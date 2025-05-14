@@ -48,6 +48,14 @@ describe('parseCorePath', () => {
     );
   });
 
+  it('should throw for wrong request', () => {
+    const request: any = { path: '/rest' };
+
+    expect(() => parseCorePath(request)).toThrow(
+      "Query path '/rest' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies",
+    );
+  });
+
   it('should parse object from batch request', () => {
     const request: any = { path: '/rest/batch/companies' };
 
