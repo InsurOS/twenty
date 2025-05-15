@@ -15,6 +15,46 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
+msgid "If you wish to continue using InsurOS, please update your subscription within the next {remainingDays} {dayOrDays}."
+msgstr "If you wish to continue using InsurOS, please update your subscription within the next {remainingDays} {dayOrDays}."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on InsurOS"
+msgstr "Join your team on InsurOS"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Thanks for registering for an account on InsurOS! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
+msgstr "Thanks for registering for an account on InsurOS! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Connect to InsurOS"
+msgstr "Connect to InsurOS"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "If you wish to use InsurOS again, you can create a new workspace."
+msgstr "If you wish to use InsurOS again, you can create a new workspace."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is InsurOS?"
+msgstr "What is InsurOS?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "InsurOS is a CRM designed for the insurance industry to manage customer data, policies, and communications more efficiently"
+msgstr "InsurOS is a CRM designed for the insurance industry to manage customer data, policies, and communications more efficiently"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Visit InsurOS's website"
+msgstr "Visit InsurOS's website"
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
 msgid "Suspended Workspace"
 msgstr "Suspended Workspace"
 
@@ -44,11 +84,6 @@ msgstr "The workspace will be deactivated in {remainingDays} {dayOrDays}, and al
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
-msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-msgstr "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
 msgid "Update your subscription"
 msgstr "Update your subscription"
 
@@ -70,11 +105,6 @@ msgstr "Test email"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Join your team on Twenty"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
 msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
 msgstr "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
 
@@ -87,11 +117,6 @@ msgstr "Accept invite"
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
 msgstr "Confirm your email address"
-
-#. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -112,11 +137,6 @@ msgstr "This is a confirmation that password for your account ({email}) was succ
 #: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
 msgstr "If you did not initiate this change, please contact your workspace owner immediately."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Connect to Twenty"
-msgstr "Connect to Twenty"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -150,23 +170,8 @@ msgstr "All data in this workspace has been permanently deleted."
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
-msgid "If you wish to use Twenty again, you can create a new workspace."
-msgstr "If you wish to use Twenty again, you can create a new workspace."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
 msgid "Create a new workspace"
 msgstr "Create a new workspace"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "What is Twenty?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -174,49 +179,84 @@ msgid "Website"
 msgstr "Website"
 
 #. js-lingui-explicit-id
-#: src/components/Footer.tsx
-msgid "Visit Twenty's website"
-msgstr "Visit Twenty's website"
+#: src/emails/warn-suspended-workspace.email.tsx
+#~ msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
+#~ msgstr "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+#~ msgid "Join your team on Twenty"
+#~ msgstr "Join your team on Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+#~ msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
+#~ msgstr "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+#~ msgid "Connect to Twenty"
+#~ msgstr "Connect to Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+#~ msgid "If you wish to use Twenty again, you can create a new workspace."
+#~ msgstr "If you wish to use Twenty again, you can create a new workspace."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+#~ msgid "What is Twenty?"
+#~ msgstr "What is Twenty?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+#~ msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+#~ msgstr "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
-msgid "Github"
-msgstr "Github"
+#~ msgid "Visit Twenty's website"
+#~ msgstr "Visit Twenty's website"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
-msgid "Visit Twenty's GitHub repository"
-msgstr "Visit Twenty's GitHub repository"
+#~ msgid "Github"
+#~ msgstr "Github"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
-msgid "User guide"
-msgstr "User guide"
+#~ msgid "Visit Twenty's GitHub repository"
+#~ msgstr "Visit Twenty's GitHub repository"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
-msgid "Read Twenty's user guide"
-msgstr "Read Twenty's user guide"
+#~ msgid "User guide"
+#~ msgstr "User guide"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
-msgid "Developers"
-msgstr "Developers"
+#~ msgid "Read Twenty's user guide"
+#~ msgstr "Read Twenty's user guide"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
-msgid "Visit Twenty's developer documentation"
-msgstr "Visit Twenty's developer documentation"
+#~ msgid "Developers"
+#~ msgstr "Developers"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
-msgid "Twenty.com, Public Benefit Corporation"
-msgstr "Twenty.com, Public Benefit Corporation"
+#~ msgid "Visit Twenty's developer documentation"
+#~ msgstr "Visit Twenty's developer documentation"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
-msgid "San Francisco / Paris"
-msgstr "San Francisco / Paris"
+#~ msgid "Twenty.com, Public Benefit Corporation"
+#~ msgstr "Twenty.com, Public Benefit Corporation"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+#~ msgid "San Francisco / Paris"
+#~ msgstr "San Francisco / Paris"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
