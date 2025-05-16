@@ -38,7 +38,7 @@ export const WorkspaceInviteLink = ({
       <Button
         Icon={IconLink}
         variant="primary"
-        accent="blue"
+        accent="green"
         title={t`Copy link`}
         onClick={() => {
           enqueueSuccessSnackBar({
