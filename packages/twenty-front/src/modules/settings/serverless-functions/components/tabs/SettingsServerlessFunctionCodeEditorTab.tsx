@@ -1,6 +1,6 @@
 import {
-  File,
-  SettingsServerlessFunctionCodeEditor,
+    File,
+    SettingsServerlessFunctionCodeEditor,
 } from '@/settings/serverless-functions/components/SettingsServerlessFunctionCodeEditor';
 import { SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/settings/serverless-functions/constants/SettingsServerlessFunctionTabListComponentId';
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
@@ -15,10 +15,10 @@ import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { Button, CoreEditorHeader } from 'twenty-ui/input';
 import {
-  H2Title,
-  IconGitCommit,
-  IconPlayerPlay,
-  IconRestore,
+    H2Title,
+    IconGitCommit,
+    IconPlayerPlay,
+    IconRestore,
 } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 
