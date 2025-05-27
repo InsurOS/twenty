@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -118,13 +119,15 @@ export const UpdateViewButtonGroup = ({
               />
             }
             dropdownComponents={
-              <DropdownMenuItemsContainer>
-                <MenuItem
-                  onClick={handleCreateViewClick}
-                  LeftIcon={IconPlus}
-                  text={t`Create view`}
-                />
-              </DropdownMenuItemsContainer>
+              <DropdownContent>
+                <DropdownMenuItemsContainer>
+                  <MenuItem
+                    onClick={handleCreateViewClick}
+                    LeftIcon={IconPlus}
+                    text={t`Create view`}
+                  />
+                </DropdownMenuItemsContainer>
+              </DropdownContent>
             }
           />
         </ButtonGroup>
