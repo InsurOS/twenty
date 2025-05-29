@@ -76,7 +76,7 @@ export const SettingsObjectDetailPage = () => {
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const isUniqueIndexesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsUniqueIndexesEnabled,
+    FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED,
   );
 
   useEffect(() => {
