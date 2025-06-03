@@ -760,10 +760,15 @@ msgstr "Blocklist"
 msgid "Book a Call"
 msgstr "Book a Call"
 
+#. js-lingui-id: HLCcj8
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx
+msgid "By using InsurOS, you agree to the"
+msgstr "By using InsurOS, you agree to the"
+
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
-msgid "By using Twenty, you agree to the"
-msgstr "By using Twenty, you agree to the"
+#~ msgid "By using Twenty, you agree to the"
+#~ msgstr "By using Twenty, you agree to the"
 
 #. js-lingui-id: PmmvzS
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx
@@ -1992,10 +1997,15 @@ msgstr "Error regenerating api key: {err}"
 msgid "Error resending invitation"
 msgstr "Error resending invitation"
 
+#. js-lingui-id: PMPiCt
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "Error while ending trial period. Please contact InsurOS team."
+msgstr "Error while ending trial period. Please contact InsurOS team."
+
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
-msgid "Error while ending trial period. Please contact Twenty team."
-msgstr "Error while ending trial period. Please contact Twenty team."
+#~ msgid "Error while ending trial period. Please contact Twenty team."
+#~ msgstr "Error while ending trial period. Please contact Twenty team."
 
 #. js-lingui-id: VSQxWH
 #: src/pages/settings/SettingsBilling.tsx

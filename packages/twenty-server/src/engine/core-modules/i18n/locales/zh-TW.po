@@ -1203,10 +1203,15 @@ msgstr "是否啟用同步"
 msgid "Job Title"
 msgstr "職稱"
 
+#. js-lingui-id: IyEmk6
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on InsurOS"
+msgstr ""
+
 #. js-lingui-id: PviVyk
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
-msgid "Join your team on Twenty"
-msgstr "加入您的團隊，使用 Twenty"
+#~ msgid "Join your team on Twenty"
+#~ msgstr "加入您的團隊，使用 Twenty"
 
 #. js-lingui-id: shbh25
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
@@ -1718,10 +1723,15 @@ msgstr "機會階段"
 msgid "Optional aggregate operation"
 msgstr "可選的聚合操作"
 
+#. js-lingui-id: +sy75R
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
+msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between InsurOS and the webhook consumer to authenticate webhook requests."
+msgstr ""
+
 #. js-lingui-id: kdClJ/
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
-msgstr "用於計算 Webhook 負載 HMAC 簽名的可選密鑰。此密鑰在 Twenty 和 Webhook 使用者之間共享，用於驗證 Webhook 請求。"
+#~ msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
+#~ msgstr "用於計算 Webhook 負載 HMAC 簽名的可選密鑰。此密鑰在 Twenty 和 Webhook 使用者之間共享，用於驗證 Webhook 請求。"
 
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2611,10 +2621,15 @@ msgstr "Webhook 目標網址"
 msgid "Webhooks"
 msgstr "Webhook"
 
+#. js-lingui-id: xEknik
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to InsurOS: Please Confirm Your Email"
+msgstr ""
+
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
-msgid "Welcome to Twenty: Please Confirm Your Email"
-msgstr "歡迎來到 Twenty：請確認您的電子郵件"
+#~ msgid "Welcome to Twenty: Please Confirm Your Email"
+#~ msgstr "歡迎來到 Twenty：請確認您的電子郵件"
 
 #. js-lingui-id: bLt/0J
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts

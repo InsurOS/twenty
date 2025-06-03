@@ -1203,10 +1203,15 @@ msgstr "Szinkronizálás Aktiválva"
 msgid "Job Title"
 msgstr "Munkakör megnevezése"
 
+#. js-lingui-id: IyEmk6
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on InsurOS"
+msgstr ""
+
 #. js-lingui-id: PviVyk
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
-msgid "Join your team on Twenty"
-msgstr "Csatlakozzon a csapatához a Twentyn"
+#~ msgid "Join your team on Twenty"
+#~ msgstr "Csatlakozzon a csapatához a Twentyn"
 
 #. js-lingui-id: shbh25
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
@@ -1718,10 +1723,15 @@ msgstr "Lehetőség szakasza"
 msgid "Optional aggregate operation"
 msgstr "Opcionális aggregációs művelet"
 
+#. js-lingui-id: +sy75R
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
+msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between InsurOS and the webhook consumer to authenticate webhook requests."
+msgstr ""
+
 #. js-lingui-id: kdClJ/
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
-msgstr "Opcionális titok, amelyet a webhook terhek HMAC aláírásának kiszámításához használnak. Ez a titok Twenty és a webhook fogyasztó között megosztásra kerül a webhook kérések hitelesítésére."
+#~ msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
+#~ msgstr "Opcionális titok, amelyet a webhook terhek HMAC aláírásának kiszámításához használnak. Ez a titok Twenty és a webhook fogyasztó között megosztásra kerül a webhook kérések hitelesítésére."
 
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2611,10 +2621,15 @@ msgstr "Webhorgok c&eacute;l URL-je"
 msgid "Webhooks"
 msgstr "Webhorgok"
 
+#. js-lingui-id: xEknik
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to InsurOS: Please Confirm Your Email"
+msgstr ""
+
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
-msgid "Welcome to Twenty: Please Confirm Your Email"
-msgstr "Üdvözöljük a Twenty-ben: Kérjük, erősítse meg e-mail-címét"
+#~ msgid "Welcome to Twenty: Please Confirm Your Email"
+#~ msgstr "Üdvözöljük a Twenty-ben: Kérjük, erősítse meg e-mail-címét"
 
 #. js-lingui-id: bLt/0J
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts

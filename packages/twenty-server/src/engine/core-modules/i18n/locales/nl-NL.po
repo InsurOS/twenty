@@ -1203,10 +1203,15 @@ msgstr "Is synchronisatie ingeschakeld"
 msgid "Job Title"
 msgstr "Functietitel"
 
+#. js-lingui-id: IyEmk6
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on InsurOS"
+msgstr ""
+
 #. js-lingui-id: PviVyk
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
-msgid "Join your team on Twenty"
-msgstr "Sluit je aan bij je team op Twenty"
+#~ msgid "Join your team on Twenty"
+#~ msgstr "Sluit je aan bij je team op Twenty"
 
 #. js-lingui-id: shbh25
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
@@ -1718,10 +1723,15 @@ msgstr "Kans stadium"
 msgid "Optional aggregate operation"
 msgstr "Optionele aggregatie operatie"
 
+#. js-lingui-id: +sy75R
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
+msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between InsurOS and the webhook consumer to authenticate webhook requests."
+msgstr ""
+
 #. js-lingui-id: kdClJ/
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
-msgstr "Optioneel geheim gebruikt voor het berekenen van de HMAC handtekening voor webhook payloads. Dit geheim wordt gedeeld tussen Twenty en de webhook consument om webhook verzoeken te authentiseren."
+#~ msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
+#~ msgstr "Optioneel geheim gebruikt voor het berekenen van de HMAC handtekening voor webhook payloads. Dit geheim wordt gedeeld tussen Twenty en de webhook consument om webhook verzoeken te authentiseren."
 
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2611,10 +2621,15 @@ msgstr "Webhook doel url"
 msgid "Webhooks"
 msgstr "Webhooks"
 
+#. js-lingui-id: xEknik
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to InsurOS: Please Confirm Your Email"
+msgstr ""
+
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
-msgid "Welcome to Twenty: Please Confirm Your Email"
-msgstr "Welkom bij Twenty: Bevestig alstublieft uw e-mail"
+#~ msgid "Welcome to Twenty: Please Confirm Your Email"
+#~ msgstr "Welkom bij Twenty: Bevestig alstublieft uw e-mail"
 
 #. js-lingui-id: bLt/0J
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts

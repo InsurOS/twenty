@@ -1203,10 +1203,15 @@ msgstr "동기화 사용 여부"
 msgid "Job Title"
 msgstr "직책"
 
+#. js-lingui-id: IyEmk6
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Join your team on InsurOS"
+msgstr ""
+
 #. js-lingui-id: PviVyk
 #: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
-msgid "Join your team on Twenty"
-msgstr "Twenty에서 팀에 합류하세요"
+#~ msgid "Join your team on Twenty"
+#~ msgstr "Twenty에서 팀에 합류하세요"
 
 #. js-lingui-id: shbh25
 #: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
@@ -1718,10 +1723,15 @@ msgstr "기회 단계"
 msgid "Optional aggregate operation"
 msgstr "선택적 집계 작업"
 
+#. js-lingui-id: +sy75R
+#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
+msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between InsurOS and the webhook consumer to authenticate webhook requests."
+msgstr ""
+
 #. js-lingui-id: kdClJ/
 #: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
-msgstr "웹훅 페이로드의 HMAC 서명을 계산하는 데 사용되는 선택적 비밀입니다. 이 비밀은 웹훅 요청을 인증하기 위해 Twenty와 웹훅 소비자 간에 공유됩니다."
+#~ msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
+#~ msgstr "웹훅 페이로드의 HMAC 서명을 계산하는 데 사용되는 선택적 비밀입니다. 이 비밀은 웹훅 요청을 인증하기 위해 Twenty와 웹훅 소비자 간에 공유됩니다."
 
 #. js-lingui-id: gh06VD
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2611,10 +2621,15 @@ msgstr "Webhook 대상 URL"
 msgid "Webhooks"
 msgstr "Webhooks"
 
+#. js-lingui-id: xEknik
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Welcome to InsurOS: Please Confirm Your Email"
+msgstr ""
+
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
-msgid "Welcome to Twenty: Please Confirm Your Email"
-msgstr "Twenty에 오신 것을 환영합니다: 이메일을 확인해 주세요"
+#~ msgid "Welcome to Twenty: Please Confirm Your Email"
+#~ msgstr "Twenty에 오신 것을 환영합니다: 이메일을 확인해 주세요"
 
 #. js-lingui-id: bLt/0J
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts

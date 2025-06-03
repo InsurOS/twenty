@@ -765,10 +765,15 @@ msgstr "拦截列表"
 msgid "Book a Call"
 msgstr "预约电话"
 
+#. js-lingui-id: HLCcj8
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx
+msgid "By using InsurOS, you agree to the"
+msgstr ""
+
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
-msgid "By using Twenty, you agree to the"
-msgstr "使用 Twenty 即表示您同意"
+#~ msgid "By using Twenty, you agree to the"
+#~ msgstr "使用 Twenty 即表示您同意"
 
 #. js-lingui-id: PmmvzS
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx
@@ -1997,10 +2002,15 @@ msgstr "重新生成 API 密钥时出错： {err}"
 msgid "Error resending invitation"
 msgstr "重新发送邀请时出错"
 
+#. js-lingui-id: PMPiCt
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "Error while ending trial period. Please contact InsurOS team."
+msgstr ""
+
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
-msgid "Error while ending trial period. Please contact Twenty team."
-msgstr ""
+#~ msgid "Error while ending trial period. Please contact Twenty team."
+#~ msgstr ""
 
 #. js-lingui-id: VSQxWH
 #: src/pages/settings/SettingsBilling.tsx

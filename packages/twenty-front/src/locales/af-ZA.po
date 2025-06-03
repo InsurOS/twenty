@@ -765,10 +765,15 @@ msgstr "Bloklys"
 msgid "Book a Call"
 msgstr "Bespreek 'n Oproep"
 
+#. js-lingui-id: HLCcj8
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx
+msgid "By using InsurOS, you agree to the"
+msgstr ""
+
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
-msgid "By using Twenty, you agree to the"
-msgstr "Deur gebruik te maak van Twenty, stem jy in tot die"
+#~ msgid "By using Twenty, you agree to the"
+#~ msgstr "Deur gebruik te maak van Twenty, stem jy in tot die"
 
 #. js-lingui-id: PmmvzS
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx
@@ -1997,10 +2002,15 @@ msgstr "Fout met die hergenerering van API-sleutel: {err}"
 msgid "Error resending invitation"
 msgstr "Fout met die herstuur van uitnodiging"
 
+#. js-lingui-id: PMPiCt
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "Error while ending trial period. Please contact InsurOS team."
+msgstr ""
+
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
-msgid "Error while ending trial period. Please contact Twenty team."
-msgstr ""
+#~ msgid "Error while ending trial period. Please contact Twenty team."
+#~ msgstr ""
 
 #. js-lingui-id: VSQxWH
 #: src/pages/settings/SettingsBilling.tsx
