@@ -1,4 +1,4 @@
-export const ADMIN_ACCOUNTS = ['jordan@insuros.ca', 'ronnie@insuros.ca'];
+const ALLOWED_ADMIN_DOMAIN = 'insuros.ca';
 
 export const isInsurOSAdminAccount = (email: string) =>
-  ADMIN_ACCOUNTS.includes(email.toLowerCase());
+  email.includes(ALLOWED_ADMIN_DOMAIN) && !email.includes('demo');
