@@ -69,7 +69,7 @@ fi
 
 # Push changes to origin
 print_status "Pushing changes to origin..."
-if ! git push -f origin main; then
+if ! git push --force-with-lease origin main; then
     print_error "Failed to push changes to origin"
     exit 1
 fi
