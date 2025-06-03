@@ -3,7 +3,6 @@ import { Logger } from '@nestjs/common';
 import { Command, CommandRunner } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
-import { seedCarriers } from 'src/database/typeorm-seeds/carriers';
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
 import {
   SEED_ACME_WORKSPACE_ID,
@@ -18,6 +17,7 @@ import { seedCalendarChannels } from 'src/database/typeorm-seeds/workspace/calen
 import { seedCalendarChannelEventAssociations } from 'src/database/typeorm-seeds/workspace/calendar-channel-event-association';
 import { seedCalendarEventParticipants } from 'src/database/typeorm-seeds/workspace/calendar-event-participants';
 import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calendar-events';
+import { seedCarriers } from 'src/database/typeorm-seeds/workspace/carriers';
 import { seedCompanies } from 'src/database/typeorm-seeds/workspace/companies';
 import { seedConnectedAccount } from 'src/database/typeorm-seeds/workspace/connected-account';
 import { seedWorkspaceFavorites } from 'src/database/typeorm-seeds/workspace/favorites';

@@ -146,6 +146,9 @@ export const COMPANY_STANDARD_FIELD_IDS = {
 export const CARRIER_STANDARD_FIELD_IDS = {
   name: '22222222-4d99-4e2e-a84c-4a27837b1ece',
   domainName: '22222222-0c28-43d8-8ba5-3659924d3489',
+  searchVector: '22222222-b8b3-41c2-bc38-41c7e77a84c8',
+  createdBy: '22222222-fabc-451d-ab7d-412170916baa',
+  favorites: '22222222-4d1d-41ac-b13b-621631298d55',
 };
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
@@ -223,6 +226,7 @@ export const FAVORITE_STANDARD_FIELD_IDS = {
   view: '20202020-5a93-4fa9-acce-e73481a0bbdf',
   custom: '20202020-855a-4bc8-9861-79deef37011f',
   favoriteFolder: '20202020-f658-4d12-8b4d-248356aa4bd9',
+  carrier: '22222222-4d1d-41ac-b13b-621631298d56',
 };
 
 export const FAVORITE_FOLDER_STANDARD_FIELD_IDS = {
