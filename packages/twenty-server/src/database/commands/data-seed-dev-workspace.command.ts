@@ -3,6 +3,7 @@ import { Logger } from '@nestjs/common';
 import { Command, CommandRunner } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
+import { seedCarriers } from 'src/database/typeorm-seeds/carriers';
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
 import {
   SEED_ACME_WORKSPACE_ID,
@@ -270,6 +271,8 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           entityManager,
           dataSourceMetadata.schema,
         );
+
+        await seedCarriers(entityManager, dataSourceMetadata.schema);
       },
     );
   }

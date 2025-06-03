@@ -11,6 +11,7 @@ export const STANDARD_OBJECT_ICONS = {
   calendarEvent: 'IconCalendar',
   comment: 'IconMessageCircle',
   company: 'IconBuildingSkyscraper',
+  carrier: 'IconBuildingSkyscraper',
   connectedAccount: 'IconAt',
   favorite: 'IconHeart',
   auditLog: 'IconTimelineEvent',

@@ -143,6 +143,11 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2c74d',
 };
 
+export const CARRIER_STANDARD_FIELD_IDS = {
+  name: '22222222-4d99-4e2e-a84c-4a27837b1ece',
+  domainName: '22222222-0c28-43d8-8ba5-3659924d3489',
+};
+
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
   handle: '20202020-c804-4a50-bb05-b3a9e24f1dec',
   provider: '20202020-ebb0-4516-befc-a9e95935efd5',
@@ -549,6 +554,7 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   attachment: ATTACHMENT_STANDARD_FIELD_IDS,
   blocklist: BLOCKLIST_STANDARD_FIELD_IDS,
   behavioralEvent: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS,
+  carrier: CARRIER_STANDARD_FIELD_IDS,
   calendarChannelEventAssociation:
     CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS,
   calendarChannel: CALENDAR_CHANNEL_STANDARD_FIELD_IDS,
