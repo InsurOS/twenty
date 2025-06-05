@@ -146,9 +146,11 @@ export const COMPANY_STANDARD_FIELD_IDS = {
 export const CARRIER_STANDARD_FIELD_IDS = {
   name: '22222222-4d99-4e2e-a84c-4a27837b1ece',
   domainName: '22222222-0c28-43d8-8ba5-3659924d3489',
-  searchVector: '22222222-b8b3-41c2-bc38-41c7e77a84c8',
+  location: '22222222-5243-4ffb-afc5-2c675da41346',
   createdBy: '22222222-fabc-451d-ab7d-412170916baa',
   favorites: '22222222-4d1d-41ac-b13b-621631298d55',
+  timelineActivities: '22222222-0414-4daf-9c0d-64fe7b27f89f',
+  searchVector: '22222222-b8b3-41c2-bc38-41c7e77a84c8',
 };
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
@@ -199,6 +201,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   properties: '20202020-f142-4b04-b91b-6a2b4af3bf11',
   workspaceMember: '20202020-af23-4479-9a30-868edc474b36',
   person: '20202020-c414-45b9-a60a-ac27aa96229f',
+  carrier: '22222222-4d1d-41ac-b13b-621631298d56',
   company: '20202020-04ad-4221-a744-7a8278a5ce21',
   opportunity: '20202020-7664-4a35-a3df-580d389fd527',
   task: '20202020-b2f5-415c-9135-a31dfe49501b',
