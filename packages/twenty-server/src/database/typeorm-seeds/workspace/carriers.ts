@@ -23,6 +23,8 @@ export const seedCarriers = async (
       'id',
       'name',
       'domainNamePrimaryLinkUrl',
+      'location',
+      'position',
     ])
     .orIgnore()
     .values([
@@ -30,26 +32,36 @@ export const seedCarriers = async (
         id: DEV_SEED_CARRIER_IDS.PROGRESSIVE,
         name: 'Progressive Insurance',
         domainNamePrimaryLinkUrl: 'https://www.progressive.com',
+        location: 'Cleveland, OH',
+        position: 0,
       },
       {
         id: DEV_SEED_CARRIER_IDS.STATE_FARM,
         name: 'State Farm',
         domainNamePrimaryLinkUrl: 'https://www.statefarm.com',
+        location: 'Bloomington, IL',
+        position: 1,
       },
       {
         id: DEV_SEED_CARRIER_IDS.GEICO,
         name: 'GEICO',
         domainNamePrimaryLinkUrl: 'https://www.geico.com',
+        location: 'Indianapolis, IN',
+        position: 2,
       },
       {
         id: DEV_SEED_CARRIER_IDS.ALLSTATE,
         name: 'Allstate Insurance',
         domainNamePrimaryLinkUrl: 'https://www.allstate.com',
+        location: 'Chicago, IL',
+        position: 3,
       },
       {
         id: DEV_SEED_CARRIER_IDS.LIBERTY_MUTUAL,
         name: 'Liberty Mutual Insurance',
         domainNamePrimaryLinkUrl: 'https://www.libertymutual.com',
+        location: 'Indianapolis, IN',
+        position: 4,
       },
     ])
     .execute();

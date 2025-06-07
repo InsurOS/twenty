@@ -30,12 +30,10 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 
 const NAME_FIELD_NAME = 'name';
 const DOMAIN_NAME_FIELD_NAME = 'domainName';
-const LOCATION_FIELD_NAME = 'location';
 
 export const SEARCH_FIELDS_FOR_CARRIER: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
   { name: DOMAIN_NAME_FIELD_NAME, type: FieldMetadataType.LINKS },
-  { name: LOCATION_FIELD_NAME, type: FieldMetadataType.TEXT },
 ];
 
 @WorkspaceEntity({
@@ -45,7 +43,7 @@ export const SEARCH_FIELDS_FOR_CARRIER: FieldTypeAndNameMetadata[] = [
   labelPlural: msg`Carriers`,
   description: msg`A carrier`,
   icon: STANDARD_OBJECT_ICONS.carrier,
-  shortcut: 'Z', // C is taken by company
+  shortcut: 'I',
   labelIdentifierStandardId: CARRIER_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceDuplicateCriteria([['name'], ['domainNamePrimaryLinkUrl']])
@@ -80,6 +78,18 @@ export class CarrierWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   location: string;
 
+  @WorkspaceField({
+    standardId: CARRIER_STANDARD_FIELD_IDS.position,
+    type: FieldMetadataType.POSITION,
+    label: msg`Position`,
+    description: msg`Carrier record position`,
+    icon: 'IconHierarchy2',
+    defaultValue: 0,
+  })
+  @WorkspaceIsSystem()
+  position: number;
+
+
   // Relations
   @WorkspaceRelation({
     standardId: CARRIER_STANDARD_FIELD_IDS.favorites,
@@ -90,6 +100,7 @@ export class CarrierWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 
