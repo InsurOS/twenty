@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { seedCarrierWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-carrier-with-demo-data';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -21,6 +22,7 @@ export class SeedCarrierDataCommand extends CommandRunner {
   constructor(
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
+    private readonly objectMetadataService: ObjectMetadataService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
   ) {
@@ -51,9 +53,15 @@ export class SeedCarrierDataCommand extends CommandRunner {
             workspace.id,
           );
 
+          // Get the object metadata standard ID to ID map for this workspace
+          const { objectMetadataStandardIdToIdMap } = await this.objectMetadataService.getObjectMetadataStandardIdToIdMap(
+            workspace.id,
+          );
+
           await seedCarrierWithDemoData(
             mainDataSource.createEntityManager() as WorkspaceEntityManager,
             dataSourceMetadata.schema,
+            objectMetadataStandardIdToIdMap,
           );
 
           this.logger.log(`Successfully seeded carrier data for workspace ${workspace.displayName}`);

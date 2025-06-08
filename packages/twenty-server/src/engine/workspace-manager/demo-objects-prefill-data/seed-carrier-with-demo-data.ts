@@ -1,9 +1,13 @@
+import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { CARRIERS_DEMO } from 'src/engine/workspace-manager/demo-objects-prefill-data/carriers-demo.json';
+import { createWorkspaceViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/create-workspace-views';
+import { carriersAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/carriers-all.view';
 
 export const seedCarrierWithDemoData = async (
   entityManager: WorkspaceEntityManager,
   schemaName: string,
+  objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap | undefined = undefined,
 ) => {
   const existingCarriers = await entityManager.createQueryBuilder(undefined, undefined, undefined, {
     shouldBypassPermissionChecks: true,
@@ -38,4 +42,13 @@ export const seedCarrierWithDemoData = async (
     .orIgnore()
     .returning('*')
     .execute();
+
+  if (objectMetadataStandardIdToIdMap) {
+    // Create the carrier view
+    await createWorkspaceViews(
+      entityManager,
+      schemaName,
+      [carriersAllView(objectMetadataStandardIdToIdMap)],
+    );
+  }
 };
