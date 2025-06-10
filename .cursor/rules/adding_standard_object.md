@@ -34,6 +34,123 @@ In `packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/
 - Add any custom field IDs needed for specific object features
 - Add field IDs for any custom relations
 
+> **Special Note:**
+> 
+> When adding or updating field IDs, follow these guidelines:
+> 
+> 1. Field ID Format:
+>    - All field IDs must follow the pattern `20202020-XXXX-XXXX-XXXX-XXXXXXXXXXXX`
+>    - The first part must always be `20202020-`
+>    - The remaining parts should be a valid UUID
+> 
+> 2. Uniqueness Requirements:
+>    - Each field ID must be unique across the entire file
+>    - No duplicate IDs are allowed, even across different object types
+>    - When updating IDs, ensure no conflicts with existing IDs
+> 
+> 3. Field ID Management:
+>    - When adding or updating field IDs:
+>      - Each field ID must be unique and not duplicate any other ID in the file
+>      - Only modify IDs for the specific object being updated
+>      - Use a UUID generator to create new unique IDs
+>      - Always prefix the UUID with `20202020-`
+>    - Example of valid field ID: `20202020-be5f-4a2b-9c3d-5e6f7a8b9c0d`
+> 
+> 4. Verification Process:
+>    - After adding or updating field IDs:
+>      - Verify that all IDs follow the correct format
+>      - Check for any duplicate IDs across the file
+>      - Ensure all required relations have proper field IDs
+>      - Test the changes in a development environment
+> 
+> 5. Common Pitfalls to Avoid:
+>    - Don't reuse existing IDs
+>    - Don't modify IDs for unrelated objects
+>    - Don't use invalid UUID formats
+>    - Don't forget to update related field IDs in other objects
+> 
+> 6. Best Practices:
+>    - Keep a record of used IDs to avoid duplicates
+>    - Use a UUID generator for new IDs
+>    - Document any ID changes in commit messages
+>    - Test thoroughly after making ID changes
+>    - Consider the impact on existing data
+
+## 2a. Update Related Objects with New Relation Fields
+
+When adding a new standard object, you must also update any related objects that are expected to have a relation to the new object. Common objects that typically need to be updated include:
+
+1. **Favorite Object Relations**
+   - Add a relation field to `FavoriteWorkspaceEntity`
+   - Add a unique field ID in `FAVORITE_STANDARD_FIELD_IDS`
+   - Example:
+   ```ts
+   @WorkspaceRelation({
+     standardId: FAVORITE_STANDARD_FIELD_IDS.[objectName],
+     type: RelationType.MANY_TO_ONE,
+     label: msg`[ObjectLabel]`,
+     description: msg`Favorite [ObjectLabel]`,
+     icon: 'Icon[AppropriateIcon]',
+     inverseSideTarget: () => [Object]WorkspaceEntity,
+     inverseSideFieldKey: 'favorites',
+     onDelete: RelationOnDeleteAction.CASCADE,
+   })
+   @WorkspaceIsNullable()
+   [objectName]: Relation<[Object]WorkspaceEntity> | null;
+
+   @WorkspaceJoinColumn('[objectName]')
+   [objectName]Id: string;
+   ```
+
+2. **Timeline Activity Relations**
+   - Add a relation field to `TimelineActivityWorkspaceEntity`
+   - Add a unique field ID in `TIMELINE_ACTIVITY_STANDARD_FIELD_IDS`
+   - Example:
+   ```ts
+   @WorkspaceRelation({
+     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.[objectName],
+     type: RelationType.MANY_TO_ONE,
+     label: msg`[ObjectLabel]`,
+     description: msg`Timeline Activity [ObjectLabel]`,
+     icon: 'Icon[AppropriateIcon]',
+     inverseSideTarget: () => [Object]WorkspaceEntity,
+     inverseSideFieldKey: 'timelineActivities',
+     onDelete: RelationOnDeleteAction.CASCADE,
+   })
+   @WorkspaceIsNullable()
+   [objectName]: Relation<[Object]WorkspaceEntity> | null;
+
+   @WorkspaceJoinColumn('[objectName]')
+   [objectName]Id: string;
+   ```
+
+3. **Other Common Relations**
+   - Check and update relations in:
+     - `NoteWorkspaceEntity`
+     - `AttachmentWorkspaceEntity`
+     - `ActivityTargetWorkspaceEntity`
+     - `EventWorkspaceEntity`
+     - Any other objects that should relate to the new object
+
+4. **Field ID Updates**
+   - Add unique field IDs in the appropriate constants:
+     ```ts
+     // In standard-field-ids.ts
+     [OBJECT]_STANDARD_FIELD_IDS: {
+       [objectName]: '20202020-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+     }
+     ```
+   - Ensure all field IDs follow the pattern `20202020-XXXX-XXXX-XXXX-XXXXXXXXXXXX`
+   - Verify no duplicate IDs exist across all field ID constants
+
+5. **Verification Steps**
+   - After adding relations:
+     - Verify all relation fields are properly defined
+     - Check that all field IDs are unique
+     - Ensure inverse relations are properly configured
+     - Test the relations in a development environment
+     - Verify that timeline activities and other features work correctly
+
 ## 3. Add Standard Object IDs and Icons
 
 In `packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/constants/`:
