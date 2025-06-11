@@ -28,6 +28,7 @@ import { seedMessageThread } from 'src/database/typeorm-seeds/workspace/message-
 import { seedMessage } from 'src/database/typeorm-seeds/workspace/messages';
 import { seedMGAs } from 'src/database/typeorm-seeds/workspace/mgas';
 import { seedOpportunity } from 'src/database/typeorm-seeds/workspace/opportunities';
+import { seedPolicies } from 'src/database/typeorm-seeds/workspace/policies';
 import { seedPeople } from 'src/database/typeorm-seeds/workspace/seedPeople';
 import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspace-members';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
@@ -216,6 +217,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           dataSourceMetadata.workspaceId,
         );
         await seedMGAs(entityManager, dataSourceMetadata.schema);
+        await seedPolicies(entityManager, dataSourceMetadata.schema);
 
         if (dataSourceMetadata.workspaceId === SEED_APPLE_WORKSPACE_ID) {
           await seedApiKey(entityManager, dataSourceMetadata.schema);
