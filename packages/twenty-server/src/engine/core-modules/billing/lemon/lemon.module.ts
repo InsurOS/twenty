@@ -12,33 +12,19 @@ import { Module } from '@nestjs/common';
 // import { StripeWebhookService } from 'src/engine/core-modules/billing/stripe/services/stripe-webhook.service';
 // import { StripeSDKModule } from 'src/engine/core-modules/billing/stripe/stripe-sdk/stripe-sdk.module';
 import { LemonSDKModule } from 'src/engine/core-modules/billing/lemon/lemon-sdk/lemon-sdk.module';
+import { LemonSubscriptionItemService } from 'src/engine/core-modules/billing/lemon/services/lemon-subscription-item.service';
+import { LemonSubscriptionService } from 'src/engine/core-modules/billing/lemon/services/lemon-subscription.service';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 
 @Module({
   imports: [DomainManagerModule, LemonSDKModule],
   providers: [
-    // StripeSubscriptionItemService,
-    // StripeWebhookService,
-    // StripeCheckoutService,
-    // StripeSubscriptionService,
-    // StripeBillingPortalService,
-    // StripeBillingMeterService,
-    // StripeCustomerService,
-    // StripePriceService,
-    // StripeProductService,
-    // StripeBillingMeterEventService,
+    LemonSubscriptionService,
+    LemonSubscriptionItemService,
   ],
   exports: [
-    // StripeWebhookService,
-    // StripeBillingPortalService,
-    // StripeBillingMeterService,
-    // StripeCustomerService,
-    // StripePriceService,
-    // StripeCheckoutService,
-    // StripeSubscriptionItemService,
-    // StripeSubscriptionService,
-    // StripeProductService,
-    // StripeBillingMeterEventService,
+    LemonSubscriptionService,
+    LemonSubscriptionItemService,
   ],
 })
 export class LemonModule {}
