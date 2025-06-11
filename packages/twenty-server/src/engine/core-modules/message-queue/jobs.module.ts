@@ -9,6 +9,7 @@ import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
+import { LemonModule } from 'src/engine/core-modules/billing/lemon/lemon.module';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
@@ -54,6 +55,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     CalendarEventParticipantManagerModule,
     TimelineActivityModule,
     StripeModule,
+    LemonModule,
     AutoCompaniesAndContactsCreationJobModule,
     TimelineJobModule,
     WebhookJobModule,
