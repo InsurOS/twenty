@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
-import { SeedCarrierDataCommand } from 'src/database/commands/seed-carrier-data.command';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -29,6 +28,6 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
     // Add TypeOrmModule with Workspace entity
     TypeOrmModule.forFeature([Workspace], 'core'),
   ],
-  providers: [DataSeedWorkspaceCommand, SeedCarrierDataCommand, ConfirmationQuestion],
+  providers: [DataSeedWorkspaceCommand, ConfirmationQuestion],
 })
 export class DatabaseCommandModule {}
