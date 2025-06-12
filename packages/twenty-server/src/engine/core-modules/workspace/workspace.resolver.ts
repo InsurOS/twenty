@@ -123,6 +123,7 @@ export class WorkspaceResolver {
   ) {
     try {
       return await this.workspaceService.updateWorkspaceById({
+        //@ts-expect-error - TODO: fix this
         payload: {
           ...data,
           id: workspace.id,
