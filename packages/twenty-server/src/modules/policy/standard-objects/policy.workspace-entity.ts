@@ -129,7 +129,8 @@ export class PolicyWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The policy effective date`,
     icon: 'IconCalendar',
   })
-  effectiveDate: string;
+  @WorkspaceIsNullable()
+  effectiveDate: string | null;
 
   @WorkspaceField({
     standardId: POLICY_STANDARD_FIELD_IDS.expirationDate,
@@ -138,7 +139,8 @@ export class PolicyWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The policy expiration date`,
     icon: 'IconCalendar',
   })
-  expirationDate: string;
+  @WorkspaceIsNullable()
+  expirationDate: string | null;
 
   @WorkspaceField({
     standardId: POLICY_STANDARD_FIELD_IDS.bindDate,
@@ -147,7 +149,8 @@ export class PolicyWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The policy bind date`,
     icon: 'IconCalendar',
   })
-  bindDate: string;
+  @WorkspaceIsNullable()
+  bindDate: string | null;
 
   @WorkspaceField({
     standardId: POLICY_STANDARD_FIELD_IDS.binderId,
@@ -156,7 +159,8 @@ export class PolicyWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The policy binder ID`,
     icon: 'IconHash',
   })
-  binderId: string;
+  @WorkspaceIsNullable()
+  binderId: string | null;
 
   @WorkspaceField({
     standardId: POLICY_STANDARD_FIELD_IDS.businessType,
