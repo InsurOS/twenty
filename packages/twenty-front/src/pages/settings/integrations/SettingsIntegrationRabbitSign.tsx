@@ -30,14 +30,16 @@ type FormInput = {
 
 const validationSchema = z.object({
   keyId: z
-    .string().trim()
+    .string()
+    .trim()
     .min(1, 'Key ID is required')
     .regex(
       /^[a-zA-Z0-9]{20,}$/,
       'Key ID must be at least 20 alphanumeric characters',
     ),
   keySecret: z
-    .string().trim()
+    .string()
+    .trim()
     .min(1, 'Key Secret is required')
     .regex(
       /^[a-zA-Z0-9]{40,}$/,
