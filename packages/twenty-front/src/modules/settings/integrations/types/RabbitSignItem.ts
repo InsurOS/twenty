@@ -1,7 +1,9 @@
 export type RabbitSignKeyItem = {
   id: string;
-  keyId: string;
-  keySecret: string;
+  key: {
+    id: string;
+    secret: string;
+  };
   workspaceMemberId: string;
   createdAt: string;
   __typename: 'RabbitSignKeyItem';
