@@ -60,13 +60,12 @@ const StyledForm = styled.form`
 export const SettingsIntegrationRabbitSign = () => {
   const { t } = useLingui();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-
   const currentWorkspaceMemberId = currentWorkspaceMember?.id ?? '';
-
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
   const integration = integrationCategoryAll.integrations.find(
     ({ from: { key } }) => key === 'rabbit-sign',
   );
+
   const { records: rabbitSignKeys } = useFindManyRecords<RabbitSignKeyItem>({
     objectNameSingular: CoreObjectNameSingular.RABBIT_SIGN_KEY,
     filter: {
@@ -190,7 +189,6 @@ export const SettingsIntegrationRabbitSign = () => {
                 />
               )}
             />
-
             <StyledButtonContainer>
               <Button title={t`Save`} type="submit" />
             </StyledButtonContainer>
