@@ -646,6 +646,12 @@ export const RABBIT_SIGN_KEY_STANDARD_FIELD_IDS = {
   workspaceMember: '20202020-7d0e-41ac-b13b-621631298d55',
 };
 
+export const RABBIT_SIGN_KEY_STANDARD_FIELD_IDS = {
+  keyId: '20202020-9d1e-41ac-b13b-621631298d55',
+  keySecret: '20202020-1d1e-41ac-b13b-621631298d55',
+  workspaceMember: '20202020-7d0e-41ac-b13b-621631298d55',
+};
+
 export const STANDARD_OBJECT_FIELD_IDS = {
   activityTarget: ACTIVITY_TARGET_STANDARD_FIELD_IDS,
   activity: ACTIVITY_STANDARD_FIELD_IDS,
