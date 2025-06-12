@@ -38,8 +38,8 @@ export const SettingsIntegrationRabbitSign = () => {
         />
         <Section>
           <H2Title
-            title={`${integration.text} database`}
-            description={`Connect or access your ${integration.text} data`}
+            title="RabbitSign Integration"
+            description="Connect your RabbitSign account to send/sync document signatures"
           />
         </Section>
       </SettingsPageContainer>
