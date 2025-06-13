@@ -61,25 +61,11 @@ import {
   PERSON_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
 import {
-  PET_DATA_SEED_COLUMNS,
-  PET_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/pet-data-seeds.constant';
-import {
-  SURVEY_RESULT_DATA_SEED_COLUMNS,
-  SURVEY_RESULT_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/survey-result-data-seeds.constant';
-import {
   WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
   WORKSPACE_MEMBER_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { prefillViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-views';
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
-import {
-  WORKFLOW_DATA_SEED_COLUMNS,
-  WORKFLOW_DATA_SEEDS,
-  WORKFLOW_VERSION_DATA_SEED_COLUMNS,
-  WORKFLOW_VERSION_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/workflow-data-seeds.constants';
 
 const RECORD_SEEDS_CONFIGS = [
   {
@@ -156,26 +142,6 @@ const RECORD_SEEDS_CONFIGS = [
     tableName: 'messageParticipant',
     pgColumns: MESSAGE_PARTICIPANT_DATA_SEED_COLUMNS,
     recordSeeds: MESSAGE_PARTICIPANT_DATA_SEEDS,
-  },
-  {
-    tableName: 'workflow',
-    pgColumns: WORKFLOW_DATA_SEED_COLUMNS,
-    recordSeeds: WORKFLOW_DATA_SEEDS,
-  },
-  {
-    tableName: 'workflowVersion',
-    pgColumns: WORKFLOW_VERSION_DATA_SEED_COLUMNS,
-    recordSeeds: WORKFLOW_VERSION_DATA_SEEDS,
-  },
-  {
-    tableName: '_pet',
-    pgColumns: PET_DATA_SEED_COLUMNS,
-    recordSeeds: PET_DATA_SEEDS,
-  },
-  {
-    tableName: '_surveyResult',
-    pgColumns: SURVEY_RESULT_DATA_SEED_COLUMNS,
-    recordSeeds: SURVEY_RESULT_DATA_SEEDS,
   },
 ];
 
