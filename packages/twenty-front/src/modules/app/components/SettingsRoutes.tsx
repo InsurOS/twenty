@@ -222,6 +222,14 @@ const SettingsIntegrationDatabase = lazy(() =>
   ),
 );
 
+const SettingsIntegrationRabbitSign = lazy(() =>
+  import('~/pages/settings/integrations/SettingsIntegrationRabbitSign').then(
+    (module) => ({
+      default: module.SettingsIntegrationRabbitSign,
+    }),
+  ),
+);
+
 const SettingsIntegrationNewDatabaseConnection = lazy(() =>
   import(
     '~/pages/settings/integrations/SettingsIntegrationNewDatabaseConnection'
@@ -493,6 +501,10 @@ export const SettingsRoutes = ({
         <Route
           path={SettingsPath.Integrations}
           element={<SettingsIntegrations />}
+        />
+        <Route
+          path={SettingsPath.IntegrationRabbitSign}
+          element={<SettingsIntegrationRabbitSign />}
         />
         <Route
           path={SettingsPath.IntegrationDatabase}
