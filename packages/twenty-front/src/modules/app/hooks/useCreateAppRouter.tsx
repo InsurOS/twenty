@@ -4,6 +4,7 @@ import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect
 
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import indexAppPath from '@/navigation/utils/indexAppPath';
+import { SignatureConfigurePage } from '@/rabbitsign/pages/SignatureConfigurePage';
 import { AppPath } from '@/types/AppPath';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
@@ -56,6 +57,7 @@ export const useCreateAppRouter = (
           <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
           <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
           <Route path={AppPath.RecordShowPage} element={<RecordShowPage />} />
+          <Route path={AppPath.RabbitSignConfigure} element={<SignatureConfigurePage />} />
           <Route
             path={AppPath.SettingsCatchAll}
             element={

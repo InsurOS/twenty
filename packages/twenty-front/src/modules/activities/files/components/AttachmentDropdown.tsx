@@ -6,6 +6,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import {
   IconDotsVertical,
   IconDownload,
+  IconMail,
   IconPencil,
   IconSignature,
   IconTrash,
@@ -17,6 +18,7 @@ type AttachmentDropdownProps = {
   onDownload: () => void;
   onDelete: () => void;
   onRename: () => void;
+  onSendForSignature: () => void;
   scopeKey: string;
   isSignatureEnabled?: boolean;
 };
@@ -25,6 +27,7 @@ export const AttachmentDropdown = ({
   onDownload,
   onDelete,
   onRename,
+  onSendForSignature,
   scopeKey,
   isSignatureEnabled = false,
 }: AttachmentDropdownProps) => {
@@ -47,10 +50,10 @@ export const AttachmentDropdown = ({
     closeDropdown();
   };
 
-  const handleCreateSignature = () => {
-    console.log('create signature');
+  const handleSendForSignature = () => {
+    onSendForSignature();
     closeDropdown();
-  };
+  }
 
   return (
     <Dropdown
@@ -78,6 +81,11 @@ export const AttachmentDropdown = ({
               text="Rename"
               LeftIcon={IconPencil}
               onClick={handleRename}
+            />
+            <MenuItem
+              text="Send for signature"
+              LeftIcon={IconMail}
+              onClick={handleSendForSignature}
             />
             <MenuItem
               text="Delete"

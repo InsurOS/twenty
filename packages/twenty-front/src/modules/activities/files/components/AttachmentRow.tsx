@@ -10,6 +10,7 @@ import {
   FieldContext,
   GenericFieldContextType,
 } from '@/object-record/record-field/contexts/FieldContext';
+import { useSendForSignature } from '@/rabbitsign/hooks/useSendForSignature';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -105,6 +106,14 @@ export const AttachmentRow = ({
 
   const handleRename = () => {
     setIsEditing(true);
+  };
+
+  const { sendForSignature: sendForSignatureAttachment } = useSendForSignature({
+    objectNameSingular: CoreObjectNameSingular.Attachment,
+  });
+
+  const handleSendForSignature = () => {
+    sendForSignatureAttachment(attachment.id);
   };
 
   const saveAttachmentName = () => {
@@ -203,6 +212,7 @@ export const AttachmentRow = ({
             onDownload={handleDownload}
             onRename={handleRename}
             isSignatureEnabled={attachment.type === 'TextDocument'}
+            onSendForSignature={handleSendForSignature}
           />
         </StyledRightContent>
       </ActivityRow>
