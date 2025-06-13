@@ -259,6 +259,7 @@ export {
   IconSettings,
   IconSettings2,
   IconSettingsAutomation,
+  IconSignature,
   IconSlash,
   IconSortAZ,
   IconSortDescending,
