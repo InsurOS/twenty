@@ -6,6 +6,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import {
   IconDotsVertical,
   IconDownload,
+  IconMail,
   IconPencil,
   IconTrash,
 } from 'twenty-ui/display';
@@ -16,6 +17,7 @@ type AttachmentDropdownProps = {
   onDownload: () => void;
   onDelete: () => void;
   onRename: () => void;
+  onSendForSignature: () => void;
   scopeKey: string;
 };
 
@@ -23,6 +25,7 @@ export const AttachmentDropdown = ({
   onDownload,
   onDelete,
   onRename,
+  onSendForSignature,
   scopeKey,
 }: AttachmentDropdownProps) => {
   const dropdownId = `${scopeKey}-settings-field-active-action-dropdown`;
@@ -44,6 +47,11 @@ export const AttachmentDropdown = ({
     closeDropdown();
   };
 
+  const handleSendForSignature = () => {
+    onSendForSignature();
+    closeDropdown();
+  }
+
   return (
     <Dropdown
       dropdownId={dropdownId}
@@ -62,6 +70,11 @@ export const AttachmentDropdown = ({
               text="Rename"
               LeftIcon={IconPencil}
               onClick={handleRename}
+            />
+            <MenuItem
+              text="Send for signature"
+              LeftIcon={IconMail}
+              onClick={handleSendForSignature}
             />
             <MenuItem
               text="Delete"

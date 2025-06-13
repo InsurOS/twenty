@@ -27,6 +27,9 @@ export enum AppPath {
   Developers = `developers`,
   DevelopersCatchAll = `/${Developers}/*`,
 
+  // Digital Signature
+  RabbitSignConfigure = '/rabbitsign/configure',
+
   Authorize = '/authorize',
 
   // 404 page not found

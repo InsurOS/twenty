@@ -20,4 +20,5 @@ export enum MessageQueue {
   serverlessFunctionQueue = 'serverless-function-queue',
   deleteCascadeQueue = 'delete-cascade-queue',
   subscriptionsQueue = 'subscriptions-queue',
+  rabbitSignSendSignatureConfigurationQueue = 'rabbit-sign-send-signature-configuration-queue',
 }
