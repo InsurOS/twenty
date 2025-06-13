@@ -63,6 +63,7 @@ export const AttachmentDropdown = ({
               text="Create Signature"
               LeftIcon={IconSignature}
               onClick={handleCreateSignature}
+              disabled
             />
             <MenuItem
               text="Download"
