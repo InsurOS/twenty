@@ -17,10 +17,19 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
+import { Modal } from '@/ui/layout/modal/components/Modal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { createPortal } from 'react-dom';
+import { Document, Page, pdfjs } from 'react-pdf';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { isNavigationModifierPressed } from 'twenty-ui/utilities';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).toString();
 
 const StyledLeftContent = styled.div`
   align-items: center;
@@ -74,12 +83,15 @@ type AttachmentRowProps = {
   onPreview?: (attachment: Attachment) => void;
 };
 
+export const SIGNATURE_MODAL_ID = 'signature-modal';
+
 export const AttachmentRow = ({
   attachment,
   onPreview,
 }: AttachmentRowProps) => {
   const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
+  const [numPages, setNumPages] = useState(0);
 
   const { name: originalFileName, extension: attachmentFileExtension } =
     getFileNameAndExtension(attachment.name);
@@ -102,6 +114,8 @@ export const AttachmentRow = ({
   const { updateOneRecord: updateOneAttachment } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Attachment,
   });
+
+  const { openModal, closeModal } = useModal();
 
   const handleRename = () => {
     setIsEditing(true);
@@ -151,6 +165,8 @@ export const AttachmentRow = ({
       onPreview(attachment);
     }
   };
+
+  const isSignatureEnabled = attachment.type === 'TextDocument';
 
   return (
     <FieldContext.Provider
@@ -202,8 +218,33 @@ export const AttachmentRow = ({
             onDelete={handleDelete}
             onDownload={handleDownload}
             onRename={handleRename}
-            isSignatureEnabled={attachment.type === 'TextDocument'}
+            onSignature={() => openModal(SIGNATURE_MODAL_ID)}
           />
+          {isSignatureEnabled &&
+            createPortal(
+              <Modal
+                modalId={SIGNATURE_MODAL_ID}
+                size="large"
+                isClosable
+                onClose={() => closeModal(SIGNATURE_MODAL_ID)}
+              >
+                <Document
+                  file={attachment.fullPath}
+                  onLoadSuccess={({ numPages }) => {
+                    setNumPages(numPages);
+                  }}
+                >
+                  {Array.from(new Array(numPages), (el, index) => (
+                    <Page
+                      key={`page_${index + 1}`}
+                      pageNumber={index + 1}
+                      width={1000}
+                    />
+                  ))}
+                </Document>
+              </Modal>,
+              document.body,
+            )}
         </StyledRightContent>
       </ActivityRow>
     </FieldContext.Provider>
