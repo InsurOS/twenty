@@ -29,6 +29,9 @@ export enum AppPath {
 
   Authorize = '/authorize',
 
+  //Signature
+  Signature = '/signature/:signatureId',
+
   // 404 page not found
   NotFoundWildcard = '*',
   NotFound = '/not-found',

@@ -47,7 +47,7 @@ export const AttachmentDropdown = ({
     closeDropdown();
   };
 
-  const handleCreateSignature = () => {
+  const handleNavigateSignaturePage = () => {
     onSignature?.();
     closeDropdown();
   };
@@ -65,7 +65,7 @@ export const AttachmentDropdown = ({
               <MenuItem
                 text="Create Signature"
                 LeftIcon={IconSignature}
-                onClick={handleCreateSignature}
+                onClick={handleNavigateSignaturePage}
               />
             )}
             <MenuItem
