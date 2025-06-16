@@ -5,9 +5,9 @@ import { FormRelationToOneFieldInput } from '@/object-record/record-field/form-t
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { styled } from 'styled-components';
 import { IconPlus, IconX } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { z } from 'zod';
