@@ -103,8 +103,8 @@ const StyledPdfWrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow: auto;
   width: 100%;
+  overflow: auto;
 `;
 
 const StyledFallback = styled.div`
@@ -128,7 +128,7 @@ const StyledPdfControls = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
   position: absolute;
   bottom: ${({ theme }) => theme.spacing(2)};
-  right: ${({ theme }) => theme.spacing(2)};
+  left: ${({ theme }) => theme.spacing(2)};
   background-color: transparent;
   padding: ${({ theme }) => theme.spacing(2)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -172,6 +172,7 @@ const StyledDeleteSigneeButton = styled(IconButton)`
 `;
 
 const StyledScrollWrapper = styled(ScrollWrapper)`
+  min-width: 340px;
   width: 340px;
 `;
 
