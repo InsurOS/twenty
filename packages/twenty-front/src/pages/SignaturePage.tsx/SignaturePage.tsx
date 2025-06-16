@@ -17,6 +17,7 @@ import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { Suspense, useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
@@ -64,7 +65,6 @@ type FormValues = z.infer<typeof formSchema>;
 
 const StyledPageContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(4)};
   height: 100%;
   overflow: hidden;
 `;
@@ -84,10 +84,6 @@ const StyledSigneeContainer = styled.div`
 
 const StyledOrderSelect = styled.div`
   width: 100px;
-`;
-
-const StyledDeleteButton = styled(IconButton)`
-  margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledAttachmentContainer = styled.div`
@@ -169,6 +165,14 @@ const StyledPageNumber = styled.div`
   &:hover {
     background-color: ${({ theme }) => theme.background.primary};
   }
+`;
+
+const StyledDeleteSigneeButton = styled(IconButton)`
+  margin-top: ${({ theme }) => theme.spacing(5)};
+`;
+
+const StyledScrollWrapper = styled(ScrollWrapper)`
+  width: 340px;
 `;
 
 export const SignaturePage = () => {
@@ -259,120 +263,122 @@ export const SignaturePage = () => {
 
   return (
     <PageContainer>
-      <PageTitle title="Create Signature" />
-      <PageHeader title="Create Signature">
+      <PageTitle title="Signature Request" />
+      <PageHeader title="Signature Request">
         <PageHeaderToggleCommandMenuButton />
       </PageHeader>
       <PageBody>
         <StyledPageContainer>
-          <StyledForm onSubmit={handleSubmit}>
-            <FormTextFieldInput
-              label="Title"
-              defaultValue=""
-              placeholder="Enter Signature Request Title"
-              onChange={(value) => setValue('title', value)}
-            />
+          <StyledScrollWrapper componentInstanceId="signature-form">
+            <StyledForm onSubmit={handleSubmit}>
+              <FormTextFieldInput
+                label="Title"
+                defaultValue=""
+                placeholder="Enter Signature Request Title"
+                onChange={(value) => setValue('title', value)}
+              />
 
-            <FormTextFieldInput
-              label="Message"
-              defaultValue=""
-              placeholder="Enter Signature Request Message"
-              onChange={(value) => setValue('message', value)}
-              multiline
-            />
+              <FormTextFieldInput
+                label="Message"
+                defaultValue=""
+                placeholder="Enter Signature Request Message"
+                onChange={(value) => setValue('message', value)}
+                multiline
+              />
 
-            {signees.map((_, index) => (
-              <StyledSigneeContainer key={index}>
-                <FormRelationToOneFieldInput
-                  label="Signee"
-                  objectNameSingular="person"
-                  defaultValue={signees[index].person}
-                  onChange={(value) => {
-                    const newSignees = [...signees];
-                    newSignees[index] = {
-                      ...newSignees[index],
-                      person: value as ObjectRecord | null,
-                    };
-                    setValue('signees', newSignees);
-                  }}
-                  excludedRecordIds={getExcludedPersonIds(index)}
-                />
-                {orderEnabled && (
-                  <StyledOrderSelect>
-                    <FormSelectFieldInput
-                      label="Order"
-                      defaultValue={(index + 1).toString()}
-                      onChange={(value) => {
-                        const newSignees = [...signees];
-                        newSignees[index] = {
-                          ...newSignees[index],
-                          order: parseInt(value as string),
-                        };
-                        setValue('signees', newSignees);
-                      }}
-                      options={Array.from(
-                        { length: signees.length },
-                        (_, i) => ({
-                          label: `${i + 1}`,
-                          value: `${i + 1}`,
-                        }),
-                      )}
-                    />
-                  </StyledOrderSelect>
-                )}
-                {index > 0 && (
-                  <StyledDeleteButton
-                    Icon={IconX}
-                    onClick={() => removeSignee(index)}
-                    variant="tertiary"
-                    size="small"
+              {signees.map((field, index) => (
+                <StyledSigneeContainer key={index}>
+                  <FormRelationToOneFieldInput
+                    label="Signee"
+                    objectNameSingular="person"
+                    defaultValue={field.person}
+                    onChange={(value) => {
+                      const newSignees = [...signees];
+                      newSignees[index] = {
+                        ...newSignees[index],
+                        person: value as ObjectRecord | null,
+                      };
+                      setValue('signees', newSignees);
+                    }}
+                    excludedRecordIds={getExcludedPersonIds(index)}
                   />
-                )}
-              </StyledSigneeContainer>
-            ))}
+                  {orderEnabled && (
+                    <StyledOrderSelect>
+                      <FormSelectFieldInput
+                        label="Order"
+                        defaultValue={(index + 1).toString()}
+                        onChange={(value) => {
+                          const newSignees = [...signees];
+                          newSignees[index] = {
+                            ...newSignees[index],
+                            order: parseInt(value as string),
+                          };
+                          setValue('signees', newSignees);
+                        }}
+                        options={Array.from(
+                          { length: signees.length },
+                          (_, i) => ({
+                            label: `${i + 1}`,
+                            value: `${i + 1}`,
+                          }),
+                        )}
+                      />
+                    </StyledOrderSelect>
+                  )}
+                  {index > 0 && (
+                    <StyledDeleteSigneeButton
+                      Icon={IconX}
+                      onClick={() => removeSignee(index)}
+                      variant="tertiary"
+                      size="small"
+                    />
+                  )}
+                </StyledSigneeContainer>
+              ))}
 
-            <Button Icon={IconPlus} title="Add Signee" onClick={addSignee} />
+              <Button Icon={IconPlus} title="Add Signee" onClick={addSignee} />
 
-            <StyledBooleanFieldContainer>
-              <FormBooleanFieldInput
-                label="I am the only signee"
-                defaultValue={false}
-                onChange={(value) => setValue('user_only', Boolean(value))}
-              />
+              <StyledBooleanFieldContainer>
+                <FormBooleanFieldInput
+                  label="I am the only signee"
+                  defaultValue={false}
+                  onChange={(value) => setValue('user_only', Boolean(value))}
+                />
 
-              <FormBooleanFieldInput
-                label="Enable signing order"
-                defaultValue={false}
+                <FormBooleanFieldInput
+                  label="Enable signing order"
+                  defaultValue={false}
+                  onChange={(value) => {
+                    setValue('order_enabled', Boolean(value));
+                    if (value === true) {
+                      const newSignees = signees.map((signee, index) => ({
+                        ...signee,
+                        order: index + 1,
+                      }));
+                      setValue('signees', newSignees);
+                      return;
+                    }
+                    setValue(
+                      'signees',
+                      signees.map(({ person }) => ({ person })),
+                    );
+                  }}
+                />
+              </StyledBooleanFieldContainer>
+
+              <FormMultiSelectFieldInput
+                label="Send Finished Documents to Additional Recepients"
+                defaultValue={watch('additional_receiver_ids')}
+                options={personOptions}
                 onChange={(value) => {
-                  setValue('order_enabled', Boolean(value));
-                  if (value === true) {
-                    const newSignees = signees.map((signee, index) => ({
-                      ...signee,
-                      order: index + 1,
-                    }));
-                    setValue('signees', newSignees);
-                    return;
+                  if (Array.isArray(value)) {
+                    setValue('additional_receiver_ids', value);
                   }
-                  setValue(
-                    'signees',
-                    signees.map(({ person }) => ({ person })),
-                  );
                 }}
+                placeholder="Select additional recipients"
               />
-            </StyledBooleanFieldContainer>
-
-            <FormMultiSelectFieldInput
-              label="Send Finished Documents to Additional Recepients"
-              defaultValue={watch('additional_receiver_ids')}
-              options={personOptions}
-              onChange={(value) => {
-                if (Array.isArray(value)) {
-                  setValue('additional_receiver_ids', value);
-                }
-              }}
-              placeholder="Select additional recipients"
-            />
-          </StyledForm>
+            </StyledForm>
+          </StyledScrollWrapper>
           <StyledAttachmentContainer>
             {attachmentLoading ? (
               <StyledFallback>Loading document...</StyledFallback>
