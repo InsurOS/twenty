@@ -25,7 +25,7 @@ import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
 import { InviteTeam } from '~/pages/onboarding/InviteTeam';
 import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
-import { SignaturePage } from '~/pages/SignaturePage.tsx/SignaturePage';
+import { SignaturePage } from '~/pages/SignaturePage/SignaturePage';
 
 export const useCreateAppRouter = (
   isFunctionSettingsEnabled?: boolean,
