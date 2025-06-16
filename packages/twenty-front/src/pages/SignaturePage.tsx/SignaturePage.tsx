@@ -287,85 +287,103 @@ export const SignaturePage = () => {
                 multiline
               />
 
-              {signees.map((field, index) => (
-                <StyledSigneeContainer key={index}>
-                  <FormRelationToOneFieldInput
-                    label="Signee"
-                    objectNameSingular="person"
-                    defaultValue={field.person}
-                    onChange={(value) => {
-                      const newSignees = [...signees];
-                      newSignees[index] = {
-                        ...newSignees[index],
-                        person: value as ObjectRecord | null,
-                      };
-                      setValue('signees', newSignees);
-                    }}
-                    excludedRecordIds={getExcludedPersonIds(index)}
-                  />
-                  {orderEnabled && (
-                    <StyledOrderSelect>
-                      <FormSelectFieldInput
-                        label="Order"
-                        defaultValue={(index + 1).toString()}
-                        onChange={(value) => {
-                          const newSignees = [...signees];
-                          newSignees[index] = {
-                            ...newSignees[index],
-                            order: parseInt(value as string),
-                          };
-                          setValue('signees', newSignees);
-                        }}
-                        options={Array.from(
-                          { length: signees.length },
-                          (_, i) => ({
-                            label: `${i + 1}`,
-                            value: `${i + 1}`,
-                          }),
-                        )}
-                      />
-                    </StyledOrderSelect>
-                  )}
-                  {index > 0 && (
-                    <StyledDeleteSigneeButton
-                      Icon={IconX}
-                      onClick={() => removeSignee(index)}
-                      variant="tertiary"
-                      size="small"
-                    />
-                  )}
-                </StyledSigneeContainer>
-              ))}
-
-              <Button Icon={IconPlus} title="Add Signee" onClick={addSignee} />
-
               <StyledBooleanFieldContainer>
                 <FormBooleanFieldInput
                   label="I am the only signee"
                   defaultValue={false}
-                  onChange={(value) => setValue('user_only', Boolean(value))}
-                />
-
-                <FormBooleanFieldInput
-                  label="Enable signing order"
-                  defaultValue={false}
                   onChange={(value) => {
-                    setValue('order_enabled', Boolean(value));
+                    setValue('user_only', Boolean(value));
                     if (value === true) {
-                      const newSignees = signees.map((signee, index) => ({
-                        ...signee,
-                        order: index + 1,
-                      }));
-                      setValue('signees', newSignees);
+                      setValue('signees', []);
+                      setValue('order_enabled', false);
                       return;
                     }
-                    setValue(
-                      'signees',
-                      signees.map(({ person }) => ({ person })),
-                    );
+                    setValue('signees', [{ person: null }]);
                   }}
                 />
+
+                {!watch('user_only') && (
+                  <FormBooleanFieldInput
+                    label="Enable signing order"
+                    defaultValue={false}
+                    onChange={(value) => {
+                      setValue('order_enabled', Boolean(value));
+                      if (value === true) {
+                        const newSignees = signees.map((signee, index) => ({
+                          ...signee,
+                          order: index + 1,
+                        }));
+                        setValue('signees', newSignees);
+                        return;
+                      }
+                      setValue(
+                        'signees',
+                        signees.map(({ person }) => ({ person })),
+                      );
+                    }}
+                  />
+                )}
               </StyledBooleanFieldContainer>
+
+              {!watch('user_only') && (
+                <>
+                  {signees.map((field, index) => (
+                    <StyledSigneeContainer key={index}>
+                      <FormRelationToOneFieldInput
+                        label="Signee"
+                        objectNameSingular="person"
+                        defaultValue={field.person}
+                        onChange={(value) => {
+                          const newSignees = [...signees];
+                          newSignees[index] = {
+                            ...newSignees[index],
+                            person: value as ObjectRecord | null,
+                          };
+                          setValue('signees', newSignees);
+                        }}
+                        excludedRecordIds={getExcludedPersonIds(index)}
+                      />
+                      {orderEnabled && (
+                        <StyledOrderSelect>
+                          <FormSelectFieldInput
+                            label="Order"
+                            defaultValue={(index + 1).toString()}
+                            onChange={(value) => {
+                              const newSignees = [...signees];
+                              newSignees[index] = {
+                                ...newSignees[index],
+                                order: parseInt(value as string),
+                              };
+                              setValue('signees', newSignees);
+                            }}
+                            options={Array.from(
+                              { length: signees.length },
+                              (_, i) => ({
+                                label: `${i + 1}`,
+                                value: `${i + 1}`,
+                              }),
+                            )}
+                          />
+                        </StyledOrderSelect>
+                      )}
+                      {index > 0 && (
+                        <StyledDeleteSigneeButton
+                          Icon={IconX}
+                          onClick={() => removeSignee(index)}
+                          variant="tertiary"
+                          size="small"
+                        />
+                      )}
+                    </StyledSigneeContainer>
+                  ))}
+
+                  <Button
+                    Icon={IconPlus}
+                    title="Add Signee"
+                    onClick={addSignee}
+                  />
+                </>
+              )}
 
               <FormMultiSelectFieldInput
                 label="Send Finished Documents to Additional Recepients"
