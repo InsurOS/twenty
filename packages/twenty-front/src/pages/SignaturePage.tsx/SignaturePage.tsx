@@ -3,7 +3,9 @@ import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/components/FormBooleanFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { FormRelationToOneFieldInput } from '@/object-record/record-field/form-types/components/FormRelationToOneFieldInput';
@@ -16,8 +18,31 @@ import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import styled from '@emotion/styled';
-import { IconPlus, IconX } from 'twenty-ui/display';
+import { Suspense, useState } from 'react';
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+import {
+    IconChevronLeft,
+    IconChevronRight,
+    IconMinus,
+    IconPlus,
+    IconX,
+} from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
+import {
+    AnimatedPlaceholder,
+    AnimatedPlaceholderEmptyContainer,
+    AnimatedPlaceholderEmptySubTitle,
+    AnimatedPlaceholderEmptyTextContainer,
+    AnimatedPlaceholderEmptyTitle,
+    EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+} from 'twenty-ui/layout';
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).toString();
 
 const formSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -36,6 +61,13 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+const StyledPageContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(4)};
+  height: 100%;
+  overflow: hidden;
+`;
 
 const StyledForm = styled.form`
   display: flex;
@@ -58,17 +90,97 @@ const StyledDeleteButton = styled(IconButton)`
   margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledDebugSection = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(4)};
-  padding: ${({ theme }) => theme.spacing(4)};
+const StyledAttachmentContainer = styled.div`
+  align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.light};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  font-family: monospace;
-  white-space: pre-wrap;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing(4)};
+  position: relative;
+`;
+
+const StyledPdfWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+  width: 100%;
+`;
+
+const StyledFallback = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.light};
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledBooleanFieldContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(3)};
+`;
+
+const StyledPdfControls = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  position: absolute;
+  bottom: ${({ theme }) => theme.spacing(2)};
+  right: ${({ theme }) => theme.spacing(2)};
+  background-color: transparent;
+  padding: ${({ theme }) => theme.spacing(2)};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.background.primary};
+  }
+`;
+
+const StyledZoomControls = styled.div`
+  align-items: center;
+  border-left: 1px solid ${({ theme }) => theme.border.color.light};
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  margin-left: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledZoomLevel = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  min-width: ${({ theme }) => theme.spacing(6)};
+  text-align: center;
+`;
+
+const StyledPageNumber = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  padding: ${({ theme }) => theme.spacing(1)};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.background.primary};
+  }
 `;
 
 export const SignaturePage = () => {
+  const [pageNumber, setPageNumber] = useState(1);
+  const [numPages, setNumPages] = useState<number | null>(null);
+  const [scale, setScale] = useState(1);
   const { signatureId } = useParams();
+  const { record: attachment, loading: attachmentLoading } = useFindOneRecord({
+    objectNameSingular: CoreObjectNameSingular.Attachment,
+    objectRecordId: signatureId,
+  });
+
   const { control, watch, setValue, getValues } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -125,6 +237,26 @@ export const SignaturePage = () => {
     return [...selectedPersonIds, ...additionalReceiverIds];
   };
 
+  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+    setNumPages(numPages);
+  };
+
+  const goToPrevPage = () => {
+    setPageNumber((prev) => Math.max(prev - 1, 1));
+  };
+
+  const goToNextPage = () => {
+    setPageNumber((prev) => Math.min(prev + 1, numPages || prev));
+  };
+
+  const zoomIn = () => {
+    setScale((prev) => Math.min(prev + 0.1, 2));
+  };
+
+  const zoomOut = () => {
+    setScale((prev) => Math.max(prev - 0.1, 0.5));
+  };
+
   return (
     <PageContainer>
       <PageTitle title="Create Signature" />
@@ -132,114 +264,188 @@ export const SignaturePage = () => {
         <PageHeaderToggleCommandMenuButton />
       </PageHeader>
       <PageBody>
-        <StyledForm onSubmit={handleSubmit}>
-          <FormTextFieldInput
-            label="Title"
-            defaultValue=""
-            placeholder="Enter Signature Request Title"
-            onChange={(value) => setValue('title', value)}
-          />
+        <StyledPageContainer>
+          <StyledForm onSubmit={handleSubmit}>
+            <FormTextFieldInput
+              label="Title"
+              defaultValue=""
+              placeholder="Enter Signature Request Title"
+              onChange={(value) => setValue('title', value)}
+            />
 
-          <FormTextFieldInput
-            label="Message"
-            defaultValue=""
-            placeholder="Enter Signature Request Message"
-            onChange={(value) => setValue('message', value)}
-            multiline
-          />
+            <FormTextFieldInput
+              label="Message"
+              defaultValue=""
+              placeholder="Enter Signature Request Message"
+              onChange={(value) => setValue('message', value)}
+              multiline
+            />
 
-          {signees.map((_, index) => (
-            <StyledSigneeContainer key={index}>
-              <FormRelationToOneFieldInput
-                label="Signee"
-                objectNameSingular="person"
-                defaultValue={signees[index].person}
-                onChange={(value) => {
-                  const newSignees = [...signees];
-                  newSignees[index] = {
-                    ...newSignees[index],
-                    person: value as ObjectRecord | null,
-                  };
-                  setValue('signees', newSignees);
-                }}
-                excludedRecordIds={getExcludedPersonIds(index)}
-              />
-              {orderEnabled && (
-                <StyledOrderSelect>
-                  <FormSelectFieldInput
-                    label="Order"
-                    defaultValue={(index + 1).toString()}
-                    onChange={(value) => {
-                      const newSignees = [...signees];
-                      newSignees[index] = {
-                        ...newSignees[index],
-                        order: parseInt(value as string),
-                      };
-                      setValue('signees', newSignees);
-                    }}
-                    options={Array.from({ length: signees.length }, (_, i) => ({
-                      label: `${i + 1}`,
-                      value: `${i + 1}`,
-                    }))}
-                  />
-                </StyledOrderSelect>
-              )}
-              {index > 0 && (
-                <StyledDeleteButton
-                  Icon={IconX}
-                  onClick={() => removeSignee(index)}
-                  variant="tertiary"
-                  size="small"
+            {signees.map((_, index) => (
+              <StyledSigneeContainer key={index}>
+                <FormRelationToOneFieldInput
+                  label="Signee"
+                  objectNameSingular="person"
+                  defaultValue={signees[index].person}
+                  onChange={(value) => {
+                    const newSignees = [...signees];
+                    newSignees[index] = {
+                      ...newSignees[index],
+                      person: value as ObjectRecord | null,
+                    };
+                    setValue('signees', newSignees);
+                  }}
+                  excludedRecordIds={getExcludedPersonIds(index)}
                 />
-              )}
-            </StyledSigneeContainer>
-          ))}
+                {orderEnabled && (
+                  <StyledOrderSelect>
+                    <FormSelectFieldInput
+                      label="Order"
+                      defaultValue={(index + 1).toString()}
+                      onChange={(value) => {
+                        const newSignees = [...signees];
+                        newSignees[index] = {
+                          ...newSignees[index],
+                          order: parseInt(value as string),
+                        };
+                        setValue('signees', newSignees);
+                      }}
+                      options={Array.from(
+                        { length: signees.length },
+                        (_, i) => ({
+                          label: `${i + 1}`,
+                          value: `${i + 1}`,
+                        }),
+                      )}
+                    />
+                  </StyledOrderSelect>
+                )}
+                {index > 0 && (
+                  <StyledDeleteButton
+                    Icon={IconX}
+                    onClick={() => removeSignee(index)}
+                    variant="tertiary"
+                    size="small"
+                  />
+                )}
+              </StyledSigneeContainer>
+            ))}
 
-          <Button Icon={IconPlus} title="Add Signee" onClick={addSignee} />
+            <Button Icon={IconPlus} title="Add Signee" onClick={addSignee} />
 
-          <FormBooleanFieldInput
-            label="I am the only signee"
-            defaultValue={false}
-            onChange={(value) => setValue('user_only', Boolean(value))}
-          />
+            <StyledBooleanFieldContainer>
+              <FormBooleanFieldInput
+                label="I am the only signee"
+                defaultValue={false}
+                onChange={(value) => setValue('user_only', Boolean(value))}
+              />
 
-          <FormBooleanFieldInput
-            label="Enable signing order"
-            defaultValue={false}
-            onChange={(value) => {
-              setValue('order_enabled', Boolean(value));
-              if (value === true) {
-                const newSignees = signees.map((signee, index) => ({
-                  ...signee,
-                  order: index + 1,
-                }));
-                setValue('signees', newSignees);
-                return;
-              }
-              setValue(
-                'signees',
-                signees.map(({ person }) => ({ person })),
-              );
-            }}
-          />
+              <FormBooleanFieldInput
+                label="Enable signing order"
+                defaultValue={false}
+                onChange={(value) => {
+                  setValue('order_enabled', Boolean(value));
+                  if (value === true) {
+                    const newSignees = signees.map((signee, index) => ({
+                      ...signee,
+                      order: index + 1,
+                    }));
+                    setValue('signees', newSignees);
+                    return;
+                  }
+                  setValue(
+                    'signees',
+                    signees.map(({ person }) => ({ person })),
+                  );
+                }}
+              />
+            </StyledBooleanFieldContainer>
 
-          <FormMultiSelectFieldInput
-            label="Send Finished Documents to Additional Recepients"
-            defaultValue={watch('additional_receiver_ids')}
-            options={personOptions}
-            onChange={(value) => {
-              if (Array.isArray(value)) {
-                setValue('additional_receiver_ids', value);
-              }
-            }}
-            placeholder="Select additional recipients"
-          />
-
-          <StyledDebugSection>
-            <strong>Current Form Values:</strong>
-            {JSON.stringify(getValues(), null, 2)}
-          </StyledDebugSection>
-        </StyledForm>
+            <FormMultiSelectFieldInput
+              label="Send Finished Documents to Additional Recepients"
+              defaultValue={watch('additional_receiver_ids')}
+              options={personOptions}
+              onChange={(value) => {
+                if (Array.isArray(value)) {
+                  setValue('additional_receiver_ids', value);
+                }
+              }}
+              placeholder="Select additional recipients"
+            />
+          </StyledForm>
+          <StyledAttachmentContainer>
+            {attachmentLoading ? (
+              <StyledFallback>Loading document...</StyledFallback>
+            ) : attachment ? (
+              <Suspense
+                fallback={<StyledFallback>Loading PDF...</StyledFallback>}
+              >
+                <StyledPdfWrapper>
+                  <Document
+                    file={attachment.fullPath}
+                    onLoadSuccess={onDocumentLoadSuccess}
+                  >
+                    <Page
+                      pageNumber={pageNumber}
+                      scale={scale}
+                      renderTextLayer={false}
+                      renderAnnotationLayer={false}
+                    />
+                  </Document>
+                </StyledPdfWrapper>
+                <StyledPdfControls>
+                  <IconButton
+                    Icon={IconChevronLeft}
+                    onClick={goToPrevPage}
+                    disabled={pageNumber <= 1}
+                    variant="tertiary"
+                  />
+                  <StyledPageNumber>
+                    Page {pageNumber} of {numPages || '-'}
+                  </StyledPageNumber>
+                  <IconButton
+                    Icon={IconChevronRight}
+                    onClick={goToNextPage}
+                    disabled={pageNumber >= (numPages || 1)}
+                    variant="tertiary"
+                  />
+                  <StyledZoomControls>
+                    <IconButton
+                      Icon={IconMinus}
+                      onClick={zoomOut}
+                      disabled={scale <= 0.5}
+                      variant="tertiary"
+                    />
+                    <StyledZoomLevel>
+                      {Math.round(scale * 100)}%
+                    </StyledZoomLevel>
+                    <IconButton
+                      Icon={IconPlus}
+                      onClick={zoomIn}
+                      disabled={scale >= 2}
+                      variant="tertiary"
+                    />
+                  </StyledZoomControls>
+                </StyledPdfControls>
+              </Suspense>
+            ) : (
+              <AnimatedPlaceholderEmptyContainer
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
+              >
+                <AnimatedPlaceholder type="noFile" />
+                <AnimatedPlaceholderEmptyTextContainer>
+                  <AnimatedPlaceholderEmptyTitle>
+                    No Document
+                  </AnimatedPlaceholderEmptyTitle>
+                  <AnimatedPlaceholderEmptySubTitle>
+                    No document was found for this signature request.
+                  </AnimatedPlaceholderEmptySubTitle>
+                </AnimatedPlaceholderEmptyTextContainer>
+              </AnimatedPlaceholderEmptyContainer>
+            )}
+          </StyledAttachmentContainer>
+        </StyledPageContainer>
       </PageBody>
     </PageContainer>
   );
