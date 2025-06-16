@@ -24,20 +24,20 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import {
-    IconChevronLeft,
-    IconChevronRight,
-    IconMinus,
-    IconPlus,
-    IconX,
+  IconChevronLeft,
+  IconChevronRight,
+  IconMinus,
+  IconPlus,
+  IconX,
 } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import {
-    AnimatedPlaceholder,
-    AnimatedPlaceholderEmptyContainer,
-    AnimatedPlaceholderEmptySubTitle,
-    AnimatedPlaceholderEmptyTextContainer,
-    AnimatedPlaceholderEmptyTitle,
-    EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
