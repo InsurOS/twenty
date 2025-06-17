@@ -110,6 +110,12 @@ export const CreateSignatureFormItems = ({
 
   const orderEnabled = watch('order_enabled');
   const signees = watch('signees');
+  const selectedSigneeId = watch('selected_signee_id');
+  const formValues = watch();
+  console.log('formValues', formValues);
+  const selectedSignee = signees.find(
+    (signee) => signee.id === selectedSigneeId,
+  );
 
   const addSignee = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -279,23 +285,15 @@ export const CreateSignatureFormItems = ({
             options={signees
               .filter((signee) => signee.id !== null)
               .map((signee) => {
-                const selectedSignee = signees.find((p) => p.id === signee.id);
-                return selectedSignee
-                  ? {
-                      label: selectedSignee?.name ?? '',
-                      value: signee.id as string,
-                      Icon: () => (
-                        <StyledColorCircle
-                          color={
-                            SignatureColorCode[signee.color as SignatureColor]
-                          }
-                        />
-                      ),
-                    }
-                  : {
-                      label: 'Unknown',
-                      value: '',
-                    };
+                return {
+                  label: signee.name ?? '',
+                  value: signee.id as string,
+                  Icon: () => (
+                    <StyledColorCircle
+                      color={SignatureColorCode[signee.color as SignatureColor]}
+                    />
+                  ),
+                };
               })}
           />
         </>
@@ -305,7 +303,10 @@ export const CreateSignatureFormItems = ({
           <Button
             title="Next"
             variant="primary"
-            onClick={() => onNext(SignatureCreationStep.SIGNATURE)}
+            onClick={() => {
+              setValue('selected_signee_id', signees[0].id);
+              onNext(SignatureCreationStep.SIGNATURE);
+            }}
           />
         )}
         {currentStep === SignatureCreationStep.SIGNATURE && (

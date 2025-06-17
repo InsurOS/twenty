@@ -80,6 +80,7 @@ export const SignaturePage = () => {
       user_only: false,
       order_enabled: false,
       additional_receiver_ids: [],
+      selected_signee_id: null,
     },
   });
 
