@@ -286,9 +286,9 @@ export const DocumentSignatureEditor = ({
       .closest('.react-pdf__Page')
       ?.getBoundingClientRect();
     if (!page) return;
-    const signature = signees.find((s) => s.id === signeeId)?.signatures[
-      signatureIndex
-    ];
+    const signee = signees.find((s) => s.id === signeeId);
+    if (!signee) return;
+    const signature = signee.signatures.find((s) => s.index === signatureIndex);
     if (!signature) return;
     const offsetX = (e.clientX - page.left) / scale - signature.x;
     const offsetY = (e.clientY - page.top) / scale - signature.y;
@@ -370,7 +370,7 @@ export const DocumentSignatureEditor = ({
                             (signature) =>
                               signature.pageIndex === pageNumber - 1,
                           )
-                          .map((signature, index) => (
+                          .map((signature) => (
                             <>
                               <StyledSignatureName
                                 x={signature.x}
@@ -378,6 +378,7 @@ export const DocumentSignatureEditor = ({
                                 width={signature.width}
                                 height={signature.height}
                                 color={signee.color}
+                                key={`name-${signee.id}-${signature.index}`}
                               >
                                 {signature.name}
                               </StyledSignatureName>
@@ -386,22 +387,30 @@ export const DocumentSignatureEditor = ({
                                 y={signature.y}
                                 width={signature.width}
                                 Icon={IconX}
+                                key={`remove-${signee.id}-${signature.index}`}
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  handleRemoveSignature(signee.id ?? '', index);
+                                  handleRemoveSignature(
+                                    signee.id ?? '',
+                                    signature.index,
+                                  );
                                 }}
                                 variant="tertiary"
                                 size="small"
                               />
                               <StyledSignatureBox
-                                key={`${signee.id}-${index}`}
+                                key={`box-${signee.id}-${signature.index}`}
                                 x={signature.x}
                                 y={signature.y}
                                 width={signature.width}
                                 height={signature.height}
                                 color={signee.color}
                                 onMouseDown={(e) =>
-                                  handleMouseDown(e, signee.id ?? '', index)
+                                  handleMouseDown(
+                                    e,
+                                    signee.id ?? '',
+                                    signature.index,
+                                  )
                                 }
                               >
                                 <div

@@ -109,7 +109,7 @@ export const CreateSignatureFormItems = ({
         color: getSignatureColor(selectedSigneeIndex),
         name: `${selectedPerson?.name?.firstName} ${selectedPerson?.name?.lastName}`,
         email: selectedPerson?.emails?.primaryEmail,
-        signatures: [],
+        signatures: newSignees[selectedSigneeIndex].signatures ?? [],
       };
       setValue('signees', newSignees);
     }
@@ -203,7 +203,7 @@ export const CreateSignatureFormItems = ({
         };
         return {
           ...signee,
-          signatures: [...signee.signatures, newSignature],
+          signatures: [...(signee.signatures ?? []), newSignature],
         };
       }
       return signee;
