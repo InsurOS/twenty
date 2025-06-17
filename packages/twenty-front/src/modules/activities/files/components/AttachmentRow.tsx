@@ -214,11 +214,17 @@ export const AttachmentRow = ({
             onDelete={handleDelete}
             onDownload={handleDownload}
             onRename={handleRename}
-            onSignature={() => {
-              navigate(
-                getAppPath(AppPath.Signature, { signatureId: attachment.id }),
-              );
-            }}
+            onSignature={
+              signatureEnabled
+                ? () => {
+                    navigate(
+                      getAppPath(AppPath.Signature, {
+                        signatureId: attachment.id,
+                      }),
+                    );
+                  }
+                : undefined
+            }
           />
         </StyledRightContent>
       </ActivityRow>
