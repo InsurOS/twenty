@@ -369,68 +369,75 @@ export const DocumentSignatureEditor = ({
                             (signature) =>
                               signature.pageIndex === pageNumber - 1,
                           )
-                          .map((signature) => (
-                            <>
-                              <StyledSignatureName
-                                x={signature.x}
-                                y={signature.y}
-                                width={signature.width}
-                                height={signature.height}
-                                color={signee.color}
-                                key={`name-${signee.id}-${signature.index}`}
-                              >
-                                {signature.name}
-                              </StyledSignatureName>
-                              <StyledSignatureRemoveButton
-                                x={signature.x}
-                                y={signature.y}
-                                width={signature.width}
-                                Icon={IconX}
-                                key={`remove-${signee.id}-${signature.index}`}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleRemoveSignature(
-                                    signee.id ?? '',
-                                    signature.index,
-                                  );
-                                }}
-                                variant="tertiary"
-                                size="small"
-                              />
-                              <StyledSignatureBox
-                                key={`box-${signee.id}-${signature.index}`}
-                                x={signature.x}
-                                y={signature.y}
-                                width={signature.width}
-                                height={signature.height}
-                                color={signee.color}
-                                onMouseDown={(e) =>
-                                  handleMouseDown(
-                                    e,
-                                    signee.id ?? '',
-                                    signature.index,
-                                  )
-                                }
-                              >
-                                <div
-                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    height: '100%',
-                                  }}
+                          .map((signature) => {
+                            const scaledX = signature.x * scale;
+                            const scaledY = signature.y * scale;
+                            const scaledWidth = signature.width * scale;
+                            const scaledHeight = signature.height * scale;
+
+                            return (
+                              <>
+                                <StyledSignatureName
+                                  x={scaledX}
+                                  y={scaledY}
+                                  width={scaledWidth}
+                                  height={scaledHeight}
+                                  color={signee.color}
+                                  key={`name-${signee.id}-${signature.index}`}
                                 >
-                                  {
-                                    MapSignatureTypeToIcon[
-                                      Number(
-                                        signature.fieldType + 1,
-                                      ) as keyof typeof MapSignatureTypeToIcon
-                                    ]
+                                  {signature.name}
+                                </StyledSignatureName>
+                                <StyledSignatureRemoveButton
+                                  x={scaledX}
+                                  y={scaledY}
+                                  width={scaledWidth}
+                                  Icon={IconX}
+                                  key={`remove-${signee.id}-${signature.index}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRemoveSignature(
+                                      signee.id ?? '',
+                                      signature.index,
+                                    );
+                                  }}
+                                  variant="tertiary"
+                                  size="small"
+                                />
+                                <StyledSignatureBox
+                                  key={`box-${signee.id}-${signature.index}`}
+                                  x={scaledX}
+                                  y={scaledY}
+                                  width={scaledWidth}
+                                  height={scaledHeight}
+                                  color={signee.color}
+                                  onMouseDown={(e) =>
+                                    handleMouseDown(
+                                      e,
+                                      signee.id ?? '',
+                                      signature.index,
+                                    )
                                   }
-                                </div>
-                              </StyledSignatureBox>
-                            </>
-                          ))
+                                >
+                                  <div
+                                    style={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      height: '100%',
+                                    }}
+                                  >
+                                    {
+                                      MapSignatureTypeToIcon[
+                                        Number(
+                                          signature.fieldType + 1,
+                                        ) as keyof typeof MapSignatureTypeToIcon
+                                      ]
+                                    }
+                                  </div>
+                                </StyledSignatureBox>
+                              </>
+                            );
+                          })
                       : null,
                   )
                 : null}
