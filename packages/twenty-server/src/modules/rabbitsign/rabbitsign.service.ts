@@ -26,7 +26,11 @@ export class RabbitSignService {
     signers: Array<{
       email: string;
       name: string;
+      fieldType: number;
       position: {
+        pageIndex: number;
+        width: number;
+        height: number;
         x: number;
         y: number;
       };
