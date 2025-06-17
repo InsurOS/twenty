@@ -193,7 +193,6 @@ const StyledSignatureName = styled.span<{
   text-align: left;
   top: ${({ y, height }) => y + height + 18}px;
   width: ${({ width }) => width}px;
-  white-space: nowrap;
 `;
 
 const StyledSignatureRemoveButton = styled(IconButton)<{

@@ -66,7 +66,7 @@ const StyledDeleteSigneeButton = styled(IconButton)`
 
 const StyledButtonContainer = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
@@ -406,11 +406,19 @@ export const CreateSignatureFormItems = ({
           />
         )}
         {currentStep === SignatureCreationStep.SIGNATURE && (
-          <Button
-            title="Previous"
-            variant="primary"
-            onClick={() => onNext(SignatureCreationStep.CONFIGURATION)}
-          />
+          <StyledBooleanFieldContainer>
+            <Button
+              title="Previous"
+              variant="primary"
+              onClick={() => onNext(SignatureCreationStep.CONFIGURATION)}
+            />
+            <Button
+              title="Submit"
+              variant="primary"
+              accent="green"
+              onClick={() => onNext(SignatureCreationStep.CONFIGURATION)}
+            />
+          </StyledBooleanFieldContainer>
         )}
       </StyledButtonContainer>
     </StyledForm>
