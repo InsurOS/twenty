@@ -112,6 +112,24 @@ const StyledPage = styled(Page)`
   position: relative;
 `;
 
+const hexToRGBA = (hex: string, alpha: number): string => {
+  // Remove the hash if it exists
+  const cleanHex = hex.replace('#', '');
+
+  // Convert hex to RGB
+  const r = parseInt(cleanHex.substring(0, 2), 16);
+  const g = parseInt(cleanHex.substring(2, 4), 16);
+  const b = parseInt(cleanHex.substring(4, 6), 16);
+
+  // Convert alpha to hex (0-255)
+  const alphaHex = Math.round(alpha * 255)
+    .toString(16)
+    .padStart(2, '0');
+
+  // Return hex with alpha
+  return `#${cleanHex}${alphaHex}`;
+};
+
 const StyledSignatureBox = styled.div<{
   x: number;
   y: number;
@@ -119,7 +137,7 @@ const StyledSignatureBox = styled.div<{
   height: number;
   color: string;
 }>`
-  background-color: ${({ color }) => color}20;
+  background-color: ${({ color }) => hexToRGBA(color, 0.2)};
   border: 2px solid ${({ color }) => color};
   cursor: move;
   display: flex;
@@ -218,25 +236,34 @@ export const DocumentSignatureEditor = ({
     signeeId: string,
     signatureIndex: number,
   ) => {
-    const box = e.currentTarget.getBoundingClientRect();
+    const page = e.currentTarget
+      .closest('.react-pdf__Page')
+      ?.getBoundingClientRect();
+    if (!page) return;
+
     setDraggedBox({
       signeeId,
       signatureIndex,
-      startX: e.clientX - box.left,
-      startY: e.clientY - box.top,
+      startX: (e.clientX - page.left) / scale,
+      startY: (e.clientY - page.top) / scale,
     });
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!draggedBox) return;
 
+    const page = document
+      .querySelector('.react-pdf__Page')
+      ?.getBoundingClientRect();
+    if (!page) return;
+
     const newSignees = signees.map((signee) => {
       if (signee.id === draggedBox.signeeId) {
         const newSignatures = [...signee.signatures];
         newSignatures[draggedBox.signatureIndex] = {
           ...newSignatures[draggedBox.signatureIndex],
-          x: e.clientX - draggedBox.startX,
-          y: e.clientY - draggedBox.startY,
+          x: (e.clientX - page.left) / scale,
+          y: (e.clientY - page.top) / scale,
         };
         return { ...signee, signatures: newSignatures };
       }
