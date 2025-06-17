@@ -61,6 +61,8 @@ const formSchema = z.object({
         signatures: z
           .array(
             z.object({
+              name: z.string(),
+              email: z.string().email(),
               index: z.number(),
               x: z.number(),
               y: z.number(),

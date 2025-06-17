@@ -6,10 +6,15 @@ import { useFormContext } from 'react-hook-form';
 import { Document, Page } from 'react-pdf';
 import { useParams } from 'react-router-dom';
 import {
+  IconCalendar,
+  IconCheckbox,
   IconChevronLeft,
   IconChevronRight,
+  IconLetterCaseUpper,
   IconMinus,
   IconPlus,
+  IconSignature,
+  IconTextScan2,
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import {
@@ -21,6 +26,22 @@ import {
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
 import { CreateSignatureFormValues } from '~/pages/SignaturePage/SignaturePage';
+
+enum SignatureType {
+  SIGNATURE = 1,
+  INITIALS = 2,
+  DATE = 3,
+  TEXT = 4,
+  CHECKBOX = 5,
+}
+
+const MapSignatureTypeToIcon = {
+  [SignatureType.SIGNATURE]: IconSignature,
+  [SignatureType.INITIALS]: IconLetterCaseUpper,
+  [SignatureType.DATE]: IconCalendar,
+  [SignatureType.TEXT]: IconTextScan2,
+  [SignatureType.CHECKBOX]: IconCheckbox,
+};
 
 const StyledPdfWrapper = styled.div`
   align-items: center;
@@ -86,6 +107,10 @@ const StyledPageNumber = styled.div`
   }
 `;
 
+const StyledPage = styled(Page)`
+  position: relative;
+`;
+
 export const DocumentSignatureEditor = () => {
   const { watch, setValue } = useFormContext<CreateSignatureFormValues>();
   const signees = watch('signees');
@@ -132,12 +157,12 @@ export const DocumentSignatureEditor = () => {
             file={attachment.fullPath}
             onLoadSuccess={onDocumentLoadSuccess}
           >
-            <Page
+            <StyledPage
               pageNumber={pageNumber}
               scale={scale}
               renderTextLayer={false}
               renderAnnotationLayer={false}
-            ></Page>
+            ></StyledPage>
           </Document>
           <StyledPdfControls>
             <IconButton
