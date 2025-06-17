@@ -94,7 +94,8 @@ export type CreateSignatureFormValues = z.infer<typeof formSchema>;
 
 export const SignaturePage = () => {
   const [step, setStep] = useState(SignatureCreationStep.CONFIGURATION);
-  const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [numPages, setNumPages] = useState<number>(0);
   const methods = useForm<CreateSignatureFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -128,11 +129,16 @@ export const SignaturePage = () => {
                 <CreateSignatureFormItems
                   onNext={setStep}
                   currentStep={step}
-                  currentPageIndex={currentPageIndex}
+                  currentPageIndex={pageNumber - 1}
                 />
               </StyledScrollWrapper>
               <StyledAttachmentContainer>
-                <DocumentSignatureEditor onPageChange={setCurrentPageIndex} />
+                <DocumentSignatureEditor
+                  pageNumber={pageNumber}
+                  setPageNumber={setPageNumber}
+                  numPages={numPages ?? 0}
+                  setNumPages={setNumPages}
+                />
               </StyledAttachmentContainer>
             </StyledPageContainer>
           </form>

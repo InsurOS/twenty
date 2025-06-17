@@ -157,10 +157,18 @@ const StyledRemoveButton = styled(IconButton)`
 
 type DocumentSignatureEditorProps = {
   onPageChange?: (pageIndex: number) => void;
+  pageNumber: number;
+  numPages: number;
+  setPageNumber: React.Dispatch<React.SetStateAction<number>>;
+  setNumPages: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export const DocumentSignatureEditor = ({
   onPageChange,
+  pageNumber,
+  numPages,
+  setPageNumber,
+  setNumPages,
 }: DocumentSignatureEditorProps) => {
   const { watch, setValue } = useFormContext<CreateSignatureFormValues>();
   const signees = watch('signees');
@@ -168,8 +176,6 @@ export const DocumentSignatureEditor = ({
   const selectedSignee = signees.find(
     (signee) => signee.id === selectedSigneeId,
   );
-  const [pageNumber, setPageNumber] = useState(1);
-  const [numPages, setNumPages] = useState<number | null>(null);
   const [scale, setScale] = useState(1);
   const [draggedBox, setDraggedBox] = useState<{
     signeeId: string;
