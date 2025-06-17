@@ -13,7 +13,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -58,6 +58,19 @@ const formSchema = z.object({
         color: z.custom<SignatureColor>(),
         name: z.string().optional(),
         email: z.string().email().optional(),
+        signatures: z
+          .array(
+            z.object({
+              index: z.number(),
+              x: z.number(),
+              y: z.number(),
+              width: z.number(),
+              height: z.number(),
+              pageIndex: z.number(),
+              fieldType: z.number(),
+            }),
+          )
+          .default([]),
       }),
     )
     .min(1, 'At least one signee is required'),
@@ -71,7 +84,7 @@ export type CreateSignatureFormValues = z.infer<typeof formSchema>;
 
 export const SignaturePage = () => {
   const [step, setStep] = useState(SignatureCreationStep.CONFIGURATION);
-  const { watch, setValue } = useForm<CreateSignatureFormValues>({
+  const methods = useForm<CreateSignatureFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
@@ -86,9 +99,9 @@ export const SignaturePage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Handle form submission
-    console.log('Form submitted:', watch());
+    console.log('Form submitted:', methods.watch());
   };
+
   return (
     <PageContainer>
       <PageTitle title="Signature Request" />
@@ -96,21 +109,19 @@ export const SignaturePage = () => {
         <PageHeaderToggleCommandMenuButton />
       </PageHeader>
       <PageBody>
-        <form onSubmit={handleSubmit}>
-          <StyledPageContainer>
-            <StyledScrollWrapper componentInstanceId="signature-form">
-              <CreateSignatureFormItems
-                onNext={setStep}
-                currentStep={step}
-                watch={watch}
-                setValue={setValue}
-              />
-            </StyledScrollWrapper>
-            <StyledAttachmentContainer>
-              <DocumentSignatureEditor />
-            </StyledAttachmentContainer>
-          </StyledPageContainer>
-        </form>
+        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+        <FormProvider {...methods}>
+          <form onSubmit={handleSubmit}>
+            <StyledPageContainer>
+              <StyledScrollWrapper componentInstanceId="signature-form">
+                <CreateSignatureFormItems onNext={setStep} currentStep={step} />
+              </StyledScrollWrapper>
+              <StyledAttachmentContainer>
+                <DocumentSignatureEditor />
+              </StyledAttachmentContainer>
+            </StyledPageContainer>
+          </form>
+        </FormProvider>
       </PageBody>
     </PageContainer>
   );

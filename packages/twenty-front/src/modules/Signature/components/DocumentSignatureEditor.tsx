@@ -1,7 +1,8 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import styled from '@emotion/styled';
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { Document, Page } from 'react-pdf';
 import { useParams } from 'react-router-dom';
 import {
@@ -19,6 +20,7 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
+import { CreateSignatureFormValues } from '~/pages/SignaturePage/SignaturePage';
 
 const StyledPdfWrapper = styled.div`
   align-items: center;
@@ -85,6 +87,12 @@ const StyledPageNumber = styled.div`
 `;
 
 export const DocumentSignatureEditor = () => {
+  const { watch, setValue } = useFormContext<CreateSignatureFormValues>();
+  const signees = watch('signees');
+  const selectedSigneeId = watch('selected_signee_id');
+  const selectedSignee = signees.find(
+    (signee) => signee.id === selectedSigneeId,
+  );
   const [pageNumber, setPageNumber] = useState(1);
   const [numPages, setNumPages] = useState<number | null>(null);
   const [scale, setScale] = useState(1);
@@ -119,20 +127,18 @@ export const DocumentSignatureEditor = () => {
       {attachmentLoading ? (
         <StyledFallback>Loading document...</StyledFallback>
       ) : attachment ? (
-        <Suspense fallback={<StyledFallback>Loading PDF...</StyledFallback>}>
-          <StyledPdfWrapper>
-            <Document
-              file={attachment.fullPath}
-              onLoadSuccess={onDocumentLoadSuccess}
-            >
-              <Page
-                pageNumber={pageNumber}
-                scale={scale}
-                renderTextLayer={false}
-                renderAnnotationLayer={false}
-              />
-            </Document>
-          </StyledPdfWrapper>
+        <StyledPdfWrapper>
+          <Document
+            file={attachment.fullPath}
+            onLoadSuccess={onDocumentLoadSuccess}
+          >
+            <Page
+              pageNumber={pageNumber}
+              scale={scale}
+              renderTextLayer={false}
+              renderAnnotationLayer={false}
+            ></Page>
+          </Document>
           <StyledPdfControls>
             <IconButton
               Icon={IconChevronLeft}
@@ -165,7 +171,7 @@ export const DocumentSignatureEditor = () => {
               />
             </StyledZoomControls>
           </StyledPdfControls>
-        </Suspense>
+        </StyledPdfWrapper>
       ) : (
         <AnimatedPlaceholderEmptyContainer
           // eslint-disable-next-line react/jsx-props-no-spreading

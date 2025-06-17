@@ -12,9 +12,17 @@ import {
 } from '@/Signature/constants/signatureColors';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
-import { UseFormReturn } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlus, IconX } from 'twenty-ui/display';
+import {
+  IconCalendar,
+  IconCheckbox,
+  IconLetterCaseUpper,
+  IconPlus,
+  IconSignature,
+  IconTextScan2,
+  IconX,
+} from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { CreateSignatureFormValues } from '~/pages/SignaturePage/SignaturePage';
 
@@ -26,7 +34,7 @@ export enum SignatureCreationStep {
 type CreateSignatureFormItemsProps = {
   onNext: (step: SignatureCreationStep) => void;
   currentStep: SignatureCreationStep;
-} & Pick<UseFormReturn<CreateSignatureFormValues>, 'watch' | 'setValue'>;
+};
 
 const StyledForm = styled.div`
   display: flex;
@@ -71,9 +79,8 @@ const StyledColorCircle = styled.div<{ color: string }>`
 export const CreateSignatureFormItems = ({
   onNext,
   currentStep,
-  watch,
-  setValue,
 }: CreateSignatureFormItemsProps) => {
+  const { watch, setValue } = useFormContext<CreateSignatureFormValues>();
   const { records: people } = useFindManyRecords({
     objectNameSingular: 'person',
     limit: 100,
@@ -98,6 +105,7 @@ export const CreateSignatureFormItems = ({
         color: getSignatureColor(selectedSigneeIndex),
         name: `${selectedPerson?.name?.firstName} ${selectedPerson?.name?.lastName}`,
         email: selectedPerson?.emails?.primaryEmail,
+        signatures: [],
       };
       setValue('signees', newSignees);
     }
@@ -119,10 +127,10 @@ export const CreateSignatureFormItems = ({
 
   const addSignee = (e: React.MouseEvent) => {
     e.preventDefault();
-    const newSigneeIndex = signees.length;
+    const newSigneeIndex = watch('signees').length;
     setValue('signees', [
-      ...signees,
-      { id: null, color: getSignatureColor(newSigneeIndex) },
+      ...watch('signees'),
+      { id: null, color: getSignatureColor(newSigneeIndex), signatures: [] },
     ]);
   };
 
@@ -177,7 +185,7 @@ export const CreateSignatureFormItems = ({
                   return;
                 }
                 setValue('signees', [
-                  { id: null, color: getSignatureColor(0) },
+                  { id: null, color: getSignatureColor(0), signatures: [] },
                 ]);
               }}
             />
@@ -295,6 +303,51 @@ export const CreateSignatureFormItems = ({
                   ),
                 };
               })}
+          />
+          <Button
+            Icon={IconSignature}
+            title="Add Signature"
+            variant="primary"
+            onClick={() => {
+              setValue('selected_signee_id', signees[0].id);
+              onNext(SignatureCreationStep.SIGNATURE);
+            }}
+          />
+          <Button
+            Icon={IconLetterCaseUpper}
+            title="Add Initials"
+            variant="primary"
+            onClick={() => {
+              setValue('selected_signee_id', signees[0].id);
+              onNext(SignatureCreationStep.SIGNATURE);
+            }}
+          />
+          <Button
+            Icon={IconCalendar}
+            title="Add Date"
+            variant="primary"
+            onClick={() => {
+              setValue('selected_signee_id', signees[0].id);
+              onNext(SignatureCreationStep.SIGNATURE);
+            }}
+          />
+          <Button
+            Icon={IconTextScan2}
+            title="Add Text"
+            variant="primary"
+            onClick={() => {
+              setValue('selected_signee_id', signees[0].id);
+              onNext(SignatureCreationStep.SIGNATURE);
+            }}
+          />
+          <Button
+            Icon={IconCheckbox}
+            title="Add Checkbox"
+            variant="primary"
+            onClick={() => {
+              setValue('selected_signee_id', signees[0].id);
+              onNext(SignatureCreationStep.SIGNATURE);
+            }}
           />
         </>
       )}
