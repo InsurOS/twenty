@@ -158,20 +158,46 @@ export const CreateSignatureFormItems = ({
     return [...selectedPersonIds, ...additionalReceiverIds];
   };
 
+  const getSignatureBoxSize = (fieldType: SignatureFieldType) => {
+    switch (fieldType) {
+      case SignatureFieldType.SIGNATURE:
+        return { width: 80, height: 15 };
+      case SignatureFieldType.INITIALS:
+        return { width: 30, height: 15 };
+      case SignatureFieldType.TEXT:
+        return { width: 80, height: 15 };
+      case SignatureFieldType.DATE:
+        return { width: 80, height: 15 };
+      case SignatureFieldType.CHECKBOX:
+        return { width: 15, height: 15 };
+      default:
+        return { width: 80, height: 15 };
+    }
+  };
+
+  const getInitialsName = (fullName: string) => {
+    if (!fullName) return '';
+    const parts = fullName.trim().split(' ');
+    if (parts.length === 1) return parts[0];
+    return `${parts[0]} ${parts[parts.length - 1][0]}.`;
+  };
+
   const addSignature = (fieldType: SignatureFieldType) => {
     const selectedSigneeId = watch('selected_signee_id');
     if (!selectedSigneeId) return;
 
     const newSignees = signees.map((signee) => {
       if (signee.id === selectedSigneeId) {
+        const { width, height } = getSignatureBoxSize(fieldType);
+        const initialsName = getInitialsName(signee.name ?? '');
         const newSignature = {
-          name: signee.name ?? '',
+          name: initialsName,
           email: signee.email ?? '',
           index: signee.signatures.length,
           x: 50, // Default position from left
           y: 50, // Default position from top
-          width: 200, // Default width
-          height: 100, // Default height
+          width,
+          height,
           pageIndex: currentPageIndex,
           fieldType,
         };

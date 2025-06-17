@@ -141,6 +141,7 @@ const StyledSignatureBox = styled.div<{
   border: 2px solid ${({ color }) => color};
   cursor: move;
   display: flex;
+  align-items: flex-start;
   flex-direction: column;
   height: ${({ height }) => height}px;
   left: ${({ x }) => x}px;
@@ -173,6 +174,50 @@ const StyledRemoveButton = styled(IconButton)`
   }
 `;
 
+const StyledSignatureName = styled.span<{
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  color: string;
+}>`
+  background: ${({ color }) => color};
+  border-radius: 4px;
+  color: ${({ theme }) => theme.font.color.inverted};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  left: ${({ x }) => x}px;
+  padding: 2px 8px;
+  pointer-events: none;
+  position: absolute;
+  text-align: left;
+  top: ${({ y, height }) => y + height + 18}px;
+  width: ${({ width }) => width}px;
+  white-space: nowrap;
+`;
+
+const StyledSignatureRemoveButton = styled(IconButton)<{
+  x: number;
+  y: number;
+  width: number;
+}>`
+  position: absolute;
+  left: ${({ x, width }) => x + width + 6}px;
+  top: ${({ y }) => y - 12}px;
+  z-index: 11;
+  background: ${({ theme }) => theme.color.red};
+  color: ${({ theme }) => theme.font.color.inverted};
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    background: ${({ theme }) => theme.color.red50};
+  }
+`;
+
 type DocumentSignatureEditorProps = {
   onPageChange?: (pageIndex: number) => void;
   pageNumber: number;
@@ -198,8 +243,8 @@ export const DocumentSignatureEditor = ({
   const [draggedBox, setDraggedBox] = useState<{
     signeeId: string;
     signatureIndex: number;
-    startX: number;
-    startY: number;
+    offsetX: number;
+    offsetY: number;
   } | null>(null);
   const { signatureId } = useParams();
   const { record: attachment, loading: attachmentLoading } = useFindOneRecord({
@@ -236,40 +281,45 @@ export const DocumentSignatureEditor = ({
     signeeId: string,
     signatureIndex: number,
   ) => {
+    if ((e.target as HTMLElement).classList.contains('resize-handle')) return;
     const page = e.currentTarget
       .closest('.react-pdf__Page')
       ?.getBoundingClientRect();
     if (!page) return;
-
+    const signature = signees.find((s) => s.id === signeeId)?.signatures[
+      signatureIndex
+    ];
+    if (!signature) return;
+    const offsetX = (e.clientX - page.left) / scale - signature.x;
+    const offsetY = (e.clientY - page.top) / scale - signature.y;
     setDraggedBox({
       signeeId,
       signatureIndex,
-      startX: (e.clientX - page.left) / scale,
-      startY: (e.clientY - page.top) / scale,
+      offsetX,
+      offsetY,
     });
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!draggedBox) return;
-
     const page = document
       .querySelector('.react-pdf__Page')
       ?.getBoundingClientRect();
     if (!page) return;
-
+    const newX = (e.clientX - page.left) / scale - draggedBox.offsetX;
+    const newY = (e.clientY - page.top) / scale - draggedBox.offsetY;
     const newSignees = signees.map((signee) => {
       if (signee.id === draggedBox.signeeId) {
         const newSignatures = [...signee.signatures];
         newSignatures[draggedBox.signatureIndex] = {
           ...newSignatures[draggedBox.signatureIndex],
-          x: (e.clientX - page.left) / scale,
-          y: (e.clientY - page.top) / scale,
+          x: newX,
+          y: newY,
         };
         return { ...signee, signatures: newSignatures };
       }
       return signee;
     });
-
     setValue('signees', newSignees);
   };
 
@@ -321,40 +371,57 @@ export const DocumentSignatureEditor = ({
                               signature.pageIndex === pageNumber - 1,
                           )
                           .map((signature, index) => (
-                            <StyledSignatureBox
-                              key={`${signee.id}-${index}`}
-                              x={signature.x}
-                              y={signature.y}
-                              width={signature.width}
-                              height={signature.height}
-                              color={signee.color}
-                              onMouseDown={(e) =>
-                                handleMouseDown(e, signee.id ?? '', index)
-                              }
-                            >
-                              <StyledSignatureHeader>
-                                {
-                                  MapSignatureTypeToIcon[
-                                    signature.fieldType as keyof typeof MapSignatureTypeToIcon
-                                  ]
+                            <>
+                              <StyledSignatureName
+                                x={signature.x}
+                                y={signature.y}
+                                width={signature.width}
+                                height={signature.height}
+                                color={signee.color}
+                              >
+                                {signature.name}
+                              </StyledSignatureName>
+                              <StyledSignatureRemoveButton
+                                x={signature.x}
+                                y={signature.y}
+                                width={signature.width}
+                                Icon={IconX}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRemoveSignature(signee.id ?? '', index);
+                                }}
+                                variant="tertiary"
+                                size="small"
+                              />
+                              <StyledSignatureBox
+                                key={`${signee.id}-${index}`}
+                                x={signature.x}
+                                y={signature.y}
+                                width={signature.width}
+                                height={signature.height}
+                                color={signee.color}
+                                onMouseDown={(e) =>
+                                  handleMouseDown(e, signee.id ?? '', index)
                                 }
-                                <StyledSignatureLabel>
-                                  {signee.name}
-                                </StyledSignatureLabel>
-                                <StyledRemoveButton
-                                  Icon={IconX}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleRemoveSignature(
-                                      signee.id ?? '',
-                                      index,
-                                    );
+                              >
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    height: '100%',
                                   }}
-                                  variant="tertiary"
-                                  size="small"
-                                />
-                              </StyledSignatureHeader>
-                            </StyledSignatureBox>
+                                >
+                                  {
+                                    MapSignatureTypeToIcon[
+                                      Number(
+                                        signature.fieldType + 1,
+                                      ) as keyof typeof MapSignatureTypeToIcon
+                                    ]
+                                  }
+                                </div>
+                              </StyledSignatureBox>
+                            </>
                           ))
                       : null,
                   )
