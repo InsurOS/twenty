@@ -5,11 +5,7 @@ import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-typ
 import { FormRelationToOneFieldInput } from '@/object-record/record-field/form-types/components/FormRelationToOneFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import {
-  getSignatureColor,
-  SignatureColor,
-  SignatureColorCode,
-} from '@/Signature/constants/signatureColors';
+import { getSignatureColor } from '@/Signature/constants/signatureColors';
 import { SignatureFieldType } from '@/Signature/constants/signatureFieldTypes';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
@@ -117,6 +113,7 @@ export const CreateSignatureFormItems = ({
 
   const orderEnabled = watch('order_enabled');
   const signees = watch('signees');
+  console.log('signees', signees);
   const allSigneesIds = signees.map((signee) => signee.id);
 
   const personOptions = people
@@ -351,11 +348,7 @@ export const CreateSignatureFormItems = ({
                 return {
                   label: signee.name ?? '',
                   value: signee.id as string,
-                  Icon: () => (
-                    <StyledColorCircle
-                      color={SignatureColorCode[signee.color as SignatureColor]}
-                    />
-                  ),
+                  Icon: () => <StyledColorCircle color={signee.color} />,
                 };
               })}
           />

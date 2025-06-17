@@ -113,24 +113,6 @@ const StyledPage = styled(Page)`
   position: relative;
 `;
 
-const hexToRGBA = (hex: string, alpha: number): string => {
-  // Remove the hash if it exists
-  const cleanHex = hex.replace('#', '');
-
-  // Convert hex to RGB
-  const r = parseInt(cleanHex.substring(0, 2), 16);
-  const g = parseInt(cleanHex.substring(2, 4), 16);
-  const b = parseInt(cleanHex.substring(4, 6), 16);
-
-  // Convert alpha to hex (0-255)
-  const alphaHex = Math.round(alpha * 255)
-    .toString(16)
-    .padStart(2, '0');
-
-  // Return hex with alpha
-  return `#${cleanHex}${alphaHex}`;
-};
-
 const StyledSignatureBox = styled.div<{
   x: number;
   y: number;
@@ -138,7 +120,6 @@ const StyledSignatureBox = styled.div<{
   height: number;
   color: string;
 }>`
-  background-color: ${({ color }) => hexToRGBA(color, 0.2)};
   border: 2px solid ${({ color }) => color};
   cursor: move;
   display: flex;
