@@ -66,6 +66,7 @@ const StyledPdfControls = styled.div`
   align-items: center;
   justify-content: center;
   gap: ${({ theme }) => theme.spacing(2)};
+  color: ${({ theme }) => theme.font.color.primary};
   margin-top: ${({ theme }) => theme.spacing(2)};
   position: absolute;
   bottom: ${({ theme }) => theme.spacing(2)};

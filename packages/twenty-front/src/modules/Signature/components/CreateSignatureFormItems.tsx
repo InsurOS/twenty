@@ -115,19 +115,16 @@ export const CreateSignatureFormItems = ({
     }
   }, [selectedPerson, selectedSigneeIndex, selectedPersonId, setValue, watch]);
 
-  const personOptions = people.map((person) => ({
-    label: `${person.name.firstName} ${person.name.lastName}`,
-    value: person.id,
-  }));
-
   const orderEnabled = watch('order_enabled');
   const signees = watch('signees');
-  const selectedSigneeId = watch('selected_signee_id');
-  const formValues = watch();
-  console.log('formValues', formValues);
-  const selectedSignee = signees.find(
-    (signee) => signee.id === selectedSigneeId,
-  );
+  const allSigneesIds = signees.map((signee) => signee.id);
+
+  const personOptions = people
+    .filter((person) => !allSigneesIds.includes(person.id))
+    .map((person) => ({
+      label: `${person.name.firstName} ${person.name.lastName}`,
+      value: person.id,
+    }));
 
   const addSignee = (e: React.MouseEvent) => {
     e.preventDefault();
