@@ -1,4 +1,3 @@
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
   CreateSignatureFormItems,
   SignatureCreationStep,
@@ -54,15 +53,18 @@ const formSchema = z.object({
   signees: z
     .array(
       z.object({
-        person: z.union([z.string(), z.custom<ObjectRecord>(), z.null()]),
+        id: z.union([z.string(), z.null()]),
         order: z.number().optional(),
         color: z.custom<SignatureColor>(),
+        name: z.string().optional(),
+        email: z.string().email().optional(),
       }),
     )
     .min(1, 'At least one signee is required'),
   user_only: z.boolean(),
   order_enabled: z.boolean(),
   additional_receiver_ids: z.array(z.string()).default([]),
+  selected_signee_id: z.union([z.string(), z.null()]),
 });
 
 export type CreateSignatureFormValues = z.infer<typeof formSchema>;
@@ -74,7 +76,7 @@ export const SignaturePage = () => {
     defaultValues: {
       title: '',
       message: '',
-      signees: [{ person: null }],
+      signees: [{ id: null }],
       user_only: false,
       order_enabled: false,
       additional_receiver_ids: [],

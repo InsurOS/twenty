@@ -1,17 +1,19 @@
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/components/FormBooleanFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { FormRelationToOneFieldInput } from '@/object-record/record-field/form-types/components/FormRelationToOneFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
   SignatureColor,
   SignatureColorCode,
   getSignatureColor,
 } from '@/Signature/constants/signatureColors';
 import styled from '@emotion/styled';
+import { useEffect, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
+import { isDefined } from 'twenty-shared/utils';
 import { IconPlus, IconX } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { CreateSignatureFormValues } from '~/pages/SignaturePage/SignaturePage';
@@ -76,6 +78,31 @@ export const CreateSignatureFormItems = ({
     objectNameSingular: 'person',
     limit: 100,
   });
+
+  const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
+  const [selectedSigneeIndex, setSelectedSigneeIndex] = useState<number | null>(
+    null,
+  );
+  const { record: selectedPerson } = useFindOneRecord({
+    objectNameSingular: 'person',
+    objectRecordId: selectedPersonId ?? '',
+    skip: !selectedPersonId,
+  });
+
+  useEffect(() => {
+    if (isDefined(selectedPerson) && isDefined(selectedSigneeIndex)) {
+      const newSignees = [...watch('signees')];
+      newSignees[selectedSigneeIndex] = {
+        ...newSignees[selectedSigneeIndex],
+        id: selectedPersonId,
+        color: getSignatureColor(selectedSigneeIndex),
+        name: `${selectedPerson?.name?.firstName} ${selectedPerson?.name?.lastName}`,
+        email: selectedPerson?.emails?.primaryEmail,
+      };
+      setValue('signees', newSignees);
+    }
+  }, [selectedPerson, selectedSigneeIndex, selectedPersonId, setValue, watch]);
+
   const personOptions = people.map((person) => ({
     label: `${person.name.firstName} ${person.name.lastName}`,
     value: person.id,
@@ -89,7 +116,7 @@ export const CreateSignatureFormItems = ({
     const newSigneeIndex = signees.length;
     setValue('signees', [
       ...signees,
-      { person: null, color: getSignatureColor(newSigneeIndex) },
+      { id: null, color: getSignatureColor(newSigneeIndex) },
     ]);
   };
 
@@ -105,9 +132,9 @@ export const CreateSignatureFormItems = ({
     const selectedPersonIds = signees
       .filter((signee, index) => {
         if (index === currentIndex) return false;
-        return typeof signee.person === 'string' && signee.person.length > 0;
+        return typeof signee.id === 'string' && signee.id.length > 0;
       })
-      .map((signee) => signee.person as string);
+      .map((signee) => signee.id as string);
 
     const additionalReceiverIds = watch('additional_receiver_ids');
     return [...selectedPersonIds, ...additionalReceiverIds];
@@ -144,7 +171,7 @@ export const CreateSignatureFormItems = ({
                   return;
                 }
                 setValue('signees', [
-                  { person: null, color: getSignatureColor(0) },
+                  { id: null, color: getSignatureColor(0) },
                 ]);
               }}
             />
@@ -182,15 +209,11 @@ export const CreateSignatureFormItems = ({
                   <FormRelationToOneFieldInput
                     label="Signee"
                     objectNameSingular="person"
-                    defaultValue={field.person}
+                    defaultValue={field.id}
                     onChange={(value) => {
-                      const newSignees = [...signees];
-                      newSignees[index] = {
-                        ...newSignees[index],
-                        person: value as ObjectRecord | null,
-                        color: getSignatureColor(index),
-                      };
-                      setValue('signees', newSignees);
+                      const personId = value as string | null;
+                      setSelectedPersonId(personId);
+                      setSelectedSigneeIndex(personId ? index : null);
                     }}
                     excludedRecordIds={getExcludedPersonIds(index)}
                   />
@@ -251,24 +274,28 @@ export const CreateSignatureFormItems = ({
             label="Select Signee"
             defaultValue=""
             onChange={(value) => {
-              // TODO: Handle signee selection for signature placement
-              console.log('Selected signee:', value);
+              setValue('selected_signee_id', value);
             }}
             options={signees
-              .filter((signee) => signee.person !== null)
+              .filter((signee) => signee.id !== null)
               .map((signee) => {
-                const person = people.find((p) => p.id === signee.person);
-                return {
-                  label: person
-                    ? `${person.name.firstName} ${person.name.lastName}`
-                    : 'Unknown',
-                  value: signee.person as string,
-                  Icon: () => (
-                    <StyledColorCircle
-                      color={SignatureColorCode[signee.color as SignatureColor]}
-                    />
-                  ),
-                };
+                const selectedSignee = signees.find((p) => p.id === signee.id);
+                return selectedSignee
+                  ? {
+                      label: selectedSignee?.name ?? '',
+                      value: signee.id as string,
+                      Icon: () => (
+                        <StyledColorCircle
+                          color={
+                            SignatureColorCode[signee.color as SignatureColor]
+                          }
+                        />
+                      ),
+                    }
+                  : {
+                      label: 'Unknown',
+                      value: '',
+                    };
               })}
           />
         </>
