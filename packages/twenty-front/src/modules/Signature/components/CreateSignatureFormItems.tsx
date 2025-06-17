@@ -6,10 +6,11 @@ import { FormRelationToOneFieldInput } from '@/object-record/record-field/form-t
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import {
+  getSignatureColor,
   SignatureColor,
   SignatureColorCode,
-  getSignatureColor,
 } from '@/Signature/constants/signatureColors';
+import { SignatureFieldType } from '@/Signature/constants/signatureFieldTypes';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -34,6 +35,7 @@ export enum SignatureCreationStep {
 type CreateSignatureFormItemsProps = {
   onNext: (step: SignatureCreationStep) => void;
   currentStep: SignatureCreationStep;
+  currentPageIndex: number;
 };
 
 const StyledForm = styled.div`
@@ -79,6 +81,7 @@ const StyledColorCircle = styled.div<{ color: string }>`
 export const CreateSignatureFormItems = ({
   onNext,
   currentStep,
+  currentPageIndex,
 }: CreateSignatureFormItemsProps) => {
   const { watch, setValue } = useFormContext<CreateSignatureFormValues>();
   const { records: people } = useFindManyRecords({
@@ -90,6 +93,7 @@ export const CreateSignatureFormItems = ({
   const [selectedSigneeIndex, setSelectedSigneeIndex] = useState<number | null>(
     null,
   );
+
   const { record: selectedPerson } = useFindOneRecord({
     objectNameSingular: 'person',
     objectRecordId: selectedPersonId ?? '',
@@ -152,6 +156,34 @@ export const CreateSignatureFormItems = ({
 
     const additionalReceiverIds = watch('additional_receiver_ids');
     return [...selectedPersonIds, ...additionalReceiverIds];
+  };
+
+  const addSignature = (fieldType: SignatureFieldType) => {
+    const selectedSigneeId = watch('selected_signee_id');
+    if (!selectedSigneeId) return;
+
+    const newSignees = signees.map((signee) => {
+      if (signee.id === selectedSigneeId) {
+        const newSignature = {
+          name: signee.name ?? '',
+          email: signee.email ?? '',
+          index: signee.signatures.length,
+          x: 50, // Default position from left
+          y: 50, // Default position from top
+          width: 200, // Default width
+          height: 100, // Default height
+          pageIndex: currentPageIndex,
+          fieldType,
+        };
+        return {
+          ...signee,
+          signatures: [...signee.signatures, newSignature],
+        };
+      }
+      return signee;
+    });
+
+    setValue('signees', newSignees);
   };
 
   return (
@@ -308,46 +340,31 @@ export const CreateSignatureFormItems = ({
             Icon={IconSignature}
             title="Add Signature"
             variant="primary"
-            onClick={() => {
-              setValue('selected_signee_id', signees[0].id);
-              onNext(SignatureCreationStep.SIGNATURE);
-            }}
+            onClick={() => addSignature(SignatureFieldType.SIGNATURE)}
           />
           <Button
             Icon={IconLetterCaseUpper}
             title="Add Initials"
             variant="primary"
-            onClick={() => {
-              setValue('selected_signee_id', signees[0].id);
-              onNext(SignatureCreationStep.SIGNATURE);
-            }}
+            onClick={() => addSignature(SignatureFieldType.INITIALS)}
           />
           <Button
             Icon={IconCalendar}
             title="Add Date"
             variant="primary"
-            onClick={() => {
-              setValue('selected_signee_id', signees[0].id);
-              onNext(SignatureCreationStep.SIGNATURE);
-            }}
+            onClick={() => addSignature(SignatureFieldType.DATE)}
           />
           <Button
             Icon={IconTextScan2}
             title="Add Text"
             variant="primary"
-            onClick={() => {
-              setValue('selected_signee_id', signees[0].id);
-              onNext(SignatureCreationStep.SIGNATURE);
-            }}
+            onClick={() => addSignature(SignatureFieldType.TEXT)}
           />
           <Button
             Icon={IconCheckbox}
             title="Add Checkbox"
             variant="primary"
-            onClick={() => {
-              setValue('selected_signee_id', signees[0].id);
-              onNext(SignatureCreationStep.SIGNATURE);
-            }}
+            onClick={() => addSignature(SignatureFieldType.CHECKBOX)}
           />
         </>
       )}

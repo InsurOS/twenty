@@ -1,7 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Document, Page } from 'react-pdf';
 import { useParams } from 'react-router-dom';
@@ -15,6 +15,7 @@ import {
   IconPlus,
   IconSignature,
   IconTextScan2,
+  IconX,
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import {
@@ -36,11 +37,11 @@ enum SignatureType {
 }
 
 const MapSignatureTypeToIcon = {
-  [SignatureType.SIGNATURE]: IconSignature,
-  [SignatureType.INITIALS]: IconLetterCaseUpper,
-  [SignatureType.DATE]: IconCalendar,
-  [SignatureType.TEXT]: IconTextScan2,
-  [SignatureType.CHECKBOX]: IconCheckbox,
+  [SignatureType.SIGNATURE]: <IconSignature size={16} />,
+  [SignatureType.INITIALS]: <IconLetterCaseUpper size={16} />,
+  [SignatureType.DATE]: <IconCalendar size={16} />,
+  [SignatureType.TEXT]: <IconTextScan2 size={16} />,
+  [SignatureType.CHECKBOX]: <IconCheckbox size={16} />,
 };
 
 const StyledPdfWrapper = styled.div`
@@ -111,7 +112,56 @@ const StyledPage = styled(Page)`
   position: relative;
 `;
 
-export const DocumentSignatureEditor = () => {
+const StyledSignatureBox = styled.div<{
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  color: string;
+}>`
+  background-color: ${({ color }) => color}20;
+  border: 2px solid ${({ color }) => color};
+  cursor: move;
+  display: flex;
+  flex-direction: column;
+  height: ${({ height }) => height}px;
+  left: ${({ x }) => x}px;
+  padding: ${({ theme }) => theme.spacing(2)};
+  position: absolute;
+  top: ${({ y }) => y}px;
+  user-select: none;
+  width: ${({ width }) => width}px;
+`;
+
+const StyledSignatureHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledSignatureLabel = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+  flex: 1;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
+const StyledRemoveButton = styled(IconButton)`
+  padding: ${({ theme }) => theme.spacing(1)};
+  color: ${({ theme }) => theme.font.color.light};
+  &:hover {
+    color: ${({ theme }) => theme.font.color.primary};
+  }
+`;
+
+type DocumentSignatureEditorProps = {
+  onPageChange?: (pageIndex: number) => void;
+};
+
+export const DocumentSignatureEditor = ({
+  onPageChange,
+}: DocumentSignatureEditorProps) => {
   const { watch, setValue } = useFormContext<CreateSignatureFormValues>();
   const signees = watch('signees');
   const selectedSigneeId = watch('selected_signee_id');
@@ -121,6 +171,12 @@ export const DocumentSignatureEditor = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [numPages, setNumPages] = useState<number | null>(null);
   const [scale, setScale] = useState(1);
+  const [draggedBox, setDraggedBox] = useState<{
+    signeeId: string;
+    signatureIndex: number;
+    startX: number;
+    startY: number;
+  } | null>(null);
   const { signatureId } = useParams();
   const { record: attachment, loading: attachmentLoading } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.Attachment,
@@ -131,12 +187,16 @@ export const DocumentSignatureEditor = () => {
     setNumPages(numPages);
   };
 
+  useEffect(() => {
+    onPageChange?.(pageNumber - 1);
+  }, [pageNumber, onPageChange]);
+
   const goToPrevPage = () => {
     setPageNumber((prev) => Math.max(prev - 1, 1));
   };
 
   const goToNextPage = () => {
-    setPageNumber((prev) => Math.min(prev + 1, numPages || prev));
+    setPageNumber((prev) => Math.min(prev + 1, numPages ?? prev));
   };
 
   const zoomIn = () => {
@@ -147,12 +207,68 @@ export const DocumentSignatureEditor = () => {
     setScale((prev) => Math.max(prev - 0.1, 0.5));
   };
 
+  const handleMouseDown = (
+    e: React.MouseEvent,
+    signeeId: string,
+    signatureIndex: number,
+  ) => {
+    const box = e.currentTarget.getBoundingClientRect();
+    setDraggedBox({
+      signeeId,
+      signatureIndex,
+      startX: e.clientX - box.left,
+      startY: e.clientY - box.top,
+    });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!draggedBox) return;
+
+    const newSignees = signees.map((signee) => {
+      if (signee.id === draggedBox.signeeId) {
+        const newSignatures = [...signee.signatures];
+        newSignatures[draggedBox.signatureIndex] = {
+          ...newSignatures[draggedBox.signatureIndex],
+          x: e.clientX - draggedBox.startX,
+          y: e.clientY - draggedBox.startY,
+        };
+        return { ...signee, signatures: newSignatures };
+      }
+      return signee;
+    });
+
+    setValue('signees', newSignees);
+  };
+
+  const handleMouseUp = () => {
+    setDraggedBox(null);
+  };
+
+  const handleRemoveSignature = (signeeId: string, signatureIndex: number) => {
+    const newSignees = signees.map((signee) => {
+      if (signee.id === signeeId) {
+        return {
+          ...signee,
+          signatures: signee.signatures.filter(
+            (_, index) => index !== signatureIndex,
+          ),
+        };
+      }
+      return signee;
+    });
+    setValue('signees', newSignees);
+  };
+
   return (
     <>
       {attachmentLoading ? (
         <StyledFallback>Loading document...</StyledFallback>
       ) : attachment ? (
-        <StyledPdfWrapper>
+        <StyledPdfWrapper
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
           <Document
             file={attachment.fullPath}
             onLoadSuccess={onDocumentLoadSuccess}
@@ -162,7 +278,55 @@ export const DocumentSignatureEditor = () => {
               scale={scale}
               renderTextLayer={false}
               renderAnnotationLayer={false}
-            ></StyledPage>
+            >
+              {signees && signees?.length > 0
+                ? signees.map((signee) =>
+                    signee.signatures?.length > 0
+                      ? signee.signatures
+                          .filter(
+                            (signature) =>
+                              signature.pageIndex === pageNumber - 1,
+                          )
+                          .map((signature, index) => (
+                            <StyledSignatureBox
+                              key={`${signee.id}-${index}`}
+                              x={signature.x}
+                              y={signature.y}
+                              width={signature.width}
+                              height={signature.height}
+                              color={signee.color}
+                              onMouseDown={(e) =>
+                                handleMouseDown(e, signee.id ?? '', index)
+                              }
+                            >
+                              <StyledSignatureHeader>
+                                {
+                                  MapSignatureTypeToIcon[
+                                    signature.fieldType as keyof typeof MapSignatureTypeToIcon
+                                  ]
+                                }
+                                <StyledSignatureLabel>
+                                  {signee.name}
+                                </StyledSignatureLabel>
+                                <StyledRemoveButton
+                                  Icon={IconX}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRemoveSignature(
+                                      signee.id ?? '',
+                                      index,
+                                    );
+                                  }}
+                                  variant="tertiary"
+                                  size="small"
+                                />
+                              </StyledSignatureHeader>
+                            </StyledSignatureBox>
+                          ))
+                      : null,
+                  )
+                : null}
+            </StyledPage>
           </Document>
           <StyledPdfControls>
             <IconButton
@@ -171,30 +335,28 @@ export const DocumentSignatureEditor = () => {
               disabled={pageNumber <= 1}
               variant="tertiary"
             />
-            <StyledPageNumber>
-              Page {pageNumber} of {numPages || '-'}
-            </StyledPageNumber>
+            <span>
+              Page {pageNumber} of {numPages ?? '?'}
+            </span>
             <IconButton
               Icon={IconChevronRight}
               onClick={goToNextPage}
-              disabled={pageNumber >= (numPages || 1)}
+              disabled={pageNumber >= (numPages ?? pageNumber)}
               variant="tertiary"
             />
-            <StyledZoomControls>
-              <IconButton
-                Icon={IconMinus}
-                onClick={zoomOut}
-                disabled={scale <= 0.5}
-                variant="tertiary"
-              />
-              <StyledZoomLevel>{Math.round(scale * 100)}%</StyledZoomLevel>
-              <IconButton
-                Icon={IconPlus}
-                onClick={zoomIn}
-                disabled={scale >= 2}
-                variant="tertiary"
-              />
-            </StyledZoomControls>
+            <IconButton
+              Icon={IconMinus}
+              onClick={zoomOut}
+              disabled={scale <= 0.5}
+              variant="tertiary"
+            />
+            <span>{Math.round(scale * 100)}%</span>
+            <IconButton
+              Icon={IconPlus}
+              onClick={zoomIn}
+              disabled={scale >= 2}
+              variant="tertiary"
+            />
           </StyledPdfControls>
         </StyledPdfWrapper>
       ) : (

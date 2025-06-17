@@ -17,6 +17,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
+
 import { z } from 'zod';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -45,6 +46,13 @@ const StyledAttachmentContainer = styled.div`
 const StyledScrollWrapper = styled(ScrollWrapper)`
   min-width: 340px;
   width: 340px;
+`;
+
+const StyledPdfControls = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 const formSchema = z.object({
@@ -86,6 +94,7 @@ export type CreateSignatureFormValues = z.infer<typeof formSchema>;
 
 export const SignaturePage = () => {
   const [step, setStep] = useState(SignatureCreationStep.CONFIGURATION);
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const methods = useForm<CreateSignatureFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -116,10 +125,14 @@ export const SignaturePage = () => {
           <form onSubmit={handleSubmit}>
             <StyledPageContainer>
               <StyledScrollWrapper componentInstanceId="signature-form">
-                <CreateSignatureFormItems onNext={setStep} currentStep={step} />
+                <CreateSignatureFormItems
+                  onNext={setStep}
+                  currentStep={step}
+                  currentPageIndex={currentPageIndex}
+                />
               </StyledScrollWrapper>
               <StyledAttachmentContainer>
-                <DocumentSignatureEditor />
+                <DocumentSignatureEditor onPageChange={setCurrentPageIndex} />
               </StyledAttachmentContainer>
             </StyledPageContainer>
           </form>
