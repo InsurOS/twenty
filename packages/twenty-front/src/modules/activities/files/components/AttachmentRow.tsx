@@ -164,6 +164,8 @@ export const AttachmentRow = ({
     }
   };
 
+  const signatureEnabled = attachment.type === 'TextDocument';
+
   return (
     <FieldContext.Provider
       value={
