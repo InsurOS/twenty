@@ -398,7 +398,7 @@ export const CreateSignatureFormItems = ({
         {currentStep === SignatureCreationStep.CONFIGURATION && (
           <Button
             title="Next"
-            variant="primary"
+            variant="secondary"
             onClick={() => {
               setValue('selected_signee_id', signees[0].id);
               onNext(SignatureCreationStep.SIGNATURE);
@@ -409,7 +409,7 @@ export const CreateSignatureFormItems = ({
           <StyledBooleanFieldContainer>
             <Button
               title="Previous"
-              variant="primary"
+              variant="secondary"
               onClick={() => onNext(SignatureCreationStep.CONFIGURATION)}
             />
             <Button
