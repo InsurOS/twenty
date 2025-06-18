@@ -1,10 +1,13 @@
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/components/FormBooleanFieldInput';
-import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { FormRelationToOneFieldInput } from '@/object-record/record-field/form-types/components/FormRelationToOneFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
+import { AdditionalRecepientsFormItem } from '@/Signature/components/AdditionalRecepientsFormItem';
+import {
+  StyledDescription,
+  StyledTitle,
+} from '@/Signature/components/SharedStyledComponents';
 import { getSignatureColor } from '@/Signature/constants/signatureColors';
 import { SignatureFieldType } from '@/Signature/constants/signatureFieldTypes';
 import styled from '@emotion/styled';
@@ -80,10 +83,6 @@ export const CreateSignatureFormItems = ({
   currentPageIndex,
 }: CreateSignatureFormItemsProps) => {
   const { watch, setValue } = useFormContext<CreateSignatureFormValues>();
-  const { records: people } = useFindManyRecords({
-    objectNameSingular: 'person',
-    limit: 100,
-  });
 
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
   const [selectedSigneeIndex, setSelectedSigneeIndex] = useState<number | null>(
@@ -95,6 +94,8 @@ export const CreateSignatureFormItems = ({
     objectRecordId: selectedPersonId ?? '',
     skip: !selectedPersonId,
   });
+  const orderEnabled = watch('order_enabled');
+  const signees = watch('signees');
 
   useEffect(() => {
     if (isDefined(selectedPerson) && isDefined(selectedSigneeIndex)) {
@@ -111,17 +112,6 @@ export const CreateSignatureFormItems = ({
     }
   }, [selectedPerson, selectedSigneeIndex, selectedPersonId, setValue, watch]);
 
-  const orderEnabled = watch('order_enabled');
-  const signees = watch('signees');
-  const allSigneesIds = signees.map((signee) => signee.id);
-
-  const personOptions = people
-    .filter((person) => !allSigneesIds.includes(person.id))
-    .map((person) => ({
-      label: `${person.name.firstName} ${person.name.lastName}`,
-      value: person.id,
-    }));
-
   const addSignee = (e: React.MouseEvent) => {
     e.preventDefault();
     const newSigneeIndex = watch('signees').length;
@@ -137,18 +127,6 @@ export const CreateSignatureFormItems = ({
       newSignees.splice(index, 1);
       setValue('signees', newSignees);
     }
-  };
-
-  const getExcludedPersonIds = (currentIndex: number): string[] => {
-    const selectedPersonIds = signees
-      .filter((signee, index) => {
-        if (index === currentIndex) return false;
-        return typeof signee.id === 'string' && signee.id.length > 0;
-      })
-      .map((signee) => signee.id as string);
-
-    const additionalReceiverIds = watch('additional_receiver_ids');
-    return [...selectedPersonIds, ...additionalReceiverIds];
   };
 
   const getSignatureBoxSize = (fieldType: SignatureFieldType) => {
@@ -203,6 +181,13 @@ export const CreateSignatureFormItems = ({
     });
 
     setValue('signees', newSignees);
+  };
+  const getExcludedPersonIds = (): string[] => {
+    const signeeIds = signees.map((signee) => signee.id).filter(isDefined);
+    const additionalRecepientIds = watch('additional_receiver_ids');
+    return [...signeeIds, ...additionalRecepientIds].filter(
+      (id) => id.length > 0,
+    );
   };
 
   return (
@@ -267,6 +252,10 @@ export const CreateSignatureFormItems = ({
             )}
           </StyledBooleanFieldContainer>
 
+          <StyledTitle>Signees</StyledTitle>
+          <StyledDescription>
+            Add signees to the document. They will be able to sign the document.
+          </StyledDescription>
           {!watch('user_only') && (
             <>
               {signees.map((field, index) => (
@@ -280,7 +269,7 @@ export const CreateSignatureFormItems = ({
                       setSelectedPersonId(personId);
                       setSelectedSigneeIndex(personId ? index : null);
                     }}
-                    excludedRecordIds={getExcludedPersonIds(index)}
+                    excludedRecordIds={getExcludedPersonIds()}
                   />
                   {orderEnabled && (
                     <StyledOrderSelect>
@@ -320,17 +309,7 @@ export const CreateSignatureFormItems = ({
             </>
           )}
 
-          <FormMultiSelectFieldInput
-            label="Send Finished Documents to Additional Recepients"
-            defaultValue={watch('additional_receiver_ids')}
-            options={personOptions}
-            onChange={(value) => {
-              if (Array.isArray(value)) {
-                setValue('additional_receiver_ids', value);
-              }
-            }}
-            placeholder="Select additional recipients"
-          />
+          <AdditionalRecepientsFormItem />
         </>
       )}
       {currentStep === SignatureCreationStep.SIGNATURE && (

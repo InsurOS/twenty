@@ -87,6 +87,7 @@ const formSchema = z.object({
   user_only: z.boolean(),
   order_enabled: z.boolean(),
   additional_receiver_ids: z.array(z.string()).default([]),
+  additional_receiver_emails: z.array(z.string().email()).default([]),
   selected_signee_id: z.union([z.string(), z.null()]),
 });
 
@@ -105,6 +106,7 @@ export const SignaturePage = () => {
       user_only: false,
       order_enabled: false,
       additional_receiver_ids: [],
+      additional_receiver_emails: [],
       selected_signee_id: null,
     },
   });
