@@ -3,7 +3,7 @@ import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/c
 import { FormRelationToOneFieldInput } from '@/object-record/record-field/form-types/components/FormRelationToOneFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { AdditionalRecepientsFormItem } from '@/Signature/components/AdditionalRecepientsFormItem';
+import { AdditionalrecipientsFormItem } from '@/Signature/components/AdditionalRecipientsFormItem';
 import {
   StyledDescription,
   StyledTitle,
@@ -184,8 +184,8 @@ export const CreateSignatureFormItems = ({
   };
   const getExcludedPersonIds = (): string[] => {
     const signeeIds = signees.map((signee) => signee.id).filter(isDefined);
-    const additionalRecepientIds = watch('additional_receiver_ids');
-    return [...signeeIds, ...additionalRecepientIds].filter(
+    const additionalrecipientIds = watch('additional_receiver_ids');
+    return [...signeeIds, ...additionalrecipientIds].filter(
       (id) => id.length > 0,
     );
   };
@@ -309,7 +309,7 @@ export const CreateSignatureFormItems = ({
             </>
           )}
 
-          <AdditionalRecepientsFormItem />
+          <AdditionalrecipientsFormItem />
         </>
       )}
       {currentStep === SignatureCreationStep.SIGNATURE && (

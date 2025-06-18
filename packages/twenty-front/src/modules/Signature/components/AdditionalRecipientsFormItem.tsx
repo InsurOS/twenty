@@ -13,28 +13,26 @@ import { IconPlus, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { CreateSignatureFormValues } from '~/pages/SignaturePage/SignaturePage';
 
-export const AdditionalRecepientsFormItem = () => {
-  const { people: additionalRecepients, fetchPeople } = useFetchPeople();
+export const AdditionalrecipientsFormItem = () => {
+  const { people: additionalrecipients, fetchPeople } = useFetchPeople();
   const { setValue, watch } = useFormContext<CreateSignatureFormValues>();
-  const additionalRecepientIds = watch('additional_receiver_ids');
+  const additionalrecipientIds = watch('additional_receiver_ids');
   const signees = watch('signees');
-  const emails = watch('additional_receiver_emails');
-  console.log(emails);
 
-  const addAdditionalRecepient = (e: React.MouseEvent) => {
+  const addAdditionalrecipient = (e: React.MouseEvent) => {
     e.preventDefault();
-    setValue('additional_receiver_ids', [...additionalRecepientIds, '']);
+    setValue('additional_receiver_ids', [...additionalrecipientIds, '']);
   };
 
-  const removeAdditionalRecepient = (index: number) => {
-    const newAdditionalRecepientIds = [...additionalRecepientIds];
-    newAdditionalRecepientIds.splice(index, 1);
-    setValue('additional_receiver_ids', newAdditionalRecepientIds);
+  const removeAdditionalrecipient = (index: number) => {
+    const newAdditionalrecipientIds = [...additionalrecipientIds];
+    newAdditionalrecipientIds.splice(index, 1);
+    setValue('additional_receiver_ids', newAdditionalrecipientIds);
   };
 
   const getExcludedPersonIds = (): string[] => {
     const signeeIds = signees.map((signee) => signee.id).filter(isDefined);
-    return [...signeeIds, ...additionalRecepientIds].filter(
+    return [...signeeIds, ...additionalrecipientIds].filter(
       (id) => id.length > 0,
     );
   };
@@ -42,9 +40,9 @@ export const AdditionalRecepientsFormItem = () => {
   useEffect(() => {
     setValue(
       'additional_receiver_emails',
-      additionalRecepients.map((person) => person.emails?.primaryEmail ?? ''),
+      additionalrecipients.map((person) => person.emails?.primaryEmail ?? ''),
     );
-  }, [additionalRecepients, setValue]);
+  }, [additionalrecipients, setValue]);
 
   return (
     <>
@@ -52,28 +50,28 @@ export const AdditionalRecepientsFormItem = () => {
       <StyledDescription>
         Send finished documents to these recipients (they won't need to sign)
       </StyledDescription>
-      {additionalRecepientIds.map((recepientId, index) => (
+      {additionalrecipientIds.map((recipientId, index) => (
         <StyledSigneeContainer key={index}>
           <FormRelationToOneFieldInput
-            label="Additional Recepient"
+            label="Additional recipient"
             objectNameSingular="person"
-            defaultValue={recepientId}
+            defaultValue={recipientId}
             onChange={(value) => {
               const personId = value as string;
-              const updatedAdditionalRecepientIds = [...additionalRecepientIds];
-              updatedAdditionalRecepientIds[index] = personId;
+              const updatedAdditionalrecipientIds = [...additionalrecipientIds];
+              updatedAdditionalrecipientIds[index] = personId;
               setValue(
                 'additional_receiver_ids',
-                updatedAdditionalRecepientIds,
+                updatedAdditionalrecipientIds,
               );
-              fetchPeople(updatedAdditionalRecepientIds);
+              fetchPeople(updatedAdditionalrecipientIds);
             }}
             excludedRecordIds={getExcludedPersonIds()}
           />
 
           <StyledDeleteSigneeButton
             Icon={IconX}
-            onClick={() => removeAdditionalRecepient(index)}
+            onClick={() => removeAdditionalrecipient(index)}
             variant="tertiary"
             size="small"
           />
@@ -81,8 +79,8 @@ export const AdditionalRecepientsFormItem = () => {
       ))}
       <Button
         Icon={IconPlus}
-        title="Add Additional Recepient"
-        onClick={addAdditionalRecepient}
+        title="Add Additional recipient"
+        onClick={addAdditionalrecipient}
       />
     </>
   );
