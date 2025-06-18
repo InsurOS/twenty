@@ -1,10 +1,8 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Document, Page } from 'react-pdf';
-import { useParams } from 'react-router-dom';
 import {
   IconCalendar,
   IconCheckbox,
@@ -18,14 +16,7 @@ import {
   IconX,
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from 'twenty-ui/layout';
+
 import { CreateSignatureFormValues } from '~/pages/SignaturePage/SignaturePage';
 
 enum SignatureType {
@@ -205,6 +196,7 @@ type DocumentSignatureEditorProps = {
   numPages: number;
   setPageNumber: React.Dispatch<React.SetStateAction<number>>;
   setNumPages: React.Dispatch<React.SetStateAction<number>>;
+  attachment: ObjectRecord;
 };
 
 export const DocumentSignatureEditor = ({
@@ -213,13 +205,10 @@ export const DocumentSignatureEditor = ({
   numPages,
   setPageNumber,
   setNumPages,
+  attachment,
 }: DocumentSignatureEditorProps) => {
   const { watch, setValue } = useFormContext<CreateSignatureFormValues>();
   const signees = watch('signees');
-  const selectedSigneeId = watch('selected_signee_id');
-  const selectedSignee = signees.find(
-    (signee) => signee.id === selectedSigneeId,
-  );
   const [scale, setScale] = useState(1);
   const [draggedBox, setDraggedBox] = useState<{
     signeeId: string;
@@ -227,11 +216,6 @@ export const DocumentSignatureEditor = ({
     offsetX: number;
     offsetY: number;
   } | null>(null);
-  const { signatureId } = useParams();
-  const { record: attachment, loading: attachmentLoading } = useFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Attachment,
-    objectRecordId: signatureId,
-  });
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     setNumPages(numPages);
@@ -324,154 +308,132 @@ export const DocumentSignatureEditor = ({
   };
 
   return (
-    <>
-      {attachmentLoading ? (
-        <StyledFallback>Loading document...</StyledFallback>
-      ) : attachment ? (
-        <StyledPdfWrapper
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
+    <StyledPdfWrapper
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+    >
+      <Document
+        file={attachment.fullPath}
+        onLoadSuccess={onDocumentLoadSuccess}
+      >
+        <StyledPage
+          pageNumber={pageNumber}
+          scale={scale}
+          renderTextLayer={false}
+          renderAnnotationLayer={false}
         >
-          <Document
-            file={attachment.fullPath}
-            onLoadSuccess={onDocumentLoadSuccess}
-          >
-            <StyledPage
-              pageNumber={pageNumber}
-              scale={scale}
-              renderTextLayer={false}
-              renderAnnotationLayer={false}
-            >
-              {signees && signees?.length > 0
-                ? signees.map((signee) =>
-                    signee.signatures?.length > 0
-                      ? signee.signatures
-                          .filter(
-                            (signature) =>
-                              signature.pageIndex === pageNumber - 1,
-                          )
-                          .map((signature) => {
-                            const scaledX = signature.x * scale;
-                            const scaledY = signature.y * scale;
-                            const scaledWidth = signature.width * scale;
-                            const scaledHeight = signature.height * scale;
+          {signees && signees?.length > 0
+            ? signees.map((signee) =>
+                signee.signatures?.length > 0
+                  ? signee.signatures
+                      .filter(
+                        (signature) => signature.pageIndex === pageNumber - 1,
+                      )
+                      .map((signature) => {
+                        const scaledX = signature.x * scale;
+                        const scaledY = signature.y * scale;
+                        const scaledWidth = signature.width * scale;
+                        const scaledHeight = signature.height * scale;
 
-                            return (
-                              <>
-                                <StyledSignatureName
-                                  x={scaledX}
-                                  y={scaledY}
-                                  width={scaledWidth}
-                                  height={scaledHeight}
-                                  color={signee.color}
-                                  key={`name-${signee.id}-${signature.index}`}
-                                >
-                                  {signature.name}
-                                </StyledSignatureName>
-                                <StyledSignatureRemoveButton
-                                  x={scaledX}
-                                  y={scaledY}
-                                  width={scaledWidth}
-                                  Icon={IconX}
-                                  key={`remove-${signee.id}-${signature.index}`}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleRemoveSignature(
-                                      signee.id ?? '',
-                                      signature.index,
-                                    );
-                                  }}
-                                  variant="tertiary"
-                                  size="small"
-                                />
-                                <StyledSignatureBox
-                                  key={`box-${signee.id}-${signature.index}`}
-                                  x={scaledX}
-                                  y={scaledY}
-                                  width={scaledWidth}
-                                  height={scaledHeight}
-                                  color={signee.color}
-                                  onMouseDown={(e) =>
-                                    handleMouseDown(
-                                      e,
-                                      signee.id ?? '',
-                                      signature.index,
-                                    )
-                                  }
-                                >
-                                  <div
-                                    style={{
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
-                                      height: '100%',
-                                    }}
-                                  >
-                                    {
-                                      MapSignatureTypeToIcon[
-                                        Number(
-                                          signature.fieldType + 1,
-                                        ) as keyof typeof MapSignatureTypeToIcon
-                                      ]
-                                    }
-                                  </div>
-                                </StyledSignatureBox>
-                              </>
-                            );
-                          })
-                      : null,
-                  )
-                : null}
-            </StyledPage>
-          </Document>
-          <StyledPdfControls>
-            <IconButton
-              Icon={IconChevronLeft}
-              onClick={goToPrevPage}
-              disabled={pageNumber <= 1}
-              variant="tertiary"
-            />
-            <span>
-              Page {pageNumber} of {numPages ?? '?'}
-            </span>
-            <IconButton
-              Icon={IconChevronRight}
-              onClick={goToNextPage}
-              disabled={pageNumber >= (numPages ?? pageNumber)}
-              variant="tertiary"
-            />
-            <IconButton
-              Icon={IconMinus}
-              onClick={zoomOut}
-              disabled={scale <= 0.5}
-              variant="tertiary"
-            />
-            <span>{Math.round(scale * 100)}%</span>
-            <IconButton
-              Icon={IconPlus}
-              onClick={zoomIn}
-              disabled={scale >= 2}
-              variant="tertiary"
-            />
-          </StyledPdfControls>
-        </StyledPdfWrapper>
-      ) : (
-        <AnimatedPlaceholderEmptyContainer
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-        >
-          <AnimatedPlaceholder type="noFile" />
-          <AnimatedPlaceholderEmptyTextContainer>
-            <AnimatedPlaceholderEmptyTitle>
-              No Document
-            </AnimatedPlaceholderEmptyTitle>
-            <AnimatedPlaceholderEmptySubTitle>
-              No document was found for this signature request.
-            </AnimatedPlaceholderEmptySubTitle>
-          </AnimatedPlaceholderEmptyTextContainer>
-        </AnimatedPlaceholderEmptyContainer>
-      )}
-    </>
+                        return (
+                          <>
+                            <StyledSignatureName
+                              x={scaledX}
+                              y={scaledY}
+                              width={scaledWidth}
+                              height={scaledHeight}
+                              color={signee.color}
+                              key={`name-${signee.id}-${signature.index}`}
+                            >
+                              {signature.name}
+                            </StyledSignatureName>
+                            <StyledSignatureRemoveButton
+                              x={scaledX}
+                              y={scaledY}
+                              width={scaledWidth}
+                              Icon={IconX}
+                              key={`remove-${signee.id}-${signature.index}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRemoveSignature(
+                                  signee.id ?? '',
+                                  signature.index,
+                                );
+                              }}
+                              variant="tertiary"
+                              size="small"
+                            />
+                            <StyledSignatureBox
+                              key={`box-${signee.id}-${signature.index}`}
+                              x={scaledX}
+                              y={scaledY}
+                              width={scaledWidth}
+                              height={scaledHeight}
+                              color={signee.color}
+                              onMouseDown={(e) =>
+                                handleMouseDown(
+                                  e,
+                                  signee.id ?? '',
+                                  signature.index,
+                                )
+                              }
+                            >
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  height: '100%',
+                                }}
+                              >
+                                {
+                                  MapSignatureTypeToIcon[
+                                    Number(
+                                      signature.fieldType + 1,
+                                    ) as keyof typeof MapSignatureTypeToIcon
+                                  ]
+                                }
+                              </div>
+                            </StyledSignatureBox>
+                          </>
+                        );
+                      })
+                  : null,
+              )
+            : null}
+        </StyledPage>
+      </Document>
+      <StyledPdfControls>
+        <IconButton
+          Icon={IconChevronLeft}
+          onClick={goToPrevPage}
+          disabled={pageNumber <= 1}
+          variant="tertiary"
+        />
+        <span>
+          Page {pageNumber} of {numPages ?? '?'}
+        </span>
+        <IconButton
+          Icon={IconChevronRight}
+          onClick={goToNextPage}
+          disabled={pageNumber >= (numPages ?? pageNumber)}
+          variant="tertiary"
+        />
+        <IconButton
+          Icon={IconMinus}
+          onClick={zoomOut}
+          disabled={scale <= 0.5}
+          variant="tertiary"
+        />
+        <span>{Math.round(scale * 100)}%</span>
+        <IconButton
+          Icon={IconPlus}
+          onClick={zoomIn}
+          disabled={scale >= 2}
+          variant="tertiary"
+        />
+      </StyledPdfControls>
+    </StyledPdfWrapper>
   );
 };

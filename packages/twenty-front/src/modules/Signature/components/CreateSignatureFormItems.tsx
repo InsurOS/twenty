@@ -316,9 +316,11 @@ export const CreateSignatureFormItems = ({
         <>
           <FormSelectFieldInput
             label="Select Signee"
-            defaultValue=""
+            defaultValue={watch('selected_signee_id')}
             onChange={(value) => {
-              setValue('selected_signee_id', value);
+              if (isDefined(value)) {
+                setValue('selected_signee_id', value);
+              }
             }}
             options={signees
               .filter((signee) => signee.id !== null)
@@ -368,8 +370,10 @@ export const CreateSignatureFormItems = ({
             title="Next"
             variant="secondary"
             onClick={() => {
-              setValue('selected_signee_id', signees[0].id);
-              onNext(SignatureCreationStep.SIGNATURE);
+              if (isDefined(signees[0].id)) {
+                setValue('selected_signee_id', signees[0].id);
+                onNext(SignatureCreationStep.SIGNATURE);
+              }
             }}
           />
         )}

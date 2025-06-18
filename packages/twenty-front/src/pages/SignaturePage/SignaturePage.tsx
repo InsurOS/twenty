@@ -1,9 +1,16 @@
+import { Attachment } from '@/activities/files/types/Attachment';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
   CreateSignatureFormItems,
   SignatureCreationStep,
 } from '@/Signature/components/CreateSignatureFormItems';
 import { DocumentSignatureEditor } from '@/Signature/components/DocumentSignatureEditor';
-import { SignatureColor } from '@/Signature/constants/signatureColors';
+import {
+  getSignatureColor,
+  SignatureColor,
+} from '@/Signature/constants/signatureColors';
 import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
@@ -17,7 +24,17 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
-
+import { useParams } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
+import { Loader } from 'twenty-ui/feedback';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+} from 'twenty-ui/layout';
 import { z } from 'zod';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -48,11 +65,11 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
   width: 340px;
 `;
 
-const StyledPdfControls = styled.div`
+const StyledLoaderContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  height: 100%;
+  justify-content: center;
 `;
 
 const formSchema = z.object({
@@ -88,12 +105,59 @@ const formSchema = z.object({
   order_enabled: z.boolean(),
   additional_receiver_ids: z.array(z.string()).default([]),
   additional_receiver_emails: z.array(z.string().email()).default([]),
-  selected_signee_id: z.union([z.string(), z.null()]),
+  selected_signee_id: z.union([z.string(), z.undefined()]),
 });
 
 export type CreateSignatureFormValues = z.infer<typeof formSchema>;
 
-export const SignaturePage = () => {
+export const SignaturePageWithAttachment = () => {
+  const { signatureId } = useParams();
+  const {
+    record: attachment,
+    loading: attachmentLoading,
+    error: attachmentError,
+  } = useFindOneRecord({
+    objectNameSingular: CoreObjectNameSingular.Attachment,
+    objectRecordId: signatureId,
+  });
+  if (attachmentLoading) {
+    return (
+      <PageContainer>
+        <PageTitle title="Signature Request" />
+        <PageHeader title="Signature Request">
+          <PageHeaderToggleCommandMenuButton />
+        </PageHeader>
+        <PageBody>
+          <StyledLoaderContainer>
+            <Loader />
+          </StyledLoaderContainer>
+        </PageBody>
+      </PageContainer>
+    );
+  }
+  if (!attachment || isDefined(attachmentError)) {
+    return (
+      <AnimatedPlaceholderEmptyContainer
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
+      >
+        <AnimatedPlaceholder type="noFile" />
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTitle>
+            No Document
+          </AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptySubTitle>
+            No document was found for this signature request.
+          </AnimatedPlaceholderEmptySubTitle>
+        </AnimatedPlaceholderEmptyTextContainer>
+      </AnimatedPlaceholderEmptyContainer>
+    );
+  }
+  return <SignaturePage attachment={attachment as Attachment} />;
+};
+
+export const SignaturePage = ({ attachment }: { attachment: ObjectRecord }) => {
+  const { person } = attachment;
   const [step, setStep] = useState(SignatureCreationStep.CONFIGURATION);
   const [pageNumber, setPageNumber] = useState(1);
   const [numPages, setNumPages] = useState<number>(0);
@@ -102,12 +166,21 @@ export const SignaturePage = () => {
     defaultValues: {
       title: '',
       message: '',
-      signees: [{ id: null }],
+      signees: [
+        {
+          id: person?.id,
+          order: 1,
+          color: getSignatureColor(0),
+          name: `${person?.name.firstName} ${person?.name.lastName}`,
+          email: person?.emails?.primaryEmail,
+          signatures: [],
+        },
+      ],
       user_only: false,
       order_enabled: false,
       additional_receiver_ids: [],
       additional_receiver_emails: [],
-      selected_signee_id: null,
+      selected_signee_id: person?.id,
     },
   });
 
@@ -140,6 +213,7 @@ export const SignaturePage = () => {
                   setPageNumber={setPageNumber}
                   numPages={numPages ?? 0}
                   setNumPages={setNumPages}
+                  attachment={attachment}
                 />
               </StyledAttachmentContainer>
             </StyledPageContainer>

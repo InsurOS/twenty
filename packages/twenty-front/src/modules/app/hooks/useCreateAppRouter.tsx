@@ -25,7 +25,7 @@ import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
 import { InviteTeam } from '~/pages/onboarding/InviteTeam';
 import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
-import { SignaturePage } from '~/pages/SignaturePage/SignaturePage';
+import { SignaturePageWithAttachment } from '~/pages/SignaturePage/SignaturePage';
 
 export const useCreateAppRouter = (
   isFunctionSettingsEnabled?: boolean,
@@ -66,7 +66,10 @@ export const useCreateAppRouter = (
               />
             }
           />
-          <Route path={AppPath.Signature} element={<SignaturePage />} />
+          <Route
+            path={AppPath.Signature}
+            element={<SignaturePageWithAttachment />}
+          />
           <Route path={AppPath.NotFoundWildcard} element={<NotFound />} />
         </Route>
         <Route element={<BlankLayout />}>
