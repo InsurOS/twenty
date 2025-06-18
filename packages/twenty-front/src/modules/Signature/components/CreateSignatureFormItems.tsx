@@ -113,7 +113,6 @@ export const CreateSignatureFormItems = ({
 
   const orderEnabled = watch('order_enabled');
   const signees = watch('signees');
-  console.log('signees', signees);
   const allSigneesIds = signees.map((signee) => signee.id);
 
   const personOptions = people
