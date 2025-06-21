@@ -106,7 +106,6 @@ export const CreateSignatureFormItems = ({
         color: getSignatureColor(selectedSigneeIndex),
         name: `${selectedPerson?.name?.firstName} ${selectedPerson?.name?.lastName}`,
         email: selectedPerson?.emails?.primaryEmail,
-        signatures: newSignees[selectedSigneeIndex].signatures ?? [],
       };
       setValue('signees', newSignees);
     }
@@ -117,15 +116,25 @@ export const CreateSignatureFormItems = ({
     const newSigneeIndex = watch('signees').length;
     setValue('signees', [
       ...watch('signees'),
-      { id: null, color: getSignatureColor(newSigneeIndex), signatures: [] },
+      { id: null, color: getSignatureColor(newSigneeIndex) },
     ]);
   };
 
   const removeSignee = (index: number) => {
     if (signees.length > 1) {
+      const signeeToRemove = signees[index];
       const newSignees = [...signees];
       newSignees.splice(index, 1);
       setValue('signees', newSignees);
+
+      // Remove all signatures associated with the removed signee
+      if (isDefined(signeeToRemove.id)) {
+        const currentSignatures = watch('signatures') || [];
+        const remainingSignatures = currentSignatures.filter(
+          (signature) => signature.signee_id !== signeeToRemove.id,
+        );
+        setValue('signatures', remainingSignatures);
+      }
     }
   };
 
@@ -157,30 +166,35 @@ export const CreateSignatureFormItems = ({
     const selectedSigneeId = watch('selected_signee_id');
     if (!selectedSigneeId) return;
 
-    const newSignees = signees.map((signee) => {
-      if (signee.id === selectedSigneeId) {
-        const { width, height } = getSignatureBoxSize(fieldType);
-        const initialsName = getInitialsName(signee.name ?? '');
-        const newSignature = {
-          name: initialsName,
-          email: signee.email ?? '',
-          index: signee.signatures.length,
-          x: 50, // Default position from left
-          y: 50, // Default position from top
-          width,
-          height,
-          pageIndex: currentPageIndex,
-          fieldType,
-        };
-        return {
-          ...signee,
-          signatures: [...(signee.signatures ?? []), newSignature],
-        };
-      }
-      return signee;
-    });
+    const selectedSignee = signees.find(
+      (signee) => signee.id === selectedSigneeId,
+    );
+    if (!selectedSignee) return;
 
-    setValue('signees', newSignees);
+    const { width, height } = getSignatureBoxSize(fieldType);
+    const initialsName = getInitialsName(selectedSignee.name ?? '');
+    const currentSignatures = watch('signatures') || [];
+
+    // Generate a unique index for the new signature
+    const maxIndex =
+      currentSignatures.length > 0
+        ? Math.max(...currentSignatures.map((s) => s.index))
+        : -1;
+
+    const newSignature = {
+      name: initialsName,
+      email: selectedSignee.email ?? '',
+      x: 50, // Default position from left
+      y: 50, // Default position from top
+      width,
+      height,
+      pageIndex: currentPageIndex,
+      fieldType,
+      signee_id: selectedSigneeId,
+      index: maxIndex + 1,
+    };
+
+    setValue('signatures', [...currentSignatures, newSignature]);
   };
   const getExcludedPersonIds = (): string[] => {
     const signeeIds = signees.map((signee) => signee.id).filter(isDefined);
@@ -221,7 +235,7 @@ export const CreateSignatureFormItems = ({
                   return;
                 }
                 setValue('signees', [
-                  { id: null, color: getSignatureColor(0), signatures: [] },
+                  { id: null, color: getSignatureColor(0) },
                 ]);
               }}
             />

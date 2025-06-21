@@ -83,24 +83,25 @@ const formSchema = z.object({
         color: z.custom<SignatureColor>(),
         name: z.string().optional(),
         email: z.string().email().optional(),
-        signatures: z
-          .array(
-            z.object({
-              name: z.string(),
-              email: z.string().email(),
-              index: z.number(),
-              x: z.number(),
-              y: z.number(),
-              width: z.number(),
-              height: z.number(),
-              pageIndex: z.number(),
-              fieldType: z.number(),
-            }),
-          )
-          .default([]),
       }),
     )
     .min(1, 'At least one signee is required'),
+  signatures: z
+    .array(
+      z.object({
+        name: z.string(),
+        email: z.string().email(),
+        x: z.number(),
+        y: z.number(),
+        width: z.number(),
+        height: z.number(),
+        pageIndex: z.number(),
+        fieldType: z.number(),
+        signee_id: z.string(),
+        index: z.number(),
+      }),
+    )
+    .default([]),
   user_only: z.boolean(),
   order_enabled: z.boolean(),
   additional_receiver_ids: z.array(z.string()).default([]),
@@ -173,9 +174,9 @@ export const SignaturePage = ({ attachment }: { attachment: ObjectRecord }) => {
           color: getSignatureColor(0),
           name: `${person?.name.firstName} ${person?.name.lastName}`,
           email: person?.emails?.primaryEmail,
-          signatures: [],
         },
       ],
+      signatures: [],
       user_only: false,
       order_enabled: false,
       additional_receiver_ids: [],

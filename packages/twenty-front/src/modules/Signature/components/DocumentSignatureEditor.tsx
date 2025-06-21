@@ -209,9 +209,9 @@ export const DocumentSignatureEditor = ({
 }: DocumentSignatureEditorProps) => {
   const { watch, setValue } = useFormContext<CreateSignatureFormValues>();
   const signees = watch('signees');
+  const signatures = watch('signatures') || [];
   const [scale, setScale] = useState(1);
   const [draggedBox, setDraggedBox] = useState<{
-    signeeId: string;
     signatureIndex: number;
     offsetX: number;
     offsetY: number;
@@ -241,24 +241,17 @@ export const DocumentSignatureEditor = ({
     setScale((prev) => Math.max(prev - 0.1, 0.5));
   };
 
-  const handleMouseDown = (
-    e: React.MouseEvent,
-    signeeId: string,
-    signatureIndex: number,
-  ) => {
+  const handleMouseDown = (e: React.MouseEvent, signatureIndex: number) => {
     if ((e.target as HTMLElement).classList.contains('resize-handle')) return;
     const page = e.currentTarget
       .closest('.react-pdf__Page')
       ?.getBoundingClientRect();
     if (!page) return;
-    const signee = signees.find((s) => s.id === signeeId);
-    if (!signee) return;
-    const signature = signee.signatures.find((s) => s.index === signatureIndex);
+    const signature = signatures.find((s) => s.index === signatureIndex);
     if (!signature) return;
     const offsetX = (e.clientX - page.left) / scale - signature.x;
     const offsetY = (e.clientY - page.top) / scale - signature.y;
     setDraggedBox({
-      signeeId,
       signatureIndex,
       offsetX,
       offsetY,
@@ -273,38 +266,28 @@ export const DocumentSignatureEditor = ({
     if (!page) return;
     const newX = (e.clientX - page.left) / scale - draggedBox.offsetX;
     const newY = (e.clientY - page.top) / scale - draggedBox.offsetY;
-    const newSignees = signees.map((signee) => {
-      if (signee.id === draggedBox.signeeId) {
-        const newSignatures = [...signee.signatures];
-        newSignatures[draggedBox.signatureIndex] = {
-          ...newSignatures[draggedBox.signatureIndex],
+    const newSignatures = signatures.map((signature) => {
+      if (signature.index === draggedBox.signatureIndex) {
+        return {
+          ...signature,
           x: newX,
           y: newY,
         };
-        return { ...signee, signatures: newSignatures };
       }
-      return signee;
+      return signature;
     });
-    setValue('signees', newSignees);
+    setValue('signatures', newSignatures);
   };
 
   const handleMouseUp = () => {
     setDraggedBox(null);
   };
 
-  const handleRemoveSignature = (signeeId: string, signatureIndex: number) => {
-    const newSignees = signees.map((signee) => {
-      if (signee.id === signeeId) {
-        return {
-          ...signee,
-          signatures: signee.signatures.filter(
-            (_, index) => index !== signatureIndex,
-          ),
-        };
-      }
-      return signee;
-    });
-    setValue('signees', newSignees);
+  const handleRemoveSignature = (signatureIndex: number) => {
+    const newSignatures = signatures.filter(
+      (signature) => signature.index !== signatureIndex,
+    );
+    setValue('signatures', newSignatures);
   };
 
   return (
@@ -323,85 +306,71 @@ export const DocumentSignatureEditor = ({
           renderTextLayer={false}
           renderAnnotationLayer={false}
         >
-          {signees && signees?.length > 0
-            ? signees.map((signee) =>
-                signee.signatures?.length > 0
-                  ? signee.signatures
-                      .filter(
-                        (signature) => signature.pageIndex === pageNumber - 1,
-                      )
-                      .map((signature) => {
-                        const scaledX = signature.x * scale;
-                        const scaledY = signature.y * scale;
-                        const scaledWidth = signature.width * scale;
-                        const scaledHeight = signature.height * scale;
+          {signatures
+            .filter((signature) => signature.pageIndex === pageNumber - 1)
+            .map((signature) => {
+              const signee = signees.find((s) => s.id === signature.signee_id);
+              if (!signee) return null;
 
-                        return (
-                          <>
-                            <StyledSignatureName
-                              x={scaledX}
-                              y={scaledY}
-                              width={scaledWidth}
-                              height={scaledHeight}
-                              color={signee.color}
-                              key={`name-${signee.id}-${signature.index}`}
-                            >
-                              {signature.name}
-                            </StyledSignatureName>
-                            <StyledSignatureRemoveButton
-                              x={scaledX}
-                              y={scaledY}
-                              width={scaledWidth}
-                              Icon={IconX}
-                              key={`remove-${signee.id}-${signature.index}`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleRemoveSignature(
-                                  signee.id ?? '',
-                                  signature.index,
-                                );
-                              }}
-                              variant="tertiary"
-                              size="small"
-                            />
-                            <StyledSignatureBox
-                              key={`box-${signee.id}-${signature.index}`}
-                              x={scaledX}
-                              y={scaledY}
-                              width={scaledWidth}
-                              height={scaledHeight}
-                              color={signee.color}
-                              onMouseDown={(e) =>
-                                handleMouseDown(
-                                  e,
-                                  signee.id ?? '',
-                                  signature.index,
-                                )
-                              }
-                            >
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  height: '100%',
-                                }}
-                              >
-                                {
-                                  MapSignatureTypeToIcon[
-                                    Number(
-                                      signature.fieldType + 1,
-                                    ) as keyof typeof MapSignatureTypeToIcon
-                                  ]
-                                }
-                              </div>
-                            </StyledSignatureBox>
-                          </>
-                        );
-                      })
-                  : null,
-              )
-            : null}
+              const scaledX = signature.x * scale;
+              const scaledY = signature.y * scale;
+              const scaledWidth = signature.width * scale;
+              const scaledHeight = signature.height * scale;
+
+              return (
+                <>
+                  <StyledSignatureName
+                    x={scaledX}
+                    y={scaledY}
+                    width={scaledWidth}
+                    height={scaledHeight}
+                    color={signee.color}
+                    key={`name-${signature.index}`}
+                  >
+                    {signature.name}
+                  </StyledSignatureName>
+                  <StyledSignatureRemoveButton
+                    x={scaledX}
+                    y={scaledY}
+                    width={scaledWidth}
+                    Icon={IconX}
+                    key={`remove-${signature.index}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveSignature(signature.index);
+                    }}
+                    variant="tertiary"
+                    size="small"
+                  />
+                  <StyledSignatureBox
+                    key={`box-${signature.index}`}
+                    x={scaledX}
+                    y={scaledY}
+                    width={scaledWidth}
+                    height={scaledHeight}
+                    color={signee.color}
+                    onMouseDown={(e) => handleMouseDown(e, signature.index)}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        height: '100%',
+                      }}
+                    >
+                      {
+                        MapSignatureTypeToIcon[
+                          Number(
+                            signature.fieldType + 1,
+                          ) as keyof typeof MapSignatureTypeToIcon
+                        ]
+                      }
+                    </div>
+                  </StyledSignatureBox>
+                </>
+              );
+            })}
         </StyledPage>
       </Document>
       <StyledPdfControls>
