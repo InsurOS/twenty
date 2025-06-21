@@ -24,6 +24,7 @@ import {
   IconX,
 } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
+import { User } from '~/generated/graphql';
 import { CreateSignatureFormValues } from '~/pages/SignaturePage/SignaturePage';
 
 export enum SignatureCreationStep {
@@ -35,6 +36,7 @@ type CreateSignatureFormItemsProps = {
   onNext: (step: SignatureCreationStep) => void;
   currentStep: SignatureCreationStep;
   currentPageIndex: number;
+  currentUser: User;
 };
 
 const StyledForm = styled.div`
@@ -81,6 +83,7 @@ export const CreateSignatureFormItems = ({
   onNext,
   currentStep,
   currentPageIndex,
+  currentUser,
 }: CreateSignatureFormItemsProps) => {
   const { watch, setValue } = useFormContext<CreateSignatureFormValues>();
 
@@ -96,6 +99,7 @@ export const CreateSignatureFormItems = ({
   });
   const orderEnabled = watch('order_enabled');
   const signees = watch('signees');
+  const userSignatureEnabled = watch('user_signature');
 
   useEffect(() => {
     if (isDefined(selectedPerson) && isDefined(selectedSigneeIndex)) {
@@ -120,11 +124,11 @@ export const CreateSignatureFormItems = ({
     ]);
   };
 
-  const removeSignee = (index: number) => {
+  const removeSignee = (signeeId: string | null) => {
     if (signees.length > 1) {
-      const signeeToRemove = signees[index];
-      const newSignees = [...signees];
-      newSignees.splice(index, 1);
+      const signeeToRemove = signees.find((signee) => signee.id === signeeId);
+      if (!signeeToRemove) return;
+      const newSignees = signees.filter((signee) => signee.id !== signeeId);
       setValue('signees', newSignees);
 
       // Remove all signatures associated with the removed signee
@@ -204,6 +208,43 @@ export const CreateSignatureFormItems = ({
     );
   };
 
+  const addCurrentUserAsSignee = () => {
+    const currentUserAlreadyExists = signees.find(
+      (signee) => signee.id === currentUser.id,
+    );
+    if (isDefined(currentUserAlreadyExists)) {
+      return;
+    }
+    setValue('signees', [
+      {
+        id: currentUser.id,
+        color: getSignatureColor(0),
+        name: `${currentUser.firstName} ${currentUser.lastName}`,
+        email: currentUser.email,
+      },
+      ...signees.map((signee, index) => ({
+        ...signee,
+        color: getSignatureColor(index + 1),
+      })),
+    ]);
+  };
+
+  const removeCurrentUserFromSignees = () => {
+    setValue(
+      'signees',
+      signees
+        .filter((signee) => signee.id !== currentUser.id)
+        .map((signee, index) => ({
+          ...signee,
+          color: getSignatureColor(index),
+        })),
+    );
+  };
+
+  const signeesExcludingCurrentUser = signees.filter(
+    (signee) => signee.id !== currentUser.id,
+  );
+
   return (
     <StyledForm>
       {currentStep === SignatureCreationStep.CONFIGURATION && (
@@ -225,103 +266,104 @@ export const CreateSignatureFormItems = ({
 
           <StyledBooleanFieldContainer>
             <FormBooleanFieldInput
-              label="I am the only signee"
-              defaultValue={false}
+              label="I will sign the document"
+              defaultValue={userSignatureEnabled}
               onChange={(value) => {
-                setValue('user_only', Boolean(value));
+                setValue('user_signature', Boolean(value));
                 if (value === true) {
-                  setValue('signees', []);
-                  setValue('order_enabled', false);
-                  return;
+                  addCurrentUserAsSignee();
+                } else {
+                  removeCurrentUserFromSignees();
                 }
-                setValue('signees', [
-                  { id: null, color: getSignatureColor(0) },
-                ]);
               }}
             />
 
-            {!watch('user_only') && (
-              <FormBooleanFieldInput
-                label="Enable signing order"
-                defaultValue={false}
-                onChange={(value) => {
-                  setValue('order_enabled', Boolean(value));
-                  if (value === true) {
-                    const newSignees = signees.map((signee, index) => ({
-                      ...signee,
-                      order: index + 1,
-                    }));
-                    setValue('signees', newSignees);
-                    return;
-                  }
-                  setValue(
-                    'signees',
-                    signees.map((signee, index) => ({
-                      ...signee,
-                      color: getSignatureColor(index),
-                    })),
-                  );
-                }}
-              />
-            )}
+            <FormBooleanFieldInput
+              label="Enable signing order"
+              defaultValue={orderEnabled}
+              onChange={(value) => {
+                setValue('order_enabled', Boolean(value));
+                if (value === true) {
+                  const newSignees = signees.map((signee, index) => ({
+                    ...signee,
+                    order: index + 1,
+                  }));
+                  setValue('signees', newSignees);
+                  return;
+                }
+                setValue(
+                  'signees',
+                  signees.map((signee, index) => ({
+                    ...signee,
+                    color: getSignatureColor(index),
+                  })),
+                );
+              }}
+            />
           </StyledBooleanFieldContainer>
 
           <StyledTitle>Signees</StyledTitle>
           <StyledDescription>
             Add signees to the document. They will be able to sign the document.
           </StyledDescription>
-          {!watch('user_only') && (
-            <>
-              {signees.map((field, index) => (
-                <StyledSigneeContainer key={index}>
-                  <FormRelationToOneFieldInput
-                    label="Signee"
-                    objectNameSingular="person"
-                    defaultValue={field.id}
-                    onChange={(value) => {
-                      const personId = value as string | null;
-                      setSelectedPersonId(personId);
-                      setSelectedSigneeIndex(personId ? index : null);
-                    }}
-                    excludedRecordIds={getExcludedPersonIds()}
-                  />
-                  {orderEnabled && (
-                    <StyledOrderSelect>
-                      <FormSelectFieldInput
-                        label="Order"
-                        defaultValue={(index + 1).toString()}
-                        onChange={(value) => {
-                          const newSignees = [...signees];
-                          newSignees[index] = {
-                            ...newSignees[index],
-                            order: parseInt(value as string),
-                          };
-                          setValue('signees', newSignees);
-                        }}
-                        options={Array.from(
-                          { length: signees.length },
-                          (_, i) => ({
-                            label: `${i + 1}`,
-                            value: `${i + 1}`,
-                          }),
-                        )}
-                      />
-                    </StyledOrderSelect>
-                  )}
-                  {index > 0 && (
-                    <StyledDeleteSigneeButton
-                      Icon={IconX}
-                      onClick={() => removeSignee(index)}
-                      variant="tertiary"
-                      size="small"
-                    />
-                  )}
-                </StyledSigneeContainer>
-              ))}
 
-              <Button Icon={IconPlus} title="Add Signee" onClick={addSignee} />
-            </>
-          )}
+          {signeesExcludingCurrentUser.map((field, index) => (
+            <StyledSigneeContainer key={index}>
+              <FormRelationToOneFieldInput
+                label="Signee"
+                objectNameSingular="person"
+                defaultValue={field.id}
+                onChange={(value) => {
+                  const personId = value as string | null;
+                  setSelectedPersonId(personId);
+                  setSelectedSigneeIndex(
+                    personId
+                      ? userSignatureEnabled
+                        ? index + 1
+                        : index
+                      : null,
+                  );
+                }}
+                excludedRecordIds={getExcludedPersonIds()}
+              />
+              {orderEnabled && (
+                <StyledOrderSelect>
+                  <FormSelectFieldInput
+                    label="Order"
+                    defaultValue={(userSignatureEnabled
+                      ? index + 2
+                      : index + 1
+                    ).toString()}
+                    onChange={(value) => {
+                      const newSignees = [...signees];
+                      newSignees[index] = {
+                        ...newSignees[index],
+                        order: parseInt(value as string),
+                      };
+                      setValue('signees', newSignees);
+                    }}
+                    options={Array.from(
+                      { length: signeesExcludingCurrentUser.length },
+                      (_, i) => ({
+                        label: `${userSignatureEnabled ? i + 2 : i + 1}`,
+                        value: `${userSignatureEnabled ? i + 2 : i + 1}`,
+                      }),
+                    )}
+                  />
+                </StyledOrderSelect>
+              )}
+              {index > 0 && (
+                <StyledDeleteSigneeButton
+                  Icon={IconX}
+                  onClick={() => removeSignee(field.id)}
+                  variant="tertiary"
+                  size="small"
+                />
+              )}
+            </StyledSigneeContainer>
+          ))}
+
+          <Button Icon={IconPlus} title="Add Signee" onClick={addSignee} />
 
           <AdditionalrecipientsFormItem />
         </>
