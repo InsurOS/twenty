@@ -219,7 +219,7 @@ export const CreateSignatureFormItems = ({
       {
         id: currentUser.id,
         color: getSignatureColor(0),
-        name: `${currentUser.firstName} ${currentUser.lastName}`,
+        name: `(You) ${currentUser.firstName} ${currentUser.lastName}`,
         email: currentUser.email,
       },
       ...signees.map((signee, index) => ({
@@ -239,6 +239,10 @@ export const CreateSignatureFormItems = ({
           color: getSignatureColor(index),
         })),
     );
+    const updatedSignatures = watch('signatures').filter(
+      (signature) => signature.signee_id !== currentUser.id,
+    );
+    setValue('signatures', updatedSignatures);
   };
 
   const signeesExcludingCurrentUser = signees.filter(

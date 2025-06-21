@@ -187,7 +187,7 @@ export const SignaturePage = ({
           id: currentUser.id,
           order: 1,
           color: getSignatureColor(0),
-          name: `${currentUser.firstName} ${currentUser.lastName}`,
+          name: `(You) ${currentUser.firstName} ${currentUser.lastName}`,
           email: currentUser.email,
         },
         {
