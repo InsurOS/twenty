@@ -123,28 +123,24 @@ export const CreateSignatureFormItems = ({
       return;
     }
 
-    try {
-      await findOneRecord({
-        objectRecordId: personId,
-        onCompleted: (person) => {
-          if (!person) {
-            throw new Error('Person not found');
-          }
+    await findOneRecord({
+      objectRecordId: personId,
+      onCompleted: (person) => {
+        if (!person) {
+          throw new Error('Person not found');
+        }
 
-          const newSignees = [...signees];
-          newSignees[actualIndex] = {
-            ...newSignees[actualIndex],
-            id: personId,
-            color: getSignatureColor(actualIndex),
-            name: `${person.name?.firstName} ${person.name?.lastName}`,
-            email: person.emails?.primaryEmail,
-          };
-          setValue('signees', newSignees);
-        },
-      });
-    } catch (error) {
-      console.error('Error fetching person data:', error);
-    }
+        const newSignees = [...signees];
+        newSignees[actualIndex] = {
+          ...newSignees[actualIndex],
+          id: personId,
+          color: getSignatureColor(actualIndex),
+          name: `${person.name?.firstName} ${person.name?.lastName}`,
+          email: person.emails?.primaryEmail,
+        };
+        setValue('signees', newSignees);
+      },
+    });
   };
 
   const removeSignee = (signeeId: string | null) => {

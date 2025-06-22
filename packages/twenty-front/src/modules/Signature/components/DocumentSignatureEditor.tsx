@@ -44,14 +44,6 @@ const StyledPdfWrapper = styled.div`
   overflow: auto;
 `;
 
-const StyledFallback = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledPdfControls = styled.div`
   display: flex;
   align-items: center;
@@ -64,34 +56,6 @@ const StyledPdfControls = styled.div`
   left: ${({ theme }) => theme.spacing(2)};
   background-color: transparent;
   padding: ${({ theme }) => theme.spacing(2)};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background-color: ${({ theme }) => theme.background.primary};
-  }
-`;
-
-const StyledZoomControls = styled.div`
-  align-items: center;
-  border-left: 1px solid ${({ theme }) => theme.border.color.light};
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  margin-left: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledZoomLevel = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  min-width: ${({ theme }) => theme.spacing(6)};
-  text-align: center;
-`;
-
-const StyledPageNumber = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  padding: ${({ theme }) => theme.spacing(1)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   transition: background-color 0.2s ease;
 
@@ -123,28 +87,6 @@ const StyledSignatureBox = styled.div<{
   top: ${({ y }) => y}px;
   user-select: none;
   width: ${({ width }) => width}px;
-`;
-
-const StyledSignatureHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledSignatureLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  flex: 1;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-`;
-
-const StyledRemoveButton = styled(IconButton)`
-  padding: ${({ theme }) => theme.spacing(1)};
-  color: ${({ theme }) => theme.font.color.light};
-  &:hover {
-    color: ${({ theme }) => theme.font.color.primary};
-  }
 `;
 
 const StyledSignatureName = styled.span<{

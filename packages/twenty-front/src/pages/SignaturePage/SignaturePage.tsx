@@ -209,7 +209,6 @@ export const SignaturePage = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', methods.watch());
   };
   return (
     <PageContainer>
