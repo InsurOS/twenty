@@ -1,4 +1,4 @@
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useLazyFindOneRecord } from '@/object-record/hooks/useLazyFindOneRecord';
 import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/components/FormBooleanFieldInput';
 import { FormRelationToOneFieldInput } from '@/object-record/record-field/form-types/components/FormRelationToOneFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
@@ -11,7 +11,6 @@ import {
 import { getSignatureColor } from '@/Signature/constants/signatureColors';
 import { SignatureFieldType } from '@/Signature/constants/signatureFieldTypes';
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -86,34 +85,13 @@ export const CreateSignatureFormItems = ({
   currentUser,
 }: CreateSignatureFormItemsProps) => {
   const { watch, setValue } = useFormContext<CreateSignatureFormValues>();
-
-  const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
-  const [selectedSigneeIndex, setSelectedSigneeIndex] = useState<number | null>(
-    null,
-  );
-
-  const { record: selectedPerson } = useFindOneRecord({
+  const { findOneRecord } = useLazyFindOneRecord({
     objectNameSingular: 'person',
-    objectRecordId: selectedPersonId ?? '',
-    skip: !selectedPersonId,
   });
+
   const orderEnabled = watch('order_enabled');
   const signees = watch('signees');
   const userSignatureEnabled = watch('user_signature');
-
-  useEffect(() => {
-    if (isDefined(selectedPerson) && isDefined(selectedSigneeIndex)) {
-      const newSignees = [...watch('signees')];
-      newSignees[selectedSigneeIndex] = {
-        ...newSignees[selectedSigneeIndex],
-        id: selectedPersonId,
-        color: getSignatureColor(selectedSigneeIndex),
-        name: `${selectedPerson?.name?.firstName} ${selectedPerson?.name?.lastName}`,
-        email: selectedPerson?.emails?.primaryEmail,
-      };
-      setValue('signees', newSignees);
-    }
-  }, [selectedPerson, selectedSigneeIndex, selectedPersonId, setValue, watch]);
 
   const addSignee = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -122,6 +100,48 @@ export const CreateSignatureFormItems = ({
       ...watch('signees'),
       { id: null, color: getSignatureColor(newSigneeIndex) },
     ]);
+  };
+
+  const handleSigneeSelection = async (
+    personId: string | null,
+    signeeIndex: number,
+  ) => {
+    const actualIndex = userSignatureEnabled ? signeeIndex + 1 : signeeIndex;
+
+    if (!personId) {
+      const newSignees = [...watch('signees')];
+      newSignees[actualIndex] = {
+        ...newSignees[actualIndex],
+        id: null,
+        name: undefined,
+        email: undefined,
+      };
+      setValue('signees', newSignees);
+      return;
+    }
+
+    try {
+      await findOneRecord({
+        objectRecordId: personId,
+        onCompleted: (person) => {
+          if (!person) {
+            throw new Error('Person not found');
+          }
+
+          const newSignees = [...watch('signees')];
+          newSignees[actualIndex] = {
+            ...newSignees[actualIndex],
+            id: personId,
+            color: getSignatureColor(actualIndex),
+            name: `${person.name?.firstName} ${person.name?.lastName}`,
+            email: person.emails?.primaryEmail,
+          };
+          setValue('signees', newSignees);
+        },
+      });
+    } catch (error) {
+      console.error('Error fetching person data:', error);
+    }
   };
 
   const removeSignee = (signeeId: string | null) => {
@@ -319,14 +339,7 @@ export const CreateSignatureFormItems = ({
                 defaultValue={field.id}
                 onChange={(value) => {
                   const personId = value as string | null;
-                  setSelectedPersonId(personId);
-                  setSelectedSigneeIndex(
-                    personId
-                      ? userSignatureEnabled
-                        ? index + 1
-                        : index
-                      : null,
-                  );
+                  handleSigneeSelection(personId, index);
                 }}
                 excludedRecordIds={getExcludedPersonIds()}
               />
