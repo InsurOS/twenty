@@ -1,11 +1,11 @@
 import { FormRelationToOneFieldInput } from '@/object-record/record-field/form-types/components/FormRelationToOneFieldInput';
 import { useFetchPeople } from '@/people/types/hooks/useFetchPeople';
 import {
-  StyledDeleteSigneeButton,
-  StyledDescription,
-  StyledSigneeContainer,
-  StyledTitle,
-} from '@/Signature/components/SharedStyledComponents';
+    StyledDeleteSigneeButton,
+    StyledDescription,
+    StyledSigneeContainer,
+    StyledTitle,
+} from '@/signature/components/SharedStyledComponents';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';

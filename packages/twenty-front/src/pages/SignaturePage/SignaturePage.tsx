@@ -6,12 +6,12 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
   CreateSignatureFormItems,
   SignatureCreationStep,
-} from '@/Signature/components/CreateSignatureFormItems';
-import { DocumentSignatureEditor } from '@/Signature/components/DocumentSignatureEditor';
+} from '@/signature/components/CreateSignatureFormItems';
+import { DocumentSignatureEditor } from '@/signature/components/DocumentSignatureEditor';
 import {
   getSignatureColor,
   SignatureColor,
-} from '@/Signature/constants/signatureColors';
+} from '@/signature/constants/signatureColors';
 import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';

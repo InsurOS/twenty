@@ -3,13 +3,13 @@ import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/c
 import { FormRelationToOneFieldInput } from '@/object-record/record-field/form-types/components/FormRelationToOneFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { AdditionalrecipientsFormItem } from '@/Signature/components/AdditionalRecipientsFormItem';
+import { AdditionalrecipientsFormItem } from '@/signature/components/AdditionalRecipientsFormItem';
 import {
   StyledDescription,
   StyledTitle,
-} from '@/Signature/components/SharedStyledComponents';
-import { getSignatureColor } from '@/Signature/constants/signatureColors';
-import { SignatureFieldType } from '@/Signature/constants/signatureFieldTypes';
+} from '@/signature/components/SharedStyledComponents';
+import { getSignatureColor } from '@/signature/constants/signatureColors';
+import { SignatureFieldType } from '@/signature/constants/signatureFieldTypes';
 import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
