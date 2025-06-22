@@ -92,12 +92,15 @@ export const CreateSignatureFormItems = ({
   const orderEnabled = watch('order_enabled');
   const signees = watch('signees');
   const userSignatureEnabled = watch('user_signature');
+  const signatures = watch('signatures') || [];
+  const additionalReceiverIds = watch('additional_receiver_ids') || [];
+  const selectedSigneeId = watch('selected_signee_id');
 
   const addSignee = (e: React.MouseEvent) => {
     e.preventDefault();
-    const newSigneeIndex = watch('signees').length;
+    const newSigneeIndex = signees.length;
     setValue('signees', [
-      ...watch('signees'),
+      ...signees,
       { id: null, color: getSignatureColor(newSigneeIndex) },
     ]);
   };
@@ -109,7 +112,7 @@ export const CreateSignatureFormItems = ({
     const actualIndex = userSignatureEnabled ? signeeIndex + 1 : signeeIndex;
 
     if (!personId) {
-      const newSignees = [...watch('signees')];
+      const newSignees = [...signees];
       newSignees[actualIndex] = {
         ...newSignees[actualIndex],
         id: null,
@@ -128,7 +131,7 @@ export const CreateSignatureFormItems = ({
             throw new Error('Person not found');
           }
 
-          const newSignees = [...watch('signees')];
+          const newSignees = [...signees];
           newSignees[actualIndex] = {
             ...newSignees[actualIndex],
             id: personId,
@@ -153,11 +156,10 @@ export const CreateSignatureFormItems = ({
 
       // Remove all signatures associated with the removed signee
       if (isDefined(signeeToRemove.id)) {
-        const currentSignatures = watch('signatures') || [];
-        const remainingSignatures = currentSignatures.filter(
+        const currentSignatures = signatures.filter(
           (signature) => signature.signee_id !== signeeToRemove.id,
         );
-        setValue('signatures', remainingSignatures);
+        setValue('signatures', currentSignatures);
       }
     }
   };
@@ -187,7 +189,6 @@ export const CreateSignatureFormItems = ({
   };
 
   const addSignature = (fieldType: SignatureFieldType) => {
-    const selectedSigneeId = watch('selected_signee_id');
     if (!selectedSigneeId) return;
 
     const selectedSignee = signees.find(
@@ -197,13 +198,10 @@ export const CreateSignatureFormItems = ({
 
     const { width, height } = getSignatureBoxSize(fieldType);
     const initialsName = getInitialsName(selectedSignee.name ?? '');
-    const currentSignatures = watch('signatures') || [];
 
     // Generate a unique index for the new signature
     const maxIndex =
-      currentSignatures.length > 0
-        ? Math.max(...currentSignatures.map((s) => s.index))
-        : -1;
+      signatures.length > 0 ? Math.max(...signatures.map((s) => s.index)) : -1;
 
     const newSignature = {
       name: initialsName,
@@ -218,12 +216,12 @@ export const CreateSignatureFormItems = ({
       index: maxIndex + 1,
     };
 
-    setValue('signatures', [...currentSignatures, newSignature]);
+    setValue('signatures', [...signatures, newSignature]);
   };
+
   const getExcludedPersonIds = (): string[] => {
     const signeeIds = signees.map((signee) => signee.id).filter(isDefined);
-    const additionalrecipientIds = watch('additional_receiver_ids');
-    return [...signeeIds, ...additionalrecipientIds].filter(
+    return [...signeeIds, ...additionalReceiverIds].filter(
       (id) => id.length > 0,
     );
   };
@@ -259,7 +257,7 @@ export const CreateSignatureFormItems = ({
           color: getSignatureColor(index),
         })),
     );
-    const updatedSignatures = watch('signatures').filter(
+    const updatedSignatures = signatures.filter(
       (signature) => signature.signee_id !== currentUser.id,
     );
     setValue('signatures', updatedSignatures);
@@ -389,7 +387,7 @@ export const CreateSignatureFormItems = ({
         <>
           <FormSelectFieldInput
             label="Select Signee"
-            defaultValue={watch('selected_signee_id')}
+            defaultValue={selectedSigneeId}
             onChange={(value) => {
               if (isDefined(value)) {
                 setValue('selected_signee_id', value);
