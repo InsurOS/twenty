@@ -151,7 +151,12 @@ export const CreateSignatureFormItems = ({
     if (signees.length > 1) {
       const signeeToRemove = signees.find((signee) => signee.id === signeeId);
       if (!signeeToRemove) return;
-      const newSignees = signees.filter((signee) => signee.id !== signeeId);
+      const newSignees = signees
+        .filter((signee) => signee.id !== signeeId)
+        .map((signee, index) => ({
+          ...signee,
+          color: getSignatureColor(index),
+        }));
       setValue('signees', newSignees);
 
       // Remove all signatures associated with the removed signee
@@ -247,22 +252,6 @@ export const CreateSignatureFormItems = ({
     ]);
   };
 
-  const removeCurrentUserFromSignees = () => {
-    setValue(
-      'signees',
-      signees
-        .filter((signee) => signee.id !== currentUser.id)
-        .map((signee, index) => ({
-          ...signee,
-          color: getSignatureColor(index),
-        })),
-    );
-    const updatedSignatures = signatures.filter(
-      (signature) => signature.signee_id !== currentUser.id,
-    );
-    setValue('signatures', updatedSignatures);
-  };
-
   const signeesExcludingCurrentUser = signees.filter(
     (signee) => signee.id !== currentUser.id,
   );
@@ -295,7 +284,7 @@ export const CreateSignatureFormItems = ({
                 if (value === true) {
                   addCurrentUserAsSignee();
                 } else {
-                  removeCurrentUserFromSignees();
+                  removeSignee(currentUser.id);
                 }
               }}
             />

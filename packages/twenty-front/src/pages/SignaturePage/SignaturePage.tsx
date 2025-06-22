@@ -193,7 +193,7 @@ export const SignaturePage = ({
         {
           id: person?.id,
           order: 2,
-          color: getSignatureColor(0),
+          color: getSignatureColor(1),
           name: `${person?.name.firstName} ${person?.name.lastName}`,
           email: person?.emails?.primaryEmail,
         },
