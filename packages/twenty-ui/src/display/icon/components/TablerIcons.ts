@@ -186,6 +186,7 @@ export {
   IconLayoutSidebarRight,
   IconLayoutSidebarRightCollapse,
   IconLayoutSidebarRightExpand,
+  IconLetterCaseUpper,
   IconLibraryPlus,
   IconLifebuoy,
   IconLink,
@@ -280,8 +281,7 @@ export {
   IconTags,
   IconTarget,
   IconTargetArrow,
-  IconTestPipe,
-  IconTextSize,
+  IconTestPipe, IconTextScan2, IconTextSize,
   IconTextWrap,
   IconTimeDuration30,
   IconTimeDuration60,
@@ -307,7 +307,7 @@ export {
   IconWand,
   IconWebhook,
   IconWorld,
-  IconX,
+  IconX
 } from '@tabler/icons-react';
 
 export type { IconProps as TablerIconsProps } from '@tabler/icons-react';
