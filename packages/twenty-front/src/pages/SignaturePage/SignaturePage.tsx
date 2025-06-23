@@ -2,7 +2,6 @@ import { Attachment } from '@/activities/files/types/Attachment';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
   CreateSignatureFormItems,
   SignatureCreationStep,
@@ -110,6 +109,7 @@ const formSchema = z.object({
   additional_receiver_ids: z.array(z.string()).default([]),
   additional_receiver_emails: z.array(z.string().email()).default([]),
   selected_signee_id: z.union([z.string(), z.undefined()]),
+  pdfData: z.string(),
 });
 
 export type CreateSignatureFormValues = z.infer<typeof formSchema>;
@@ -170,7 +170,7 @@ export const SignaturePage = ({
   attachment,
   currentUser,
 }: {
-  attachment: ObjectRecord;
+  attachment: Attachment;
   currentUser: User;
 }) => {
   const { person } = attachment;
@@ -227,6 +227,7 @@ export const SignaturePage = ({
                   currentStep={step}
                   currentPageIndex={pageNumber - 1}
                   currentUser={currentUser}
+                  attachment={attachment}
                 />
               </StyledScrollWrapper>
               <StyledAttachmentContainer>
