@@ -75,10 +75,10 @@ const StyledSignatureBox = styled.div<{
   height: number;
   color: string;
 }>`
+  align-items: flex-start;
   border: 2px solid ${({ color }) => color};
   cursor: move;
   display: flex;
-  align-items: flex-start;
   flex-direction: column;
   height: ${({ height }) => height}px;
   left: ${({ x }) => x}px;
@@ -132,6 +132,25 @@ const StyledSignatureRemoveButton = styled(IconButton)<{
   }
 `;
 
+const StyledResizeHandle = styled.div<{
+  color: string;
+  height: number;
+  width: number;
+  x: number;
+  y: number;
+}>`
+  align-items: center;
+  cursor: se-resize;
+  display: flex;
+  height: 15px;
+  justify-content: center;
+  left: ${({ x, width }) => x + width + 10}px;
+  position: absolute;
+  top: ${({ y, height }) => y + height + 10}px;
+  width: 15px;
+  z-index: 10;
+`;
+
 type DocumentSignatureEditorProps = {
   onPageChange?: (pageIndex: number) => void;
   pageNumber: number;
@@ -157,6 +176,13 @@ export const DocumentSignatureEditor = ({
     signatureIndex: number;
     offsetX: number;
     offsetY: number;
+  } | null>(null);
+  const [resizingBox, setResizingBox] = useState<{
+    signatureIndex: number;
+    startX: number;
+    startY: number;
+    startWidth: number;
+    startHeight: number;
   } | null>(null);
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
@@ -200,8 +226,50 @@ export const DocumentSignatureEditor = ({
     });
   };
 
+  const handleResizeMouseDown = (
+    e: React.MouseEvent,
+    signatureIndex: number,
+  ) => {
+    e.stopPropagation();
+    const page = document
+      .querySelector('.react-pdf__Page')
+      ?.getBoundingClientRect();
+    if (!page) return;
+    const signature = signatures.find((s) => s.index === signatureIndex);
+    if (!signature) return;
+
+    setResizingBox({
+      signatureIndex,
+      startX: e.clientX,
+      startY: e.clientY,
+      startWidth: signature.width,
+      startHeight: signature.height,
+    });
+  };
+
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!draggedBox) return;
+    if (resizingBox !== null) {
+      const deltaX = (e.clientX - resizingBox.startX) / scale;
+      const deltaY = (e.clientY - resizingBox.startY) / scale;
+
+      const newWidth = Math.max(50, resizingBox.startWidth + deltaX);
+      const newHeight = Math.max(30, resizingBox.startHeight + deltaY);
+
+      const newSignatures = signatures.map((signature) => {
+        if (signature.index === resizingBox.signatureIndex) {
+          return {
+            ...signature,
+            width: newWidth,
+            height: newHeight,
+          };
+        }
+        return signature;
+      });
+      setValue('signatures', newSignatures);
+      return;
+    }
+
+    if (draggedBox === null) return;
     const page = document
       .querySelector('.react-pdf__Page')
       ?.getBoundingClientRect();
@@ -223,6 +291,7 @@ export const DocumentSignatureEditor = ({
 
   const handleMouseUp = () => {
     setDraggedBox(null);
+    setResizingBox(null);
   };
 
   const handleRemoveSignature = (signatureIndex: number) => {
@@ -310,6 +379,18 @@ export const DocumentSignatureEditor = ({
                       }
                     </div>
                   </StyledSignatureBox>
+                  <StyledResizeHandle
+                    key={`resize-${signature.index}`}
+                    x={scaledX}
+                    y={scaledY}
+                    width={scaledWidth}
+                    height={scaledHeight}
+                    color={signee.color}
+                    className="resize-handle"
+                    onMouseDown={(e) =>
+                      handleResizeMouseDown(e, signature.index)
+                    }
+                  />
                 </>
               );
             })}
