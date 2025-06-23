@@ -1,10 +1,22 @@
 import { Module } from '@nestjs/common';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
-import { RabbitSignService } from './rabbitsign.service';
+import { CreateOneRabbitSignSignatureInput } from './dtos/create-one-rabbit-sign-signature.input';
+import { CreateOneRabbitSignSignatureOutput } from './dtos/create-one-rabbit-sign-signature.output';
+import { RabbitSignResolver } from './rabbitsign.resolver';
+import { RabbitSignKeyService } from './rabbitsignkey.service';
+import { RabbitSignSignatureService } from './rabbitsignsignature.service';
 
 @Module({
-  imports: [TwentyORMModule],
-  providers: [RabbitSignService],
-  exports: [RabbitSignService],
+  providers: [
+    CreateOneRabbitSignSignatureInput,
+    CreateOneRabbitSignSignatureOutput,
+    RabbitSignKeyService,
+    RabbitSignSignatureService,
+    RabbitSignResolver,
+  ],
+  exports: [
+    CreateOneRabbitSignSignatureInput,
+    CreateOneRabbitSignSignatureOutput,
+  ],
 })
-export class RabbitSignModule {} 
+
+export class RabbitSignModule {}
