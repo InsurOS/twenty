@@ -1,9 +1,9 @@
-import { Attachment } from '@/activities/files/types/Attachment';
 import { useLazyFindOneRecord } from '@/object-record/hooks/useLazyFindOneRecord';
 import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/components/FormBooleanFieldInput';
 import { FormRelationToOneFieldInput } from '@/object-record/record-field/form-types/components/FormRelationToOneFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { AdditionalrecipientsFormItem } from '@/signature/components/AdditionalRecipientsFormItem';
 import {
   StyledDescription,
@@ -38,7 +38,7 @@ type CreateSignatureFormItemsProps = {
   currentStep: SignatureCreationStep;
   currentPageIndex: number;
   currentUser: User;
-  attachment: Attachment;
+  attachment: ObjectRecord;
 };
 
 const StyledForm = styled.div`
@@ -88,7 +88,8 @@ export const CreateSignatureFormItems = ({
   currentUser,
   attachment,
 }: CreateSignatureFormItemsProps) => {
-  const { watch, setValue, handleSubmit } = useFormContext<CreateSignatureFormValues>();
+  const { watch, setValue, handleSubmit } =
+    useFormContext<CreateSignatureFormValues>();
   const { findOneRecord } = useLazyFindOneRecord({
     objectNameSingular: 'person',
   });
@@ -469,7 +470,7 @@ export const CreateSignatureFormItems = ({
               onClick={() => onNext(SignatureCreationStep.CONFIGURATION)}
             />
             <Button
-              title={loading ? "Creating..." : "Submit"}
+              title={loading ? 'Creating...' : 'Submit'}
               variant="primary"
               accent="green"
               onClick={handleSubmit(onSubmit)}

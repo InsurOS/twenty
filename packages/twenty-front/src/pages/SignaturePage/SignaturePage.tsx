@@ -2,6 +2,7 @@ import { Attachment } from '@/activities/files/types/Attachment';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
   CreateSignatureFormItems,
   SignatureCreationStep,
@@ -171,7 +172,7 @@ export const SignaturePage = ({
   attachment,
   currentUser,
 }: {
-  attachment: Attachment;
+  attachment: ObjectRecord;
   currentUser: User;
 }) => {
   const { person } = attachment;
