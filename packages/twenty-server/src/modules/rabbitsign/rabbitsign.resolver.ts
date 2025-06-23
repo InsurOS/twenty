@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -12,6 +13,7 @@ import { RabbitSignSignatureService } from './rabbitsignsignature.service';
 export class RabbitSignResolver {
   constructor(
     private readonly rabbitSignSignatureService: RabbitSignSignatureService,
+    private readonly fileService: FileService,
   ) {}
 
   @Mutation(() => CreateOneRabbitSignSignatureOutput, {
@@ -40,11 +42,26 @@ export class RabbitSignResolver {
       },
     }));
 
+    // Fetch PDF data from the file URL
+    let pdfBuffer: Buffer | undefined;
+    if (input.filename) {
+      try {
+        const response = await fetch(input.filename);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch PDF: ${response.status} ${response.statusText}`);
+        }
+        pdfBuffer = Buffer.from(await response.arrayBuffer());
+      } catch (error) {
+        console.error('Failed to fetch PDF data:', error);
+        throw new Error(`Failed to fetch PDF data from URL: ${error.message}`);
+      }
+    }
+
     const signature = await this.rabbitSignSignatureService.createSignatureWithExternalCall({
       title: input.title,
       workspaceMemberId: input.workspaceMemberId,
       workspaceId,
-      pdfBuffer: input.pdfData ? Buffer.from(input.pdfData, 'base64') : undefined,
+      pdfBuffer,
       signers,
     });
 

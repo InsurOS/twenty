@@ -18,7 +18,7 @@ export class CreateOneRabbitSignSignatureInput {
 
   @Field(() => String)
   @IsString()
-  pdfData: string;
+  filename: string;
 
   @Field(() => String)
   @IsString()
