@@ -1,3 +1,4 @@
+import { Attachment } from '@/activities/files/types/Attachment';
 import { useLazyFindOneRecord } from '@/object-record/hooks/useLazyFindOneRecord';
 import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/components/FormBooleanFieldInput';
 import { FormRelationToOneFieldInput } from '@/object-record/record-field/form-types/components/FormRelationToOneFieldInput';
@@ -10,7 +11,9 @@ import {
 } from '@/signature/components/SharedStyledComponents';
 import { getSignatureColor } from '@/signature/constants/signatureColors';
 import { SignatureFieldType } from '@/signature/constants/signatureFieldTypes';
+import { useCreateSignature } from '@/signature/hooks/useCreateSignature';
 import styled from '@emotion/styled';
+import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -26,6 +29,22 @@ import { Button, IconButton } from 'twenty-ui/input';
 import { User } from '~/generated/graphql';
 import { CreateSignatureFormValues } from '~/pages/SignaturePage/SignaturePage';
 
+// Utility function to fetch PDF data as base64
+const fetchPdfAsBase64 = async (pdfUrl: string): Promise<string> => {
+  try {
+    const response = await fetch(pdfUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch PDF: ${response.statusText}`);
+    }
+    const arrayBuffer = await response.arrayBuffer();
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    return base64;
+  } catch (error) {
+    console.error('Error fetching PDF as base64:', error);
+    throw error;
+  }
+};
+
 export enum SignatureCreationStep {
   CONFIGURATION = 'configuration',
   SIGNATURE = 'signature',
@@ -36,6 +55,7 @@ type CreateSignatureFormItemsProps = {
   currentStep: SignatureCreationStep;
   currentPageIndex: number;
   currentUser: User;
+  attachment: Attachment;
 };
 
 const StyledForm = styled.div`
@@ -83,11 +103,34 @@ export const CreateSignatureFormItems = ({
   currentStep,
   currentPageIndex,
   currentUser,
+  attachment,
 }: CreateSignatureFormItemsProps) => {
-  const { watch, setValue } = useFormContext<CreateSignatureFormValues>();
+  const { watch, setValue, handleSubmit } = useFormContext<CreateSignatureFormValues>();
   const { findOneRecord } = useLazyFindOneRecord({
     objectNameSingular: 'person',
   });
+  const { createSignature, loading } = useCreateSignature();
+
+  // Fetch PDF data when component mounts
+  useEffect(() => {
+    const loadPdfData = async () => {
+      try {
+        if (!attachment?.fullPath) {
+          console.error('No PDF path available');
+          return;
+        }
+        const pdfBase64 = await fetchPdfAsBase64(attachment.fullPath);
+        setValue('pdfData', pdfBase64);
+      } catch (error) {
+        console.error('Failed to load PDF data:', error);
+        // You might want to show an error message to the user here
+      }
+    };
+
+    if (attachment?.fullPath) {
+      loadPdfData();
+    }
+  }, [attachment?.fullPath, setValue]);
 
   const orderEnabled = watch('order_enabled');
   const signees = watch('signees');
@@ -251,6 +294,29 @@ export const CreateSignatureFormItems = ({
   const signeesExcludingCurrentUser = signees.filter(
     (signee) => signee.id !== currentUser.id,
   );
+
+  const onSubmit = async (formValues: CreateSignatureFormValues) => {
+    try {
+      await createSignature({
+        title: formValues.title,
+        message: formValues.message,
+        signees: formValues.signees,
+        user_signature: formValues.user_signature,
+        order_enabled: formValues.order_enabled,
+        additional_receiver_ids: formValues.additional_receiver_ids,
+        additional_receiver_emails: formValues.additional_receiver_emails,
+        // TODO on submit, we need to get the pdfData from the attachment
+        pdfData: formValues.pdfData,
+        signatures: formValues.signatures,
+      });
+
+      console.log('Signature created successfully');
+      // You might want to show a success message or redirect
+    } catch (error) {
+      console.error('Failed to create signature:', error);
+      // Handle error (show error message, etc.)
+    }
+  };
 
   return (
     <StyledForm>
@@ -441,10 +507,11 @@ export const CreateSignatureFormItems = ({
               onClick={() => onNext(SignatureCreationStep.CONFIGURATION)}
             />
             <Button
-              title="Submit"
+              title={loading ? "Creating..." : "Submit"}
               variant="primary"
               accent="green"
-              onClick={() => onNext(SignatureCreationStep.CONFIGURATION)}
+              onClick={handleSubmit(onSubmit)}
+              disabled={loading}
             />
           </StyledBooleanFieldContainer>
         )}
