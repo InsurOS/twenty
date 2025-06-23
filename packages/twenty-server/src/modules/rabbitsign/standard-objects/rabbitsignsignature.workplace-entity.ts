@@ -12,6 +12,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { RABBIT_SIGN_KEY_STANDARD_FIELD_IDS, RABBIT_SIGN_SIGNATURE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceEntity({
@@ -41,23 +42,22 @@ export class RabbitSignSignatureWorkspaceEntity extends BaseWorkspaceEntity {
   })
   signatureStatus: string;
 
-  @WorkspaceField({
-    standardId: RABBIT_SIGN_SIGNATURE_STANDARD_FIELD_IDS.pdfData,
-    type: FieldMetadataType.TEXT,
-    label: msg`PDF Data`,
-    description: msg`Base64 encoded PDF data`,
-  })
-  pdfData: string;
-
-  @WorkspaceField({
-    standardId: RABBIT_SIGN_SIGNATURE_STANDARD_FIELD_IDS.signaturesData,
-    type: FieldMetadataType.TEXT,
-    label: msg`Signatures Data`,
-    description: msg`JSON encoded signatures data`,
-  })
-  signaturesData: string;
-  
   // Relations
+  @WorkspaceRelation({
+    standardId: RABBIT_SIGN_SIGNATURE_STANDARD_FIELD_IDS.attachment,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Attachment`,
+    description: msg`The attachment associated with this signature`,
+    icon: 'IconFileUpload',
+    inverseSideTarget: () => AttachmentWorkspaceEntity,
+    inverseSideFieldKey: 'signature',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  attachment: Relation<AttachmentWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('attachment')
+  attachmentId: string;
+
   @WorkspaceRelation({
     standardId: RABBIT_SIGN_KEY_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationType.MANY_TO_ONE,

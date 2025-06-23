@@ -3,6 +3,7 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import axios from 'axios';
 import { createHash } from 'crypto';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { RabbitSignKeyService } from 'src/modules/rabbitsign/rabbitsignkey.service';
 import { RabbitSignSignatureWorkspaceEntity } from './standard-objects/rabbitsignsignature.workplace-entity';
 
@@ -211,6 +212,7 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
     title: string;
     workspaceMemberId: string;
     workspaceId: string;
+    attachmentId: string;
     pdfBuffer?: Buffer;
     signers?: Array<{
       email: string;
@@ -235,6 +237,17 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
       title: input.title,
       signatureStatus: 'PROCESSING',
       workspaceMemberId: input.workspaceMemberId,
+      attachmentId: input.attachmentId,
+    });
+
+    const attachmentRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
+      input.workspaceId,
+      'attachment',
+    );
+
+    await attachmentRepository.save({
+      id: input.attachmentId,
+      signatureId: signatureRecord.id,
     });
 
     try {

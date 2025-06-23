@@ -33,6 +33,7 @@ export const useCreateSignature = () => {
           signatureStatus: 'PROCESSING',
           workspaceMemberId: currentWorkspaceMember.id,
           filename: formValues.filename,
+          attachmentId: formValues.attachmentId,
           signaturesData: signaturesJson,
         },
       },

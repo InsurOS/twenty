@@ -110,6 +110,7 @@ const formSchema = z.object({
   additional_receiver_emails: z.array(z.string().email()).default([]),
   selected_signee_id: z.union([z.string(), z.undefined()]),
   filename: z.string(),
+  attachmentId: z.string(),
 });
 
 export type CreateSignatureFormValues = z.infer<typeof formSchema>;
@@ -205,6 +206,7 @@ export const SignaturePage = ({
       additional_receiver_emails: [],
       selected_signee_id: person?.id,
       filename: attachment.fullPath,
+      attachmentId: attachment.id,
     },
   });
 

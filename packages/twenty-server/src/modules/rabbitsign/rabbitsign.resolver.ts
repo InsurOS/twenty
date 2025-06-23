@@ -61,6 +61,7 @@ export class RabbitSignResolver {
       title: input.title,
       workspaceMemberId: input.workspaceMemberId,
       workspaceId,
+      attachmentId: input.attachmentId,
       pdfBuffer,
       signers,
     });

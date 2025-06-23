@@ -22,5 +22,9 @@ export class CreateOneRabbitSignSignatureInput {
 
   @Field(() => String)
   @IsString()
+  attachmentId: string;
+
+  @Field(() => String)
+  @IsString()
   signaturesData: string;
 }

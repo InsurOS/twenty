@@ -442,7 +442,8 @@ export type CreateOneFieldMetadataInput = {
 };
 
 export type CreateOneRabbitSignSignatureInput = {
-  pdfData: Scalars['String'];
+  attachmentId: Scalars['String'];
+  filename: Scalars['String'];
   signatureStatus: Scalars['String'];
   signaturesData: Scalars['String'];
   title: Scalars['String'];

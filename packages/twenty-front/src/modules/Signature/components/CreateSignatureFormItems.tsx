@@ -268,6 +268,7 @@ export const CreateSignatureFormItems = ({
         additional_receiver_ids: formValues.additional_receiver_ids,
         additional_receiver_emails: formValues.additional_receiver_emails,
         filename: attachment.fullPath,
+        attachmentId: attachment.id,
         signatures: formValues.signatures,
       });
 
