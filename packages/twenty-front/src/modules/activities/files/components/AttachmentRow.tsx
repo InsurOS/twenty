@@ -221,12 +221,13 @@ export const AttachmentRow = ({
                 ? () => {
                     navigate(
                       getAppPath(AppPath.Signature, {
-                        signatureId: attachment.id,
+                        attachmentId: attachment.id,
                       }),
                     );
                   }
                 : undefined
             }
+            signatureId={attachment.signatureId}
           />
         </StyledRightContent>
       </ActivityRow>

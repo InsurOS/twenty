@@ -118,14 +118,14 @@ export type CreateSignatureFormValues = z.infer<typeof formSchema>;
 
 export const SignaturePageWithAttachment = () => {
   const currentUser = useRecoilValue(currentUserState);
-  const { signatureId } = useParams();
+  const { attachmentId } = useParams();
   const {
     record: attachment,
     loading: attachmentLoading,
     error: attachmentError,
   } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.Attachment,
-    objectRecordId: signatureId,
+    objectRecordId: attachmentId,
   });
   if (attachmentLoading) {
     return (

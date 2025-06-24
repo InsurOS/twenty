@@ -30,7 +30,7 @@ export enum AppPath {
   Authorize = '/authorize',
 
   //Signature
-  Signature = '/signature/:signatureId',
+  Signature = '/signature/:attachmentId',
 
   // 404 page not found
   NotFoundWildcard = '*',

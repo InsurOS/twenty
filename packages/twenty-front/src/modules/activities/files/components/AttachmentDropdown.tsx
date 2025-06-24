@@ -19,6 +19,7 @@ type AttachmentDropdownProps = {
   onRename: () => void;
   scopeKey: string;
   onSignature?: () => void;
+  signatureId: string | null;
 };
 
 export const AttachmentDropdown = ({
@@ -27,6 +28,7 @@ export const AttachmentDropdown = ({
   onRename,
   scopeKey,
   onSignature,
+  signatureId,
 }: AttachmentDropdownProps) => {
   const dropdownId = `${scopeKey}-settings-field-active-action-dropdown`;
 
@@ -63,7 +65,7 @@ export const AttachmentDropdown = ({
           <DropdownMenuItemsContainer scrollable={false}>
             {Boolean(onSignature) && (
               <MenuItem
-                text="Create Signature"
+                text={signatureId ? 'View Signature' : 'Create Signature'}
                 LeftIcon={IconSignature}
                 onClick={handleNavigateSignaturePage}
               />

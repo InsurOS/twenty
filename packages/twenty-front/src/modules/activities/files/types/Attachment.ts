@@ -1,5 +1,3 @@
-import { Signature } from '@/signature/types/Signature';
-
 export type Attachment = {
   id: string;
   name: string;
@@ -10,7 +8,6 @@ export type Attachment = {
   authorId: string;
   createdAt: string;
   __typename: string;
-  signatures: null | Signature[];
   signatureId: string | null;
 };
 
