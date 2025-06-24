@@ -175,7 +175,6 @@ export const SignaturePage = ({
   attachment: ObjectRecord;
   currentUser: User;
 }) => {
-  console.log('attachment', attachment);
   const { person } = attachment;
   const [step, setStep] = useState(SignatureCreationStep.CONFIGURATION);
   const [pageNumber, setPageNumber] = useState(1);
