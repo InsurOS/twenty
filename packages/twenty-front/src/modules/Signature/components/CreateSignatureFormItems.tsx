@@ -1,3 +1,5 @@
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useLazyFindOneRecord } from '@/object-record/hooks/useLazyFindOneRecord';
 import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/components/FormBooleanFieldInput';
 import { FormRelationToOneFieldInput } from '@/object-record/record-field/form-types/components/FormRelationToOneFieldInput';
@@ -12,6 +14,9 @@ import {
 import { getSignatureColor } from '@/signature/constants/signatureColors';
 import { SignatureFieldType } from '@/signature/constants/signatureFieldTypes';
 import { useCreateSignature } from '@/signature/hooks/useCreateSignature';
+import { AppPath } from '@/types/AppPath';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
@@ -26,6 +31,7 @@ import {
 } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { User } from '~/generated/graphql';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { CreateSignatureFormValues } from '~/pages/SignaturePage/SignaturePage';
 
 export enum SignatureCreationStep {
@@ -94,6 +100,8 @@ export const CreateSignatureFormItems = ({
     objectNameSingular: 'person',
   });
   const { createSignature, loading } = useCreateSignature();
+  const { enqueueSnackBar } = useSnackBar();
+  const navigateApp = useNavigateApp();
 
   const orderEnabled = watch('order_enabled');
   const signees = watch('signees');
@@ -273,11 +281,29 @@ export const CreateSignatureFormItems = ({
         signatures: formValues.signatures,
       });
 
-      console.log('Signature created successfully');
-      // You might want to show a success message or redirect
+      enqueueSnackBar('Signature created successfully', {
+        variant: SnackBarVariant.Success,
+      });
+      if (isDefined(attachment.personId)) {
+        navigateApp(
+          AppPath.RecordShowPage,
+          {
+            objectNameSingular: CoreObjectNameSingular.Person,
+            objectRecordId: attachment.personId,
+          },
+          undefined,
+          undefined,
+          'files',
+        );
+      } else {
+        navigateApp(AppPath.RecordIndexPage, {
+          objectNamePlural: CoreObjectNamePlural.Person,
+        });
+      }
     } catch (error) {
-      console.error('Failed to create signature:', error);
-      // Handle error (show error message, etc.)
+      enqueueSnackBar('Failed to create signature', {
+        variant: SnackBarVariant.Error,
+      });
     }
   };
 
