@@ -286,6 +286,7 @@ export {
   IconTarget,
   IconTargetArrow,
   IconTestPipe,
+  IconTextScan2,
   IconTextSize,
   IconTextWrap,
   IconTimeDuration30,
@@ -312,7 +313,7 @@ export {
   IconWand,
   IconWebhook,
   IconWorld,
-  IconX,
+  IconX
 } from '@tabler/icons-react';
 
 export type { IconProps as TablerIconsProps } from '@tabler/icons-react';
