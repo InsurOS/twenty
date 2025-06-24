@@ -4,7 +4,9 @@ import { useRecoilValue } from 'recoil';
 import { CreateSignatureFormValues } from '~/pages/SignaturePage/SignaturePage';
 
 const CREATE_RABBIT_SIGN_SIGNATURE_WITH_EXTERNAL = gql`
-  mutation CreateRabbitSignSignatureWithExternalCall($input: CreateOneRabbitSignSignatureInput!) {
+  mutation CreateRabbitSignSignatureWithExternalCall(
+    $input: CreateOneRabbitSignSignatureInput!
+  ) {
     createRabbitSignSignatureWithExternalCall(input: $input) {
       id
     }
@@ -13,9 +15,9 @@ const CREATE_RABBIT_SIGN_SIGNATURE_WITH_EXTERNAL = gql`
 
 export const useCreateSignature = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  
+
   const [createSignatureMutation, { loading, error }] = useMutation(
-    CREATE_RABBIT_SIGN_SIGNATURE_WITH_EXTERNAL
+    CREATE_RABBIT_SIGN_SIGNATURE_WITH_EXTERNAL,
   );
 
   const createSignature = async (formValues: CreateSignatureFormValues) => {

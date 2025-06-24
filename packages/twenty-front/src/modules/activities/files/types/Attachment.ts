@@ -8,6 +8,8 @@ export type Attachment = {
   authorId: string;
   createdAt: string;
   __typename: string;
+  signatures: null;
+  signatureId: string | null;
 };
 
 export type AttachmentType =
