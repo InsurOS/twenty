@@ -569,9 +569,6 @@ export class PolicyWorkspaceEntity extends BaseWorkspaceEntity {
   })
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
-  @WorkspaceJoinColumn('timelineActivities')
-  timelineActivitiesId: string;
-
   @WorkspaceRelation({
     standardId: POLICY_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,
@@ -595,9 +592,6 @@ export class PolicyWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   attachments: Relation<AttachmentWorkspaceEntity[]>;
-
-  @WorkspaceJoinColumn('attachments')
-  attachmentsId: string;
 
   @WorkspaceRelation({
     standardId: POLICY_STANDARD_FIELD_IDS.notes,
