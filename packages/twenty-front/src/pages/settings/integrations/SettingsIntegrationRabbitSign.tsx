@@ -148,11 +148,12 @@ export const SettingsIntegrationRabbitSign = () => {
       <SettingsPageContainer>
         <SettingsIntegrationPreview
           integrationLogoUrl={integration.from.image}
+          label={t`Connect your RabbitSign account to create signatures`}
         />
         <Section>
           <H2Title
             title={`${t`RabbitSign Integration`}`}
-            description={t`Connect your RabbitSign account to send/sync document signatures`}
+            description={t`Input your RabbitSign API key below`}
           />
           <StyledForm onSubmit={handleSubmit(onSubmit)}>
             <Controller
