@@ -119,6 +119,11 @@ msgstr ""
 msgid "{name}"
 msgstr "{name}"
 
+#. js-lingui-id: mxuI9n
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+msgid "{serviceName} Integration"
+msgstr ""
+
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
@@ -795,7 +800,7 @@ msgstr "차단 목록"
 msgid "Book a Call"
 msgstr "통화 예약"
 
-#. js-lingui-id: 8Pfllj
+#. js-lingui-id: HLCcj8
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "By using InsurOS, you agree to the"
 msgstr "InsurOS를 사용함으로써 귀하는 다음에 동의합니다"
@@ -867,6 +872,11 @@ msgstr "요금제 취소"
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Cancel your subscription"
 msgstr "구독 취소"
+
+#. js-lingui-id: HGJB7h
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Carriers"
+msgstr ""
 
 #. js-lingui-id: M1RLfx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -1112,6 +1122,11 @@ msgstr "Google과 연결"
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Microsoft와 연결"
+
+#. js-lingui-id: TmTa/m
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+msgid "Connect your {serviceName} account to create signatures"
+msgstr ""
 
 #. js-lingui-id: 9TzudL
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -2078,10 +2093,15 @@ msgstr "API 키 재생성 오류: {err}"
 msgid "Error resending invitation"
 msgstr "초대 재발송 오류"
 
+#. js-lingui-id: PMPiCt
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "Error while ending trial period. Please contact InsurOS team."
+msgstr ""
+
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
-msgid "Error while ending trial period. Please contact Twenty team."
-msgstr ""
+#~ msgid "Error while ending trial period. Please contact Twenty team."
+#~ msgstr ""
 
 #. js-lingui-id: VSQxWH
 #: src/pages/settings/SettingsBilling.tsx
@@ -2468,6 +2488,11 @@ msgstr "구독 신청"
 msgid "Global"
 msgstr "글로벌"
 
+#. js-lingui-id: l2GlQ+
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to Carriers"
+msgstr ""
+
 #. js-lingui-id: mUbv8L
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Companies"
@@ -2476,6 +2501,11 @@ msgstr ""
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "Go to Draft"
+msgstr ""
+
+#. js-lingui-id: 3kZRFj
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to MGAs"
 msgstr ""
 
 #. js-lingui-id: BQE4ob
@@ -2492,6 +2522,11 @@ msgstr ""
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to People"
+msgstr ""
+
+#. js-lingui-id: w0OkWI
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to Policies"
 msgstr ""
 
 #. js-lingui-id: iS69s6
@@ -2746,6 +2781,11 @@ msgstr "입력은 카멜 케이스여야 하며 숫자로 시작할 수 없습�
 msgid "Input settings"
 msgstr "입력 설정"
 
+#. js-lingui-id: nsLdct
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+msgid "Input your {serviceName} API key below"
+msgstr ""
+
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 msgid "Instances"
@@ -2970,6 +3010,18 @@ msgstr ""
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Kanban"
 msgstr "칸반"
+
+#. js-lingui-id: wCSQOc
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+msgid "Key ID"
+msgstr ""
+
+#. js-lingui-id: AJGTWp
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
+msgid "Key Secret"
+msgstr ""
 
 #. js-lingui-id: h6S9Yz
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3246,6 +3298,11 @@ msgstr "메타데이터"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Metadata file generation failed"
 msgstr "메타데이터 파일 생성 실패"
+
+#. js-lingui-id: RJdTU8
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "MGAs"
+msgstr ""
 
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -4005,6 +4062,11 @@ msgstr "출처 및 목적 필드에 대해 다른 이름을 사용하십시오"
 msgid "Plural"
 msgstr "복수"
 
+#. js-lingui-id: KF60Xw
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Policies"
+msgstr ""
+
 #. js-lingui-id: trnWaw
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Polish"
@@ -4319,6 +4381,7 @@ msgid "Russian"
 msgstr "러시아어"
 
 #. js-lingui-id: tfDRzk
+#: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 msgid "Save"
