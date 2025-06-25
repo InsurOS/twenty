@@ -129,6 +129,7 @@ export class PolicyWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The policy effective date`,
     icon: 'IconCalendar',
   })
+  @WorkspaceIsNullable()
   effectiveDate: string;
 
   @WorkspaceField({
@@ -138,6 +139,7 @@ export class PolicyWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The policy expiration date`,
     icon: 'IconCalendar',
   })
+  @WorkspaceIsNullable()
   expirationDate: string;
 
   @WorkspaceField({
@@ -147,6 +149,7 @@ export class PolicyWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The policy bind date`,
     icon: 'IconCalendar',
   })
+  @WorkspaceIsNullable()
   bindDate: string;
 
   @WorkspaceField({
