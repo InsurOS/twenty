@@ -1,7 +1,9 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateOneRabbitSignSignatureInput } from 'src/modules/rabbitsign/dtos/create-one-rabbit-sign-signature.input';
@@ -71,5 +73,30 @@ export class RabbitSignResolver {
     return {
       id: signature.id,
     };
+  }
+
+  @Query(() => String, {
+    name: 'getRabbitSignDownloadUrl',
+    description: 'Get the download URL for a completed RabbitSign signature',
+  })
+  async getRabbitSignDownloadUrl(
+    @Args('signatureId') signatureId: string,
+    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: User,
+  ): Promise<string | null> {
+    const workspaceId = workspace.id;
+    
+    // Get the workspace member ID for the current user in this workspace
+    const workspaceMemberId = user.workspaceMember?.id;
+    
+    if (!workspaceMemberId) {
+      throw new Error('User is not a member of this workspace');
+    }
+    
+    return await this.rabbitSignSignatureService.getDownloadUrl(
+      workspaceId,
+      workspaceMemberId,
+      signatureId,
+    );
   }
 }

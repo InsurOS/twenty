@@ -101,8 +101,6 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
           // You might want to store additional info like folder ID
         }
       );
-      console.log('banana')
-      console.log('result', result);
 
       return {
         ...signatureRecord,
@@ -359,6 +357,51 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
       );
 
       console.log(`Signature ${signatureId} marked as completed - all signers have signed`);
+    }
+  }
+
+  /**
+   * Get download URL for a completed signature
+   */
+  async getDownloadUrl(
+    workspaceId: string,
+    workspaceMemberId: string,
+    signatureId: string,
+  ): Promise<string | null> {
+    console.log(`Getting repository for workspace ${workspaceId} to fetch signature ${signatureId}`);
+    const rabbitSignSignatureRepository = 
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<RabbitSignSignatureWorkspaceEntity>(
+        workspaceId,
+        'rabbitSignSignature',
+      );
+
+    const signature = await rabbitSignSignatureRepository.findOne({
+      where: { id: signatureId, workspaceMemberId },
+    });
+
+    if (!signature || !signature.folderId) {
+      return null;
+    }
+
+    try {
+      const rabbitSignKey = await this.rabbitSignKeyService.getRabbitSignKeyForWorkspace(workspaceMemberId, workspaceId);
+      const { keyId, keySecret } = rabbitSignKey;
+
+      const path = `/api/v1/folder/${signature.folderId}`;
+      const headers = this.createSignatureHeaders('GET', path, keyId, keySecret);
+
+      console.log('before axios')
+      const response = await axios.get(
+        `${this.RABBITSIGN_API_BASE_URL}/folder/${signature.folderId}`,
+        { headers }
+      );
+      console.log('after axios')
+      console.log(response.data)
+
+      return response.data.downloadUrl || null;
+    } catch (error) {
+      console.error('Failed to get download URL:', error);
+      return null;
     }
   }
 }
