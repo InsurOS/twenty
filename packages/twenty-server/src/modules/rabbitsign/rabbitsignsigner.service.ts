@@ -92,34 +92,34 @@ export class RabbitSignSignerService extends TypeOrmQueryService<RabbitSignSigne
         'rabbitSignSigner',
       );
 
-    // Get existing signers to preserve personId relationships
+    // Get existing signers with their person relations to access email
     const existingSigners = await rabbitSignSignerRepository.find({
       where: { signatureId },
+      relations: ['person'],
+      order: { signingOrder: 'ASC' },
     });
 
-    // Create a map of email to personId for existing signers
-    const emailToPersonIdMap = new Map<string, string>();
-    
-    // We need to get person data to match by email
-    // This is a simplified approach - in a real implementation you might want to
-    // store the email in the signer entity or handle this differently
-    for (const existingSigner of existingSigners) {
-      // For now, we'll just update the status of existing signers
-      // In a real implementation, you'd want to match by email and person
-    }
-
-    // Update existing signers with new status
-    for (const rabbitSigner of rabbitSignData.signers) {
-      const existingSigner = existingSigners.find(
-        signer => signer.signingOrder === rabbitSigner.signingOrder
-      );
+    // Update signers based on signing order (since we don't have email in signer entity)
+    // This assumes the order of signers in the webhook matches the order in our database
+    for (let i = 0; i < Math.min(existingSigners.length, rabbitSignData.signers.length); i++) {
+      const existingSigner = existingSigners[i];
+      const rabbitSigner = rabbitSignData.signers[i];
       
-      if (existingSigner) {
+      if (existingSigner && rabbitSigner) {
         await rabbitSignSignerRepository.update(
           { id: existingSigner.id },
-          { status: rabbitSigner.status }
+          { 
+            status: rabbitSigner.status,
+            // Optionally update signing order if it changed
+            signingOrder: rabbitSigner.signingOrder,
+          }
         );
       }
+    }
+
+    // If there are more webhook signers than existing signers, log a warning
+    if (rabbitSignData.signers.length > existingSigners.length) {
+      console.warn(`More signers in webhook (${rabbitSignData.signers.length}) than in database (${existingSigners.length}) for signature ${signatureId}`);
     }
   }
 } 

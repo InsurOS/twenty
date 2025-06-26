@@ -335,20 +335,49 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
         'rabbitSignSignature',
       );
 
-    // Update signature record
-    await rabbitSignSignatureRepository.update(
-      { id: signatureId },
-      {
-        folderId: rabbitSignData.folderId,
-        signatureStatus: rabbitSignData.folderStatus,
-      },
-    );
-
-    // Update signers
+    // First, update the signers
     await this.rabbitSignSignerService.updateSignersFromRabbitSignData(
       workspaceId,
       signatureId,
       rabbitSignData,
     );
+
+    // Check if all signers have signed
+    const allSignersSigned = rabbitSignData.signers.every(signer => 
+      signer.status === 'SIGNED'
+    );
+
+    // Only update signature status if all signers have signed
+    if (allSignersSigned) {
+      await rabbitSignSignatureRepository.update(
+        { id: signatureId },
+        {
+          folderId: rabbitSignData.folderId,
+          signatureStatus: 'COMPLETED', // or whatever status you want for fully signed
+        },
+      );
+    } else {
+      // If not all signers have signed, just update the folderId but keep current status
+      await rabbitSignSignatureRepository.update(
+        { id: signatureId },
+        {
+          folderId: rabbitSignData.folderId,
+        },
+      );
+    }
+  }
+
+  async findSignatureByFolderId(workspaceId: string, folderId: string): Promise<string | null> {
+    const rabbitSignSignatureRepository = 
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<RabbitSignSignatureWorkspaceEntity>(
+        workspaceId,
+        'rabbitSignSignature',
+      );
+
+    const signature = await rabbitSignSignatureRepository.findOne({
+      where: { folderId },
+    });
+
+    return signature?.id || null;
   }
 }
