@@ -52,30 +52,23 @@ export class RabbitSignWebhookController {
         throw new BadRequestException(`No signature found for folderId: ${payload.folderId}`);
       }
       
-      await this.rabbitSignSignatureService.updateSignatureFromRabbitSignData(
+      // Handle the webhook based on event type
+      await this.rabbitSignSignatureService.handleWebhookEvent(
         workspaceId,
         foundSignatureId,
-        {
-          folderId: payload.folderId,
-          creatorEmail: payload.creatorEmail,
-          title: payload.title,
-          summary: payload.summary,
-          folderStatus: payload.folderStatus,
-          signers: payload.signers,
-          ccList: payload.ccList,
-          creationTimeUtc: payload.creationTimeUtc,
-          downloadUrl: payload.downloadUrl,
-        },
+        payload.eventName,
+        payload.signerEmail,
       );
       
       return res.status(HttpStatus.OK).json({
         success: true,
-        message: 'Signature updated successfully',
+        message: 'Webhook processed successfully',
         folderId: payload.folderId,
         signatureId: foundSignatureId,
+        eventName: payload.eventName,
       });
     } catch (error) {
-      console.error('Failed to update signature from webhook data:', error);
+      console.error('Failed to process RabbitSign webhook:', error);
       
       if (error instanceof BadRequestException) {
         return res.status(HttpStatus.BAD_REQUEST).json({

@@ -309,56 +309,6 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
     }
   }
 
-  async updateSignatureFromRabbitSignData(
-    workspaceId: string,
-    signatureId: string,
-    rabbitSignData: {
-      folderId: string;
-      creatorEmail: string;
-      title: string;
-      summary: string;
-      folderStatus: string;
-      signers: Array<{
-        email: string;
-        name: string;
-        status: string;
-        signingOrder: number;
-      }>;
-      ccList: any[];
-      creationTimeUtc: string;
-      downloadUrl: string;
-    },
-  ) {
-    const rabbitSignSignatureRepository = 
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<RabbitSignSignatureWorkspaceEntity>(
-        workspaceId,
-        'rabbitSignSignature',
-      );
-
-    // First, update the signers
-    await this.rabbitSignSignerService.updateSignersFromRabbitSignData(
-      workspaceId,
-      signatureId,
-      rabbitSignData,
-    );
-
-    // Check if all signers have signed
-    const allSignersSigned = rabbitSignData.signers.every(signer => 
-      signer.status === 'SIGNED'
-    );
-
-    // Only update signature status if all signers have signed
-    if (allSignersSigned) {
-      await rabbitSignSignatureRepository.update(
-        { id: signatureId },
-        {
-          folderId: rabbitSignData.folderId,
-          signatureStatus: 'COMPLETED', // or whatever status you want for fully signed
-        },
-      );
-    }
-  }
-
   async findSignatureByFolderId(workspaceId: string, folderId: string): Promise<string | null> {
     const rabbitSignSignatureRepository = 
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<RabbitSignSignatureWorkspaceEntity>(
@@ -371,5 +321,44 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
     });
 
     return signature?.id || null;
+  }
+
+  async handleWebhookEvent(
+    workspaceId: string,
+    signatureId: string,
+    eventName: string,
+    signerEmail: string,
+  ) {
+    console.log(`Handling webhook event: ${eventName} for signer: ${signerEmail}`);
+
+    // Update the specific signer's status based on the event
+    await this.rabbitSignSignerService.updateSignerStatusByEmail(
+      workspaceId,
+      signatureId,
+      signerEmail,
+      eventName === 'SIGNER_SIGNED' ? 'SIGNED' : 'PENDING',
+    );
+
+    // Check if all signers have signed
+    const allSignersSigned = await this.rabbitSignSignerService.areAllSignersSigned(
+      workspaceId,
+      signatureId,
+    );
+
+    // If all signers have signed, update the signature status to completed
+    if (allSignersSigned) {
+      const rabbitSignSignatureRepository = 
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<RabbitSignSignatureWorkspaceEntity>(
+          workspaceId,
+          'rabbitSignSignature',
+        );
+
+      await rabbitSignSignatureRepository.update(
+        { id: signatureId },
+        { signatureStatus: 'COMPLETED' },
+      );
+
+      console.log(`Signature ${signatureId} marked as completed - all signers have signed`);
+    }
   }
 }

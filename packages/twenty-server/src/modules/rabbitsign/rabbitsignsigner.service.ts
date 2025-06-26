@@ -132,4 +132,73 @@ export class RabbitSignSignerService extends TypeOrmQueryService<RabbitSignSigne
     
     console.log(`Updated ${updatedCount} out of ${rabbitSignData.signers.length} signers for signature ${signatureId}`);
   }
+
+  async updateSignerStatusByEmail(
+    workspaceId: string,
+    signatureId: string,
+    signerEmail: string,
+    status: string,
+  ): Promise<RabbitSignSignerWorkspaceEntity | null> {
+    const rabbitSignSignerRepository = 
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<RabbitSignSignerWorkspaceEntity>(
+        workspaceId,
+        'rabbitSignSigner',
+      );
+
+    // Find the signer by signature ID and person's primary email
+    const signer = await rabbitSignSignerRepository.findOne({
+      where: { signatureId },
+      relations: ['person'],
+    });
+
+    if (!signer || !signer.person?.emails?.primaryEmail) {
+      console.warn(`No signer found for email: ${signerEmail} in signature ${signatureId}`);
+      return null;
+    }
+
+    // Check if the email matches (case-insensitive)
+    if (signer.person.emails.primaryEmail.toLowerCase() !== signerEmail.toLowerCase()) {
+      console.warn(`Email mismatch: expected ${signerEmail}, found ${signer.person.emails.primaryEmail}`);
+      return null;
+    }
+
+    // Update the signer status
+    await rabbitSignSignerRepository.update(
+      { id: signer.id },
+      { status }
+    );
+
+    console.log(`Updated signer ${signer.id} status to ${status} for email ${signerEmail}`);
+
+    return await rabbitSignSignerRepository.findOne({
+      where: { id: signer.id },
+      relations: ['person'],
+    });
+  }
+
+  async areAllSignersSigned(
+    workspaceId: string,
+    signatureId: string,
+  ): Promise<boolean> {
+    const rabbitSignSignerRepository = 
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<RabbitSignSignerWorkspaceEntity>(
+        workspaceId,
+        'rabbitSignSigner',
+      );
+
+    const signers = await rabbitSignSignerRepository.find({
+      where: { signatureId },
+    });
+
+    if (signers.length === 0) {
+      console.warn(`No signers found for signature ${signatureId}`);
+      return false;
+    }
+
+    const allSigned = signers.every(signer => signer.status === 'SIGNED');
+    
+    console.log(`Signature ${signatureId}: ${signers.length} signers, all signed: ${allSigned}`);
+    
+    return allSigned;
+  }
 } 

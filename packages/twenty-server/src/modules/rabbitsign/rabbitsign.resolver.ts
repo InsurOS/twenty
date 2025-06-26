@@ -6,7 +6,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateOneRabbitSignSignatureInput } from 'src/modules/rabbitsign/dtos/create-one-rabbit-sign-signature.input';
 import { CreateOneRabbitSignSignatureOutput } from 'src/modules/rabbitsign/dtos/create-one-rabbit-sign-signature.output';
-import { UpdateRabbitSignSignatureWebhookInput } from 'src/modules/rabbitsign/dtos/update-rabbit-sign-signature-webhook.input';
 import { RabbitSignSignatureService } from './rabbitsignsignature.service';
 
 @Resolver()
@@ -72,30 +71,5 @@ export class RabbitSignResolver {
     return {
       id: signature.id,
     };
-  }
-
-  @Mutation(() => Boolean, {
-    name: 'updateRabbitSignSignatureFromWebhook',
-  })
-  async updateRabbitSignSignatureFromWebhook(
-    @Args('input') input: UpdateRabbitSignSignatureWebhookInput,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<boolean> {
-    const workspaceId = workspace.id;
-    
-    try {
-      const parsedData = JSON.parse(input.rabbitSignData);
-      
-      await this.rabbitSignSignatureService.updateSignatureFromRabbitSignData(
-        workspaceId,
-        input.signatureId,
-        parsedData,
-      );
-      
-      return true;
-    } catch (error) {
-      console.error('Failed to update signature from webhook data:', error);
-      return false;
-    }
   }
 }
