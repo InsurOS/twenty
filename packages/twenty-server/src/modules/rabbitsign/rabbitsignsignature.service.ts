@@ -390,13 +390,10 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
       const path = `/api/v1/folder/${signature.folderId}`;
       const headers = this.createSignatureHeaders('GET', path, keyId, keySecret);
 
-      console.log('before axios')
       const response = await axios.get(
         `${this.RABBITSIGN_API_BASE_URL}/folder/${signature.folderId}`,
         { headers }
       );
-      console.log('after axios')
-      console.log(response.data)
 
       return response.data.downloadUrl || null;
     } catch (error) {
