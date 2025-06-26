@@ -4,9 +4,10 @@ export type Signature = {
   title: string;
   message: string;
   createdAt: string;
+  folderId: string;
   updatedAt: string;
   deletedAt: string;
-  signatureStatus: string;
+  signatureStatus: SignatureStatus;
   workspaceMemberId: string;
   __typename: 'RabbitSignSignature';
 };

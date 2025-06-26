@@ -1,8 +1,7 @@
-import { Attachment } from '@/activities/files/types/Attachment';
+import { AttachmentComplete } from '@/activities/files/types/Attachment';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
   CreateSignatureFormItems,
   SignatureCreationStep,
@@ -162,7 +161,7 @@ export const SignaturePageWithAttachment = () => {
   }
   return (
     <SignaturePage
-      attachment={attachment as Attachment}
+      attachment={attachment as AttachmentComplete}
       currentUser={currentUser as User}
     />
   );
@@ -172,10 +171,11 @@ export const SignaturePage = ({
   attachment,
   currentUser,
 }: {
-  attachment: ObjectRecord;
+  attachment: AttachmentComplete;
   currentUser: User;
 }) => {
-  const { person } = attachment;
+  const { person, signature } = attachment;
+  console.log(signature);
   const [step, setStep] = useState(SignatureCreationStep.CONFIGURATION);
   const [pageNumber, setPageNumber] = useState(1);
   const [numPages, setNumPages] = useState<number>(0);
@@ -226,13 +226,19 @@ export const SignaturePage = ({
           <form onSubmit={handleSubmit}>
             <StyledPageContainer>
               <StyledScrollWrapper componentInstanceId="signature-form">
-                <CreateSignatureFormItems
-                  onNext={setStep}
-                  currentStep={step}
-                  currentPageIndex={pageNumber - 1}
-                  currentUser={currentUser}
-                  attachment={attachment}
-                />
+                {signature ? (
+                  <div>
+                    <h1>Signature</h1>
+                  </div>
+                ) : (
+                  <CreateSignatureFormItems
+                    onNext={setStep}
+                    currentStep={step}
+                    currentPageIndex={pageNumber - 1}
+                    currentUser={currentUser}
+                    attachment={attachment}
+                  />
+                )}
               </StyledScrollWrapper>
               <StyledAttachmentContainer>
                 <DocumentSignatureEditor
