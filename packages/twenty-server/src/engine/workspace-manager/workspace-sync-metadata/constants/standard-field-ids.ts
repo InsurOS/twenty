@@ -652,6 +652,7 @@ export const RABBIT_SIGN_KEY_STANDARD_FIELD_IDS = {
 
 export const RABBIT_SIGN_SIGNATURE_STANDARD_FIELD_IDS = {
   title: '20202020-9d1e-51ac-b13b-621631298d55',
+  message: '20202020-1d1e-51ac-b13b-621631298d75',
   signatureStatus: '20202020-1d1e-51ac-b13b-621631298d65',
   workspaceMember: '20202020-7d0e-51ac-b13b-621631298d75',
   attachment: '20202020-5d1e-51ac-b13b-621633238d85',

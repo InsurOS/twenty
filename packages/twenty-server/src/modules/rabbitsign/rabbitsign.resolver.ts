@@ -32,15 +32,15 @@ export class RabbitSignResolver {
     
     // Convert signatures to signers format for RabbitSign
     const signers = signatures.map((signature: any) => ({
-      personId: signature.personId,
       email: signature.email,
       name: signature.name,
+      signeeId: signature.signee_id,
       signaturePosition: {
         x: signature.x,
         y: signature.y,
         width: signature.width,
         height: signature.height,
-        pageIndex: signature.pageIndex,
+        pageIndex: signature.page_index,
       },
     }));
 

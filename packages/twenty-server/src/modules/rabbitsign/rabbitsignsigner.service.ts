@@ -92,34 +92,44 @@ export class RabbitSignSignerService extends TypeOrmQueryService<RabbitSignSigne
         'rabbitSignSigner',
       );
 
-    // Get existing signers with their person relations to access email
+    // Get existing signers with their person relations to access primary email
     const existingSigners = await rabbitSignSignerRepository.find({
       where: { signatureId },
       relations: ['person'],
       order: { signingOrder: 'ASC' },
     });
 
-    // Update signers based on signing order (since we don't have email in signer entity)
-    // This assumes the order of signers in the webhook matches the order in our database
-    for (let i = 0; i < Math.min(existingSigners.length, rabbitSignData.signers.length); i++) {
-      const existingSigner = existingSigners[i];
-      const rabbitSigner = rabbitSignData.signers[i];
+    // Create a map of primary email to existing signer for efficient lookup
+    const emailToSignerMap = new Map<string, RabbitSignSignerWorkspaceEntity>();
+    
+    for (const existingSigner of existingSigners) {
+      if (existingSigner.person?.emails?.primaryEmail) {
+        emailToSignerMap.set(existingSigner.person.emails.primaryEmail.toLowerCase(), existingSigner);
+      }
+    }
+
+    // Update signers by matching email addresses
+    for (const rabbitSigner of rabbitSignData.signers) {
+      const existingSigner = emailToSignerMap.get(rabbitSigner.email.toLowerCase());
       
-      if (existingSigner && rabbitSigner) {
+      if (existingSigner) {
         await rabbitSignSignerRepository.update(
           { id: existingSigner.id },
           { 
             status: rabbitSigner.status,
-            // Optionally update signing order if it changed
             signingOrder: rabbitSigner.signingOrder,
           }
         );
+      } else {
+        console.warn(`No signer found for email: ${rabbitSigner.email} in signature ${signatureId}`);
       }
     }
 
-    // If there are more webhook signers than existing signers, log a warning
-    if (rabbitSignData.signers.length > existingSigners.length) {
-      console.warn(`More signers in webhook (${rabbitSignData.signers.length}) than in database (${existingSigners.length}) for signature ${signatureId}`);
-    }
+    // Log summary of updates
+    const updatedCount = rabbitSignData.signers.filter(signer => 
+      emailToSignerMap.has(signer.email.toLowerCase())
+    ).length;
+    
+    console.log(`Updated ${updatedCount} out of ${rabbitSignData.signers.length} signers for signature ${signatureId}`);
   }
 } 

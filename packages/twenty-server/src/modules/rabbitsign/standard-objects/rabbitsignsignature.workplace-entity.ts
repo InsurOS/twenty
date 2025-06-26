@@ -36,6 +36,14 @@ export class RabbitSignSignatureWorkspaceEntity extends BaseWorkspaceEntity {
   title: string;
 
   @WorkspaceField({
+    standardId: RABBIT_SIGN_SIGNATURE_STANDARD_FIELD_IDS.message,
+    type: FieldMetadataType.TEXT,
+    label: msg`Message`,
+    description: msg`The message of the RabbitSignature request`,
+  })
+  message: string;
+
+  @WorkspaceField({
     standardId: RABBIT_SIGN_SIGNATURE_STANDARD_FIELD_IDS.signatureStatus,
     type: FieldMetadataType.TEXT,
     label: msg`Signature Status`,

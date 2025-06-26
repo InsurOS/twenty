@@ -221,9 +221,9 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
     attachmentId: string;
     pdfBuffer?: Buffer;
     signers?: Array<{
-      personId: string;
       email: string;
       name: string;
+      signeeId: string;
       signaturePosition: {
         x: number;
         y: number;
@@ -276,7 +276,7 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
         // Step 3: Create signer records
         if (input.signers) {
           const signersData = input.signers.map((signer, index) => ({
-            personId: signer.personId,
+            personId: signer.signeeId,
             status: 'NOTIFIED', // Initial status when signature is sent
             signingOrder: index + 1,
           }));
@@ -354,14 +354,6 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
         {
           folderId: rabbitSignData.folderId,
           signatureStatus: 'COMPLETED', // or whatever status you want for fully signed
-        },
-      );
-    } else {
-      // If not all signers have signed, just update the folderId but keep current status
-      await rabbitSignSignatureRepository.update(
-        { id: signatureId },
-        {
-          folderId: rabbitSignData.folderId,
         },
       );
     }
