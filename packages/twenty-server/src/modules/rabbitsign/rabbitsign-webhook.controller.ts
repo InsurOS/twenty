@@ -32,6 +32,8 @@ export class RabbitSignWebhookController {
     @Res() res: Response,
   ) {
     try {
+      console.log('updateSignatureFromWebhook', payload);
+      console.log(payload);
       // Extract workspace from the request origin
       const origin = request.get('origin') || request.get('host') || '';
       const workspace = await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(origin);
