@@ -592,7 +592,7 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
           const attachment = await attachmentRepository.save({
             name: file.name,
             fullPath: uploadResult.files[0].path,
-            type: file.type,
+            type: originalAttachment.type,
             authorId: signature.workspaceMemberId,
             signatureId: signatureId,
             // Copy the fields from the original attachment to link to the same person/company
