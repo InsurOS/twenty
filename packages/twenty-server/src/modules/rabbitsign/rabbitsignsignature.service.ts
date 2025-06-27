@@ -600,7 +600,6 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
             fullPath: uploadResult.files[0].path,
             type: originalAttachment.type,
             authorId: signature.workspaceMemberId,
-            signatureId: signatureId,
             // Copy the fields from the original attachment to link to the same person/company
             personId: originalAttachment.personId,
             companyId: originalAttachment.companyId,
