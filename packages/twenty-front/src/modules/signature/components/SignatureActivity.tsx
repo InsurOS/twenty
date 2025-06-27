@@ -152,7 +152,10 @@ const SignatureActivityWithSignatureComplete = ({
       }
     });
 
-    if (signatureComplete.signatureStatus === 'SIGNED') {
+    if (
+      signatureComplete.signatureStatus === 'SIGNED' ||
+      signatureComplete.signatureStatus === 'COMPLETED'
+    ) {
       const allSignersSigned = signatureComplete.signers.every(
         (signer) => signer.status === 'SIGNED',
       );
