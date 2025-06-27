@@ -30,12 +30,13 @@ type SignatureActivityWithSignatureCompleteProps = {
 };
 
 const StyledTimelineContainer = styled.div`
-  align-items: center;
+  align-items: flex-start;
   align-self: stretch;
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
+  margin: 0 ${({ theme }) => theme.spacing(6)};
   justify-content: flex-start;
 `;
 

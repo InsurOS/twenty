@@ -213,6 +213,14 @@ export const formatToHumanReadableDate = (date: Date | string) => {
   }).format(parsedJSDate);
 };
 
+export const formatToHumanReadableDateWithoutYear = (date: Date | string) => {
+  const parsedJSDate = parseDate(date).toJSDate();
+  return new Intl.DateTimeFormat(undefined, {
+    month: 'short',
+    day: 'numeric',
+  }).format(parsedJSDate);
+};
+
 export const formatToHumanReadableDateTime = (date: Date | string) => {
   const parsedJSDate = parseDate(date).toJSDate();
 
