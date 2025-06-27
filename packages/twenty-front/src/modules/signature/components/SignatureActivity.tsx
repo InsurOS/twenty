@@ -1,0 +1,212 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { SignatureActivityRow } from '@/signature/components/SignatureActivityRow';
+import { SignatureStatusHeader } from '@/signature/components/SignatureStatusHeader';
+import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
+import { IconCheck, IconClockHour8, IconSignature } from 'twenty-ui/display';
+import { Loader } from 'twenty-ui/feedback';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+} from 'twenty-ui/layout';
+import {
+  Signature,
+  SignatureActivityItem,
+  SignatureComplete,
+} from '../types/Signature';
+
+type SignatureActivityProps = {
+  signature: Signature;
+};
+
+type SignatureActivityWithSignatureCompleteProps = {
+  signatureComplete: SignatureComplete;
+};
+
+const StyledTimelineContainer = styled.div`
+  align-items: center;
+  align-self: stretch;
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
+  justify-content: flex-start;
+`;
+
+const StyledActivityGroupContainer = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  position: relative;
+`;
+
+const StyledActivityGroupBar = styled.div`
+  align-items: center;
+  background: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  width: 24px;
+`;
+
+const StyledLoaderContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+`;
+
+const generateSignatureActivities = (
+  signatureComplete: SignatureComplete,
+): SignatureActivityItem[] => {
+  const activities: SignatureActivityItem[] = [];
+
+  activities.push({
+    id: 'signature-created',
+    type: 'SIGNATURE_CREATED',
+    title: 'Signature request created',
+    description: `"${signatureComplete.title}" was created`,
+    createdAt: signatureComplete.createdAt,
+    icon: <IconSignature />,
+  });
+
+  signatureComplete.signers.forEach((signer) => {
+    if (signer.status === 'NOTIFIED') {
+      activities.push({
+        id: `signer-${signer.id}-notified`,
+        type: 'SIGNER_NOTIFIED',
+        title: 'Signer notified',
+        description: 'A signer was notified to sign the document',
+        createdAt: signer.createdAt,
+        icon: <IconClockHour8 />,
+        signerId: signer.personId,
+      });
+    } else if (signer.status === 'SIGNED') {
+      activities.push({
+        id: `signer-${signer.id}-signed`,
+        type: 'SIGNER_SIGNED',
+        title: 'Signer signed',
+        description: 'A signer completed their signature',
+        createdAt: signer.updatedAt,
+        icon: <IconCheck />,
+        signerId: signer.personId,
+      });
+    }
+  });
+
+  if (signatureComplete.signatureStatus === 'SIGNED') {
+    const allSignersSigned = signatureComplete.signers.every(
+      (signer) => signer.status === 'SIGNED',
+    );
+    if (allSignersSigned) {
+      activities.push({
+        id: 'signature-completed',
+        type: 'SIGNATURE_COMPLETED',
+        title: 'Signature request completed',
+        description: 'All signers have completed their signatures',
+        createdAt: signatureComplete.updatedAt,
+        icon: <IconCheck />,
+      });
+    }
+  }
+
+  return activities.sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  );
+};
+
+export const SignatureActivity = ({ signature }: SignatureActivityProps) => {
+  const {
+    record: signatureComplete,
+    loading: signatureCompleteLoading,
+    error: signatureCompleteError,
+  } = useFindOneRecord<SignatureComplete>({
+    objectNameSingular: CoreObjectNameSingular.RABBIT_SIGN_SIGNATURE,
+    objectRecordId: signature.id,
+  });
+
+  if (signatureCompleteLoading) {
+    return (
+      <StyledLoaderContainer>
+        <Loader />
+      </StyledLoaderContainer>
+    );
+  }
+
+  if (!signatureComplete || isDefined(signatureCompleteError)) {
+    return (
+      <AnimatedPlaceholderEmptyContainer
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
+      >
+        <AnimatedPlaceholder type="noFile" />
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTitle>
+            No Document
+          </AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptySubTitle>
+            No document was found for this signature request.
+          </AnimatedPlaceholderEmptySubTitle>
+        </AnimatedPlaceholderEmptyTextContainer>
+      </AnimatedPlaceholderEmptyContainer>
+    );
+  }
+
+  return (
+    <SignatureActivityWithSignatureComplete
+      signatureComplete={signatureComplete}
+    />
+  );
+};
+
+const SignatureActivityWithSignatureComplete = ({
+  signatureComplete,
+}: SignatureActivityWithSignatureCompleteProps) => {
+  const activities = generateSignatureActivities(signatureComplete);
+  const isActivitiesEmpty = activities.length === 0;
+
+  if (isActivitiesEmpty) {
+    return (
+      <AnimatedPlaceholderEmptyContainer
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
+      >
+        <AnimatedPlaceholder type="emptyTimeline" />
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTitle>
+            No signature activity yet
+          </AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptySubTitle>
+            There is no activity associated with this signature request.
+          </AnimatedPlaceholderEmptySubTitle>
+        </AnimatedPlaceholderEmptyTextContainer>
+      </AnimatedPlaceholderEmptyContainer>
+    );
+  }
+
+  return (
+    <div>
+      <SignatureStatusHeader signatureComplete={signatureComplete} />
+      <StyledTimelineContainer>
+        <StyledActivityGroupContainer>
+          <StyledActivityGroupBar />
+          {activities.map((activity, index) => (
+            <SignatureActivityRow
+              key={activity.id}
+              activity={activity}
+              isLastActivity={index === activities.length - 1}
+            />
+          ))}
+        </StyledActivityGroupContainer>
+      </StyledTimelineContainer>
+    </div>
+  );
+};

@@ -1,3 +1,5 @@
+import { Attachment } from '@/activities/files/types/Attachment';
+
 export type Signature = {
   id: string;
   attachmentId: string;
@@ -18,3 +20,39 @@ export enum SignatureStatus {
   SIGNED = 'SIGNED',
   FAILED = 'FAILED',
 }
+
+export enum SignatureSignerStatus {
+  NOTIFIED = 'NOTIFIED',
+  SIGNED = 'SIGNED',
+}
+
+export type SignatureSigner = {
+  id: string;
+  createdAt: string;
+  deletedAt: string;
+  updatedAt: string;
+  personId: string;
+  signatureId: string;
+  signingOrder: number;
+  status: SignatureSignerStatus;
+  __typename: 'RabbitSignSignatureSigner';
+};
+
+export type SignatureComplete = Signature & {
+  attachment: Attachment;
+  signers: SignatureSigner[];
+};
+
+export type SignatureActivityItem = {
+  id: string;
+  type:
+    | 'SIGNATURE_CREATED'
+    | 'SIGNER_SIGNED'
+    | 'SIGNER_NOTIFIED'
+    | 'SIGNATURE_COMPLETED';
+  title: string;
+  description: string;
+  createdAt: string;
+  icon: React.ReactNode;
+  signerId?: string;
+};

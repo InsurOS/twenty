@@ -7,6 +7,7 @@ import {
   SignatureCreationStep,
 } from '@/signature/components/CreateSignatureFormItems';
 import { DocumentSignatureEditor } from '@/signature/components/DocumentSignatureEditor';
+import { SignatureActivity } from '@/signature/components/SignatureActivity';
 import {
   getSignatureColor,
   SignatureColor,
@@ -175,7 +176,6 @@ export const SignaturePage = ({
   currentUser: User;
 }) => {
   const { person, signature } = attachment;
-  console.log(signature);
   const [step, setStep] = useState(SignatureCreationStep.CONFIGURATION);
   const [pageNumber, setPageNumber] = useState(1);
   const [numPages, setNumPages] = useState<number>(0);
@@ -225,12 +225,12 @@ export const SignaturePage = ({
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit}>
             <StyledPageContainer>
-              <StyledScrollWrapper componentInstanceId="signature-form">
-                {signature ? (
-                  <div>
-                    <h1>Signature</h1>
-                  </div>
-                ) : (
+              {signature ? (
+                <StyledScrollWrapper componentInstanceId="signature-activity">
+                  <SignatureActivity signature={signature} />
+                </StyledScrollWrapper>
+              ) : (
+                <StyledScrollWrapper componentInstanceId="signature-form">
                   <CreateSignatureFormItems
                     onNext={setStep}
                     currentStep={step}
@@ -238,8 +238,8 @@ export const SignaturePage = ({
                     currentUser={currentUser}
                     attachment={attachment}
                   />
-                )}
-              </StyledScrollWrapper>
+                </StyledScrollWrapper>
+              )}
               <StyledAttachmentContainer>
                 <DocumentSignatureEditor
                   pageNumber={pageNumber}
