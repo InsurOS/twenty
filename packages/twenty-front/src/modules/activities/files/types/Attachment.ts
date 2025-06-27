@@ -1,3 +1,6 @@
+import { Person } from '@/people/types/Person';
+import { Signature } from '../../../signature/types/Signature';
+
 export type Attachment = {
   id: string;
   name: string;
@@ -20,3 +23,14 @@ export type AttachmentType =
   | 'TextDocument'
   | 'Video'
   | 'Other';
+
+export type AttachmentComplete = Attachment & {
+  person: Omit<Person, 'email'> & {
+    emails: {
+      __typename: 'Emails';
+      primaryEmail: string;
+      additionalEmails: string[];
+    };
+  };
+  signature: Signature | null;
+};
