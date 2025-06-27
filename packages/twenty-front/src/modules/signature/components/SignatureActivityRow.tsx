@@ -4,9 +4,9 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { Person } from '@/people/types/Person';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { format } from 'date-fns';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { formatToHumanReadableDateTime } from '~/utils/date-utils';
 import { SignatureActivityItem } from '../types/Signature';
 
 const StyledTimelineItemContainer = styled.div`
@@ -95,10 +95,7 @@ export const SignatureActivityRow = ({
   isLastActivity: boolean;
 }) => {
   const { t } = useLingui();
-  const beautifiedCreatedAt = format(
-    new Date(activity.createdAt),
-    "MMM d, yyyy 'at' h:mm a",
-  );
+  const beautifiedCreatedAt = formatToHumanReadableDateTime(activity.createdAt);
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 

@@ -1,4 +1,8 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { gql, useMutation } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 import { CreateSignatureFormValues } from '~/pages/SignaturePage/SignaturePage';
@@ -15,6 +19,16 @@ const CREATE_RABBIT_SIGN_SIGNATURE_WITH_EXTERNAL = gql`
 
 export const useCreateSignature = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.Attachment,
+  });
+  const computedRecordGqlFields = generateDepthOneRecordGqlFields({
+    objectMetadataItem,
+  });
+  const { findOneRecordQuery: findOneAttachmentQuery } = useFindOneRecordQuery({
+    objectNameSingular: CoreObjectNameSingular.Attachment,
+    recordGqlFields: computedRecordGqlFields,
+  });
 
   const [createSignatureMutation, { loading, error }] = useMutation(
     CREATE_RABBIT_SIGN_SIGNATURE_WITH_EXTERNAL,
@@ -40,6 +54,12 @@ export const useCreateSignature = () => {
           signaturesData: signaturesJson,
         },
       },
+      refetchQueries: [
+        {
+          query: findOneAttachmentQuery,
+          variables: { objectRecordId: formValues.attachment_id },
+        },
+      ],
     });
 
     return result.data.createRabbitSignSignatureWithExternalCall;
