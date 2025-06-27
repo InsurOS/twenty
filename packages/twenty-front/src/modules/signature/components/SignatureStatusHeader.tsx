@@ -1,5 +1,6 @@
 import { SignatureComplete } from '@/signature/types/Signature';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledStatusHeader = styled.div`
   margin-bottom: 0;
@@ -24,6 +25,8 @@ export const SignatureStatusHeader = ({
 }: {
   signatureComplete: SignatureComplete;
 }) => {
+  const { t } = useLingui();
+
   const getStatusInfo = () => {
     const totalSigners = signatureComplete.signers.length;
     const signedSigners = signatureComplete.signers.filter(
@@ -32,28 +35,28 @@ export const SignatureStatusHeader = ({
 
     if (signatureComplete.signatureStatus === 'SIGNED') {
       return {
-        title: 'Signature Completed',
-        description: `All ${totalSigners} signer${totalSigners > 1 ? 's' : ''} have completed their signatures`,
+        title: t`Signature Completed`,
+        description: t`All ${totalSigners} signer${totalSigners === 1 ? '' : 's'} have completed their signatures`,
       };
     }
 
     if (signatureComplete.signatureStatus === 'SENT_FOR_SIGNATURE') {
       if (signedSigners === 0) {
         return {
-          title: 'Signature Pending',
-          description: `Signature request is created, waiting on ${totalSigners} signer${totalSigners > 1 ? 's' : ''} to complete signature`,
+          title: t`Signature Pending`,
+          description: t`Signature request is created, waiting on ${totalSigners} signer${totalSigners === 1 ? '' : 's'} to complete signature`,
         };
       } else {
         return {
-          title: 'Signature In Progress',
-          description: `${signedSigners} of ${totalSigners} signer${totalSigners > 1 ? 's' : ''} have signed`,
+          title: t`Signature In Progress`,
+          description: t`${signedSigners} of ${totalSigners} signer${totalSigners === 1 ? '' : 's'} have signed`,
         };
       }
     }
 
     return {
-      title: 'Signature Request',
-      description: 'Signature request details',
+      title: t`Signature Request`,
+      description: t`Signature request details`,
     };
   };
 

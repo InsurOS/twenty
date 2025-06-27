@@ -3,6 +3,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { SignatureActivityRow } from '@/signature/components/SignatureActivityRow';
 import { SignatureStatusHeader } from '@/signature/components/SignatureStatusHeader';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconClockHour8, IconSignature } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
@@ -64,66 +65,8 @@ const StyledLoaderContainer = styled.div`
   justify-content: center;
 `;
 
-const generateSignatureActivities = (
-  signatureComplete: SignatureComplete,
-): SignatureActivityItem[] => {
-  const activities: SignatureActivityItem[] = [];
-
-  activities.push({
-    id: 'signature-created',
-    type: 'SIGNATURE_CREATED',
-    title: 'Signature request created',
-    description: `"${signatureComplete.title}" was created`,
-    createdAt: signatureComplete.createdAt,
-    icon: <IconSignature />,
-  });
-
-  signatureComplete.signers.forEach((signer) => {
-    if (signer.status === 'NOTIFIED') {
-      activities.push({
-        id: `signer-${signer.id}-notified`,
-        type: 'SIGNER_NOTIFIED',
-        title: 'Signer notified',
-        description: 'A signer was notified to sign the document',
-        createdAt: signer.createdAt,
-        icon: <IconClockHour8 />,
-        signerId: signer.personId,
-      });
-    } else if (signer.status === 'SIGNED') {
-      activities.push({
-        id: `signer-${signer.id}-signed`,
-        type: 'SIGNER_SIGNED',
-        title: 'Signer signed',
-        description: 'A signer completed their signature',
-        createdAt: signer.updatedAt,
-        icon: <IconCheck />,
-        signerId: signer.personId,
-      });
-    }
-  });
-
-  if (signatureComplete.signatureStatus === 'SIGNED') {
-    const allSignersSigned = signatureComplete.signers.every(
-      (signer) => signer.status === 'SIGNED',
-    );
-    if (allSignersSigned) {
-      activities.push({
-        id: 'signature-completed',
-        type: 'SIGNATURE_COMPLETED',
-        title: 'Signature request completed',
-        description: 'All signers have completed their signatures',
-        createdAt: signatureComplete.updatedAt,
-        icon: <IconCheck />,
-      });
-    }
-  }
-
-  return activities.sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-  );
-};
-
 export const SignatureActivity = ({ signature }: SignatureActivityProps) => {
+  const { t } = useLingui();
   const {
     record: signatureComplete,
     loading: signatureCompleteLoading,
@@ -150,10 +93,10 @@ export const SignatureActivity = ({ signature }: SignatureActivityProps) => {
         <AnimatedPlaceholder type="noFile" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            No Document
+            {t`No Document`}
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            No document was found for this signature request.
+            {t`No document was found for this signature request.`}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>
@@ -170,7 +113,68 @@ export const SignatureActivity = ({ signature }: SignatureActivityProps) => {
 const SignatureActivityWithSignatureComplete = ({
   signatureComplete,
 }: SignatureActivityWithSignatureCompleteProps) => {
-  const activities = generateSignatureActivities(signatureComplete);
+  const { t } = useLingui();
+
+  const generateSignatureActivities = (): SignatureActivityItem[] => {
+    const activities: SignatureActivityItem[] = [];
+    const signatureTitle = signatureComplete.title;
+
+    activities.push({
+      id: 'signature-created',
+      type: 'SIGNATURE_CREATED',
+      title: t`Signature request created`,
+      description: t`"${signatureTitle}" was created`,
+      createdAt: signatureComplete.createdAt,
+      icon: <IconSignature />,
+    });
+
+    signatureComplete.signers.forEach((signer) => {
+      if (signer.status === 'NOTIFIED') {
+        activities.push({
+          id: `signer-${signer.id}-notified`,
+          type: 'SIGNER_NOTIFIED',
+          title: t`Signer notified`,
+          description: t`A signer was notified to sign the document`,
+          createdAt: signer.createdAt,
+          icon: <IconClockHour8 />,
+          signerId: signer.personId,
+        });
+      } else if (signer.status === 'SIGNED') {
+        activities.push({
+          id: `signer-${signer.id}-signed`,
+          type: 'SIGNER_SIGNED',
+          title: t`Signer signed`,
+          description: t`A signer completed their signature`,
+          createdAt: signer.updatedAt,
+          icon: <IconCheck />,
+          signerId: signer.personId,
+        });
+      }
+    });
+
+    if (signatureComplete.signatureStatus === 'SIGNED') {
+      const allSignersSigned = signatureComplete.signers.every(
+        (signer) => signer.status === 'SIGNED',
+      );
+      if (allSignersSigned) {
+        activities.push({
+          id: 'signature-completed',
+          type: 'SIGNATURE_COMPLETED',
+          title: t`Signature request completed`,
+          description: t`All signers have completed their signatures`,
+          createdAt: signatureComplete.updatedAt,
+          icon: <IconCheck />,
+        });
+      }
+    }
+
+    return activities.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  };
+
+  const activities = generateSignatureActivities();
   const isActivitiesEmpty = activities.length === 0;
 
   if (isActivitiesEmpty) {
@@ -182,10 +186,10 @@ const SignatureActivityWithSignatureComplete = ({
         <AnimatedPlaceholder type="emptyTimeline" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            No signature activity yet
+            {t`No signature activity yet`}
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            There is no activity associated with this signature request.
+            {t`There is no activity associated with this signature request.`}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>

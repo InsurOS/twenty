@@ -3,6 +3,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { Person } from '@/people/types/Person';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { format } from 'date-fns';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -93,6 +94,7 @@ export const SignatureActivityRow = ({
   activity: SignatureActivityItem;
   isLastActivity: boolean;
 }) => {
+  const { t } = useLingui();
   const beautifiedCreatedAt = format(
     new Date(activity.createdAt),
     "MMM d, yyyy 'at' h:mm a",
@@ -115,17 +117,17 @@ export const SignatureActivityRow = ({
     activity.type === 'SIGNER_SIGNED'
   ) {
     if (personLoading) {
-      title = 'Loading...';
-      description = 'Loading signer information...';
+      title = t`Loading...`;
+      description = t`Loading signer information...`;
     } else if (isDefined(person)) {
       const isCurrentUser = currentWorkspaceMember?.id === activity.signerId;
       if (isCurrentUser) {
         if (activity.type === 'SIGNER_NOTIFIED') {
-          title = 'You notified';
-          description = 'You were notified to sign the document';
+          title = t`You notified`;
+          description = t`You were notified to sign the document`;
         } else {
-          title = 'You signed';
-          description = 'You completed your signature';
+          title = t`You signed`;
+          description = t`You completed your signature`;
         }
       } else {
         const displayName =
@@ -133,19 +135,19 @@ export const SignatureActivityRow = ({
             ? `${person.name.firstName} ${person.name.lastName.charAt(0)}.`
             : person.name?.firstName ||
               person.name?.lastName ||
-              'Unknown Person';
+              t`Unknown Person`;
         if (activity.type === 'SIGNER_NOTIFIED') {
-          title = `${displayName} notified`;
-          description = `${displayName} was notified to sign the document`;
+          title = t`${displayName} notified`;
+          description = t`${displayName} was notified to sign the document`;
         } else {
-          title = `${displayName} signed`;
-          description = `${displayName} completed their signature`;
+          title = t`${displayName} signed`;
+          description = t`${displayName} completed their signature`;
         }
       }
     } else {
       // Fallback for when person data is not available
-      title = 'Signer information unavailable';
-      description = 'Unable to load signer details';
+      title = t`Signer information unavailable`;
+      description = t`Unable to load signer details`;
     }
   }
 
