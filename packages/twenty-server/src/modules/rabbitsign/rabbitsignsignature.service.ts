@@ -396,6 +396,22 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
       throw new Error('Signature not found or no folder ID available');
     }
 
+    // Get the original attachment to copy its fields
+    const attachmentRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
+      workspaceId,
+      'attachment',
+    );
+
+    const originalAttachment = await attachmentRepository.findOne({
+      where: { signatureId: signatureId },
+    });
+
+    if (!originalAttachment) {
+      throw new Error('Original attachment not found for signature');
+    }
+
+    console.log(`Found original attachment: ${originalAttachment.name} with personId: ${originalAttachment.personId}, companyId: ${originalAttachment.companyId}`);
+
     try {
       // Step 1: Get download URL from RabbitSign
       const rabbitSignKey = await this.rabbitSignKeyService.getRabbitSignKeyForWorkspace(signature.workspaceMemberId, workspaceId);
@@ -556,11 +572,6 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
       }
 
       // Step 4: Upload each document to S3 and create attachment records
-      const attachmentRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
-        workspaceId,
-        'attachment',
-      );
-
       const uploadedAttachments: Array<{ id: string; name: string; fullPath: string; type: string }> = [];
 
       for (const file of extractedFiles) {
@@ -584,6 +595,13 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
             type: file.type,
             authorId: signature.workspaceMemberId,
             signatureId: signatureId,
+            // Copy the fields from the original attachment to link to the same person/company
+            personId: originalAttachment.personId,
+            companyId: originalAttachment.companyId,
+            policyId: originalAttachment.policyId,
+            taskId: originalAttachment.taskId,
+            noteId: originalAttachment.noteId,
+            opportunityId: originalAttachment.opportunityId,
           });
 
           uploadedAttachments.push({
