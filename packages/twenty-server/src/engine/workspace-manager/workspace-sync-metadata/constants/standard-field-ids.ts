@@ -53,6 +53,8 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   opportunity: '20202020-7374-499d-bea3-9354890755b5',
   custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
   signature: '20202020-6d1e-51ac-b15b-621631238d86',
+  signatureAuditTrail: '20202020-7d1e-51ac-b15b-121631238d87',
+  signatureSigned: '20202020-8d1e-51ac-b15b-221631238d88',
 };
 
 export const BASE_OBJECT_STANDARD_FIELD_IDS = {
@@ -658,6 +660,8 @@ export const RABBIT_SIGN_SIGNATURE_STANDARD_FIELD_IDS = {
   attachment: '20202020-5d1e-51ac-b13b-621633238d85',
   folderId: '20202020-5d1e-51ac-b13b-621633238c25',
   signers: '20202020-6d1e-51ac-b13b-621633234c86',
+  signatureAuditTrailAttachment: '20202020-7d1e-51ac-b13b-121633234c87',
+  signatureSignedAttachment: '20202020-8d1e-51ac-b13b-221633234c88',
 };
 
 export const RABBIT_SIGN_SIGNER_STANDARD_FIELD_IDS = {
