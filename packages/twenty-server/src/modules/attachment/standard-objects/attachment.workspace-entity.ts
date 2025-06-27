@@ -192,6 +192,38 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('signature')
   signatureId: string | null;
 
+  @WorkspaceRelation({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.signatureAuditTrail,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Signature Audit Trail Download`,
+    description: msg`Attachment signature audit trail download`,
+    icon: 'IconFileDownload',
+    inverseSideTarget: () => RabbitSignSignatureWorkspaceEntity,
+    inverseSideFieldKey: 'signatureAuditTrailDownloadAttachment',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  signatureAuditTrailDownload: Relation<RabbitSignSignatureWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('signatureAuditTrailDownload')
+  signatureAuditTrailDownloadId: string | null;
+
+  @WorkspaceRelation({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.signatureSigned,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Signature Signed`,
+    description: msg`Attachment signature signed`,
+    icon: 'IconFileCheck',
+    inverseSideTarget: () => RabbitSignSignatureWorkspaceEntity,
+    inverseSideFieldKey: 'signatureSignedAttachment',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  signatureSigned: Relation<RabbitSignSignatureWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('signatureSigned')
+  signatureSignedId: string | null;
+
   @WorkspaceDynamicRelation({
     type: RelationType.MANY_TO_ONE,
     argsFactory: (oppositeObjectMetadata) => ({
