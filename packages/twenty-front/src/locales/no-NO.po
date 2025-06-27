@@ -74,6 +74,11 @@ msgstr ": I dag"
 msgid "· {fieldSearchInputValue}"
 msgstr ""
 
+#. js-lingui-id: +o6pRA
+#: src/modules/signature/components/SignatureActivity.tsx
+msgid "\"{signatureTitle}\" was created"
+msgstr ""
+
 #. js-lingui-id: ZBGbuw
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
@@ -108,6 +113,26 @@ msgstr ""
 msgid "{contextStoreNumberOfSelectedRecords} selected"
 msgstr "{contextStoreNumberOfSelectedRecords} valgt"
 
+#. js-lingui-id: nFzAd2
+#: src/modules/signature/components/SignatureActivityRow.tsx
+msgid "{displayName} completed their signature"
+msgstr ""
+
+#. js-lingui-id: UTKT05
+#: src/modules/signature/components/SignatureActivityRow.tsx
+msgid "{displayName} notified"
+msgstr ""
+
+#. js-lingui-id: Z1akbP
+#: src/modules/signature/components/SignatureActivityRow.tsx
+msgid "{displayName} signed"
+msgstr ""
+
+#. js-lingui-id: 4/oxjc
+#: src/modules/signature/components/SignatureActivityRow.tsx
+msgid "{displayName} was notified to sign the document"
+msgstr ""
+
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
@@ -137,6 +162,12 @@ msgstr ""
 #. js-lingui-id: mxuI9n
 #: src/pages/settings/integrations/SettingsIntegrationRabbitSign.tsx
 msgid "{serviceName} Integration"
+msgstr ""
+
+#. js-lingui-id: 0qt4cE
+#. placeholder {2}: totalSigners === 1 ? '' : 's'
+#: src/modules/signature/components/SignatureStatusHeader.tsx
+msgid "{signedSigners} of {totalSigners} signer{2} have signed"
 msgstr ""
 
 #. js-lingui-id: pDgeaz
@@ -235,6 +266,16 @@ msgstr ""
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Et delt miljø hvor du vil kunne håndtere dine kundeforhold med teamet ditt."
+
+#. js-lingui-id: PvfGcC
+#: src/modules/signature/components/SignatureActivity.tsx
+msgid "A signer completed their signature"
+msgstr ""
+
+#. js-lingui-id: 1DMWHA
+#: src/modules/signature/components/SignatureActivity.tsx
+msgid "A signer was notified to sign the document"
+msgstr ""
 
 #. js-lingui-id: /cSHSG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -548,6 +589,12 @@ msgstr "Alle"
 msgid "All ({relationRecordsCount})"
 msgstr "Alle ({relationRecordsCount})"
 
+#. js-lingui-id: kqBYiV
+#. placeholder {0}: totalSigners === 1 ? '' : 's'
+#: src/modules/signature/components/SignatureStatusHeader.tsx
+msgid "All {totalSigners} signer{0} have completed their signatures"
+msgstr ""
+
 #. js-lingui-id: 9ljU00
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #~ msgid "All Actions"
@@ -582,6 +629,11 @@ msgstr ""
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "All roles"
 msgstr "Alle roller"
+
+#. js-lingui-id: bL5bBA
+#: src/modules/signature/components/SignatureActivity.tsx
+msgid "All signers have completed their signatures"
+msgstr ""
 
 #. js-lingui-id: F8bx9e
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
@@ -3546,7 +3598,13 @@ msgstr ""
 msgid "Loading metrics data..."
 msgstr "Laster inn metrikkdata..."
 
+#. js-lingui-id: gHadwk
+#: src/modules/signature/components/SignatureActivityRow.tsx
+msgid "Loading signer information..."
+msgstr ""
+
 #. js-lingui-id: Z3FXyt
+#: src/modules/signature/components/SignatureActivityRow.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Loading..."
@@ -3992,6 +4050,16 @@ msgstr ""
 msgid "No data found"
 msgstr ""
 
+#. js-lingui-id: SAJuFS
+#: src/modules/signature/components/SignatureActivity.tsx
+msgid "No Document"
+msgstr ""
+
+#. js-lingui-id: jvdYMG
+#: src/modules/signature/components/SignatureActivity.tsx
+msgid "No document was found for this signature request."
+msgstr ""
+
 #. js-lingui-id: xlUOps
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "No free workflow executions left. End trial period and activate your billing to continue."
@@ -4118,6 +4186,11 @@ msgstr ""
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "No Select field"
 msgstr "Ingen valgt felt"
+
+#. js-lingui-id: zJG6Zq
+#: src/modules/signature/components/SignatureActivity.tsx
+msgid "No signature activity yet"
+msgstr ""
 
 #. js-lingui-id: A5XQ/A
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
@@ -5363,6 +5436,62 @@ msgstr "Registrer deg"
 msgid "Sign Up"
 msgstr ""
 
+#. js-lingui-id: Esi3hC
+#: src/modules/signature/components/SignatureStatusHeader.tsx
+msgid "Signature Completed"
+msgstr ""
+
+#. js-lingui-id: +90yOr
+#: src/modules/signature/components/SignatureStatusHeader.tsx
+msgid "Signature In Progress"
+msgstr ""
+
+#. js-lingui-id: 1AMf5t
+#: src/modules/signature/components/SignatureStatusHeader.tsx
+msgid "Signature Pending"
+msgstr ""
+
+#. js-lingui-id: py6hU8
+#: src/modules/signature/components/SignatureStatusHeader.tsx
+msgid "Signature Request"
+msgstr ""
+
+#. js-lingui-id: gHvaS+
+#: src/modules/signature/components/SignatureActivity.tsx
+msgid "Signature request completed"
+msgstr ""
+
+#. js-lingui-id: BsqMXC
+#: src/modules/signature/components/SignatureActivity.tsx
+msgid "Signature request created"
+msgstr ""
+
+#. js-lingui-id: SqKfYG
+#: src/modules/signature/components/SignatureStatusHeader.tsx
+msgid "Signature request details"
+msgstr ""
+
+#. js-lingui-id: qOEEs9
+#. placeholder {1}: totalSigners === 1 ? '' : 's'
+#: src/modules/signature/components/SignatureStatusHeader.tsx
+msgid "Signature request is created, waiting on {totalSigners} signer{1} to complete signature"
+msgstr ""
+
+#. js-lingui-id: mF9gim
+#: src/modules/signature/components/SignatureActivityRow.tsx
+msgid "Signer information unavailable"
+msgstr ""
+
+#. js-lingui-id: lceUx/
+#: src/modules/signature/components/SignatureActivity.tsx
+msgid "Signer notified"
+msgstr ""
+
+#. js-lingui-id: G3Fj77
+#: src/modules/signature/components/SignatureActivity.tsx
+msgid "Signer signed"
+msgstr ""
+
 #. js-lingui-id: 5v3IHX
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithSSO.tsx
 msgid "Single sign-on (SSO)"
@@ -5761,6 +5890,11 @@ msgstr ""
 msgid "There are still some rows that contain errors. Rows with errors will be ignored when submitting."
 msgstr ""
 
+#. js-lingui-id: jnua8y
+#: src/modules/signature/components/SignatureActivity.tsx
+msgid "There is no activity associated with this signature request."
+msgstr ""
+
 #. js-lingui-id: ynfkhb
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
@@ -5967,6 +6101,11 @@ msgstr "Skriv hva som helst"
 msgid "Ukrainian"
 msgstr "Ukrainsk"
 
+#. js-lingui-id: HurcVc
+#: src/modules/signature/components/SignatureActivityRow.tsx
+msgid "Unable to load signer details"
+msgstr ""
+
 #. js-lingui-id: wSXm5S
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -5982,6 +6121,11 @@ msgstr ""
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Unknown error"
 msgstr "Ukjent feil"
+
+#. js-lingui-id: ylxT8b
+#: src/modules/signature/components/SignatureActivityRow.tsx
+msgid "Unknown Person"
+msgstr ""
 
 #. js-lingui-id: GQCXQS
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -6480,6 +6624,11 @@ msgstr "Du har ikke tillatelse til å opprette poster for dette objektet"
 #~ msgid "You are not allowed to create records in this object"
 #~ msgstr "You are not allowed to create records in this object"
 
+#. js-lingui-id: MewY24
+#: src/modules/signature/components/SignatureActivityRow.tsx
+msgid "You completed your signature"
+msgstr ""
+
 #. js-lingui-id: TBApzn
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "You do not have access to impersonate users."
@@ -6488,6 +6637,21 @@ msgstr "Du har ikke tillatelse til å opprette poster for dette objektet"
 #. js-lingui-id: cdk3eC
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "You haven't configured any model provider. Please set up an API Key in your instance's admin panel or as an environment variable."
+msgstr ""
+
+#. js-lingui-id: NLAngV
+#: src/modules/signature/components/SignatureActivityRow.tsx
+msgid "You notified"
+msgstr ""
+
+#. js-lingui-id: QSDXnq
+#: src/modules/signature/components/SignatureActivityRow.tsx
+msgid "You signed"
+msgstr ""
+
+#. js-lingui-id: 5oZVqg
+#: src/modules/signature/components/SignatureActivityRow.tsx
+msgid "You were notified to sign the document"
 msgstr ""
 
 #. js-lingui-id: zEM7Ne

@@ -109,6 +109,8 @@ export const CreateSignatureFormItems = ({
   const signatures = watch('signatures') || [];
   const additionalReceiverIds = watch('additional_receiver_ids') || [];
   const selectedSigneeId = watch('selected_signee_id');
+  const title = watch('title');
+  const message = watch('message');
 
   const addSignee = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -313,14 +315,14 @@ export const CreateSignatureFormItems = ({
         <>
           <FormTextFieldInput
             label="Title"
-            defaultValue=""
+            defaultValue={title}
             placeholder="Enter Signature Request Title"
             onChange={(value) => setValue('title', value)}
           />
 
           <FormTextFieldInput
             label="Message"
-            defaultValue=""
+            defaultValue={message}
             placeholder="Enter Signature Request Message"
             onChange={(value) => setValue('message', value)}
             multiline
