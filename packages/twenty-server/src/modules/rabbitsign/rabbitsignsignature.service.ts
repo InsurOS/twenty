@@ -573,6 +573,8 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
 
       // Step 4: Upload each document to S3 and create attachment records
       const uploadedAttachments: Array<{ id: string; name: string; fullPath: string; type: string }> = [];
+      let auditTrailAttachment: any = null;
+      let signedAttachment: any = null;
 
       for (const file of extractedFiles) {
         try {
@@ -587,6 +589,10 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
             fileFolder: FileFolder.Attachment,
             workspaceId,
           });
+
+          // Determine if this is the audit trail or signed document based on filename
+          const isAuditTrail = file.name.startsWith('Audit Trail_');
+          const isSignedDocument = !isAuditTrail; // The other file is the signed document
 
           // Create attachment record
           const attachment = await attachmentRepository.save({
@@ -604,6 +610,23 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
             opportunityId: originalAttachment.opportunityId,
           });
 
+          // Store the appropriate attachment based on type
+          if (isAuditTrail) {
+            auditTrailAttachment = attachment;
+            // Link audit trail attachment to signature
+            await attachmentRepository.update(
+              { id: attachment.id },
+              { signatureAuditTrailDownloadId: signatureId }
+            );
+          } else if (isSignedDocument) {
+            signedAttachment = attachment;
+            // Link signed attachment to signature
+            await attachmentRepository.update(
+              { id: attachment.id },
+              { signatureSignedId: signatureId }
+            );
+          }
+
           uploadedAttachments.push({
             id: attachment.id,
             name: file.name,
@@ -611,11 +634,29 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
             type: file.type,
           });
 
-          console.log(`Successfully uploaded and created attachment for: ${file.name}`);
+          console.log(`Successfully uploaded and created attachment for: ${file.name} (${isAuditTrail ? 'audit trail' : isSignedDocument ? 'signed document' : 'other'})`);
         } catch (error) {
           console.error(`Failed to process file ${file.name}:`, error);
           // Continue with other files even if one fails
         }
+      }
+
+      // Update the signature record with the specific attachment references
+      if (auditTrailAttachment || signedAttachment) {
+        const updateData: any = {};
+        if (auditTrailAttachment) {
+          updateData.signatureAuditTrailDownloadAttachmentId = auditTrailAttachment.id;
+        }
+        if (signedAttachment) {
+          updateData.signatureSignedAttachmentId = signedAttachment.id;
+        }
+
+        await rabbitSignSignatureRepository.update(
+          { id: signatureId },
+          updateData
+        );
+
+        console.log(`Updated signature ${signatureId} with audit trail: ${auditTrailAttachment?.id}, signed: ${signedAttachment?.id}`);
       }
 
       if (uploadedAttachments.length === 0) {

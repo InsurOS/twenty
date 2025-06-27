@@ -77,6 +77,36 @@ export class RabbitSignSignatureWorkspaceEntity extends BaseWorkspaceEntity {
   attachmentId: string;
 
   @WorkspaceRelation({
+    standardId: RABBIT_SIGN_SIGNATURE_STANDARD_FIELD_IDS.signatureAuditTrailAttachment,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Signature Audit Trail Download Attachment`,
+    description: msg`The audit trail download attachment for this signature`,
+    icon: 'IconFileDownload',
+    inverseSideTarget: () => AttachmentWorkspaceEntity,
+    inverseSideFieldKey: 'signatureAuditTrailDownload',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  signatureAuditTrailDownloadAttachment: Relation<AttachmentWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('signatureAuditTrailDownloadAttachment')
+  signatureAuditTrailDownloadAttachmentId: string;
+
+  @WorkspaceRelation({
+    standardId: RABBIT_SIGN_SIGNATURE_STANDARD_FIELD_IDS.signatureSignedAttachment,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Signature Signed Attachment`,
+    description: msg`The signed attachment for this signature`,
+    icon: 'IconFileCheck',
+    inverseSideTarget: () => AttachmentWorkspaceEntity,
+    inverseSideFieldKey: 'signatureSigned',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  signatureSignedAttachment: Relation<AttachmentWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('signatureSignedAttachment')
+  signatureSignedAttachmentId: string;
+
+  @WorkspaceRelation({
     standardId: RABBIT_SIGN_KEY_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workspace Member`,
