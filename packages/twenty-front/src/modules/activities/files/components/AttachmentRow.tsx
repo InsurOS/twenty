@@ -11,7 +11,6 @@ import {
   GenericFieldContextType,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -19,12 +18,21 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
 import { AppPath } from '@/types/AppPath';
+import { createPortal } from 'react-dom';
 import { pdfjs } from 'react-pdf';
-import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import {
+  AppTooltip,
+  OverflowingTextWithTooltip,
+  TooltipDelay,
+} from 'twenty-ui/display';
 import { isNavigationModifierPressed } from 'twenty-ui/utilities';
-import { formatToHumanReadableDate } from '~/utils/date-utils';
+import {
+  formatToHumanReadableDate,
+  formatToHumanReadableDateWithoutYear,
+} from '~/utils/date-utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 import { getAppPath } from '~/utils/navigation/getAppPath';
+import { AttachmentRowStatusIcon } from './AttachmentRowStatusIcon';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -45,12 +53,6 @@ const StyledRightContent = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(0.5)};
-`;
-
-const StyledCalendarIconContainer = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
-  display: flex;
 `;
 
 const StyledLink = styled.a`
@@ -78,6 +80,11 @@ const StyledLinkContainer = styled.div`
   width: 100%;
 `;
 
+const StyledAttachmentDate = styled.span`
+  text-align: right;
+  width: 44px;
+`;
+
 type AttachmentRowProps = {
   attachment: Attachment;
   onPreview?: (attachment: Attachment) => void;
@@ -90,7 +97,6 @@ export const AttachmentRow = ({
   onPreview,
 }: AttachmentRowProps) => {
   const navigate = useNavigate();
-  const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
 
   const { name: originalFileName, extension: attachmentFileExtension } =
@@ -102,6 +108,8 @@ export const AttachmentRow = ({
 
   const [attachmentFileName, setAttachmentFileName] =
     useState(originalFileName);
+
+  const attachmentDateTooltipComponentId = `attachment-date-${attachment.id}`;
 
   const { destroyOneRecord: destroyOneAttachment } = useDestroyOneRecord({
     objectNameSingular: CoreObjectNameSingular.Attachment,
@@ -207,10 +215,19 @@ export const AttachmentRow = ({
           )}
         </StyledLeftContent>
         <StyledRightContent>
-          <StyledCalendarIconContainer>
-            <IconCalendar size={theme.icon.size.md} />
-          </StyledCalendarIconContainer>
-          {formatToHumanReadableDate(attachment.createdAt)}
+          <AttachmentRowStatusIcon attachment={attachment} />
+          <StyledAttachmentDate id={attachmentDateTooltipComponentId}>
+            {formatToHumanReadableDateWithoutYear(attachment.createdAt)}
+          </StyledAttachmentDate>
+          {createPortal(
+            <AppTooltip
+              anchorSelect={`#${attachmentDateTooltipComponentId}`}
+              place="top"
+              content={formatToHumanReadableDate(attachment.createdAt)}
+              delay={TooltipDelay.shortDelay}
+            />,
+            document.body,
+          )}
           <AttachmentDropdown
             scopeKey={attachment.id}
             onDelete={handleDelete}
