@@ -2,9 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import axios from 'axios';
 import { createHash } from 'crypto';
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { RabbitSignKeyService } from 'src/modules/rabbitsign/rabbitsignkey.service';
+import { Extract, Open } from 'unzipper';
+import { v4 as uuidv4 } from 'uuid';
 import { RabbitSignSignerService } from './rabbitsignsigner.service';
 import { RabbitSignSignatureWorkspaceEntity } from './standard-objects/rabbitsignsignature.workplace-entity';
 
@@ -33,6 +37,7 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly rabbitSignKeyService: RabbitSignKeyService,
     private readonly rabbitSignSignerService: RabbitSignSignerService,
+    private readonly fileUploadService: FileUploadService,
   ) {
     super(null as any);
   }
@@ -356,12 +361,300 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
         { signatureStatus: 'COMPLETED' },
       );
 
+
+      // In your webhook handler
+      await this.processSignatureDocuments(
+        workspaceId,
+        signatureId
+      );
+
       console.log(`Signature ${signatureId} marked as completed - all signers have signed`);
     }
   }
 
   /**
-   * Get download URL for a completed signature
+   * Process signature documents by downloading the zip from RabbitSign,
+   * extracting the documents, uploading them to S3, and creating attachment records
+   */
+  async processSignatureDocuments(
+    workspaceId: string,
+    signatureId: string,
+  ): Promise<Array<{ id: string; name: string; fullPath: string; type: string }>> {
+    console.log(`Processing signature documents for signature ${signatureId} in workspace ${workspaceId}`);
+    
+    const rabbitSignSignatureRepository = 
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<RabbitSignSignatureWorkspaceEntity>(
+        workspaceId,
+        'rabbitSignSignature',
+      );
+
+    const signature = await rabbitSignSignatureRepository.findOne({
+      where: { id: signatureId },
+    });
+
+    if (!signature || !signature.folderId) {
+      throw new Error('Signature not found or no folder ID available');
+    }
+
+    try {
+      // Step 1: Get download URL from RabbitSign
+      const rabbitSignKey = await this.rabbitSignKeyService.getRabbitSignKeyForWorkspace(signature.workspaceMemberId, workspaceId);
+      const { keyId, keySecret } = rabbitSignKey;
+
+      const path = `/api/v1/folder/${signature.folderId}`;
+      const headers = this.createSignatureHeaders('GET', path, keyId, keySecret);
+
+      const response = await axios.get(
+        `${this.RABBITSIGN_API_BASE_URL}/folder/${signature.folderId}`,
+        { headers }
+      );
+
+      const downloadUrl = response.data.downloadUrl;
+      if (!downloadUrl) {
+        throw new Error('No download URL available from RabbitSign');
+      }
+
+      // Step 2: Download the zip file
+      console.log(`Downloading zip from RabbitSign: ${downloadUrl}`);
+      const zipResponse = await axios.get(downloadUrl, {
+        responseType: 'arraybuffer',
+      });
+
+      const zipBuffer = Buffer.from(zipResponse.data);
+      console.log(`Downloaded zip file size: ${zipBuffer.length} bytes`);
+      
+      // Validate that we have a valid zip file
+      if (zipBuffer.length < 4 || zipBuffer.toString('hex', 0, 4) !== '504b0304') {
+        throw new Error('Downloaded file does not appear to be a valid ZIP file');
+      }
+      
+      // Log the first few bytes for debugging
+      console.log(`Zip file header: ${zipBuffer.toString('hex', 0, 16)}`);
+
+      // Step 3: Extract documents from zip
+      const extractedFiles: Array<{ name: string; buffer: Buffer; type: string }> = [];
+      
+      try {
+        console.log('Starting zip extraction using buffer method...');
+        
+        // Use the Open.buffer method instead of streaming
+        const directory = await Open.buffer(zipBuffer);
+        
+        console.log('Directory entries:', directory.files.length);
+        
+        for (const entry of directory.files) {
+          console.log('Processing entry:', entry.path, entry.type);
+          
+          // Skip directories and hidden files
+          if (entry.type === 'Directory' || entry.path.startsWith('.') || entry.path.endsWith('/')) {
+            console.log(`Skipping directory or hidden file: ${entry.path}`);
+            continue;
+          }
+          
+          try {
+            const buffer = await entry.buffer();
+            const fileType = this.getFileTypeFromName(entry.path);
+            console.log(`Extracted file: ${entry.path} (${buffer.length} bytes)`);
+            
+            extractedFiles.push({
+              name: entry.path,
+              buffer: buffer,
+              type: fileType,
+            });
+          } catch (entryError) {
+            console.error(`Error extracting file ${entry.path}:`, entryError);
+            // Continue with other files
+          }
+        }
+        
+        console.log(`Zip extraction completed. Found ${extractedFiles.length} files.`);
+        
+      } catch (extractionError) {
+        console.error('Failed to extract zip using buffer method:', extractionError);
+        
+        // Fallback: Try the original streaming approach as a last resort
+        console.log('Trying streaming approach as fallback...');
+        
+        await new Promise<void>((resolve, reject) => {
+          const stream = require('stream');
+          const bufferStream = new stream.PassThrough();
+          
+          // Set up error handling for the buffer stream
+          bufferStream.on('error', (error: any) => {
+            console.error('Buffer stream error:', error);
+            reject(error);
+          });
+          
+          bufferStream.end(zipBuffer);
+
+          const extractStream = Extract();
+          
+          // Set a timeout for the extraction process
+          const timeout = setTimeout(() => {
+            console.error('Zip extraction timed out after 30 seconds');
+            reject(new Error('Zip extraction timed out'));
+          }, 30000);
+          
+          extractStream.on('entry', (entry: any) => {
+            console.log('Processing entry:', {
+              path: entry.path,
+              type: entry.type,
+              size: entry.vars?.uncompressedSize
+            });
+            
+            // Check if entry has a valid path
+            if (!entry.path) {
+              console.warn('Entry has no path, skipping');
+              entry.autodrain();
+              return;
+            }
+            
+            const fileName = entry.path;
+            const fileType = this.getFileTypeFromName(fileName);
+            
+            // Skip directories and hidden files
+            if (entry.type === 'Directory' || fileName.startsWith('.')) {
+              console.log(`Skipping directory or hidden file: ${fileName}`);
+              entry.autodrain();
+              return;
+            }
+
+            const chunks: Buffer[] = [];
+            entry.on('data', (chunk: Buffer) => chunks.push(chunk));
+            entry.on('end', () => {
+              const fileBuffer = Buffer.concat(chunks);
+              console.log(`Extracted file: ${fileName} (${fileBuffer.length} bytes)`);
+              extractedFiles.push({
+                name: fileName,
+                buffer: fileBuffer,
+                type: fileType,
+              });
+            });
+            entry.on('error', (error: any) => {
+              console.error(`Error processing entry ${fileName}:`, error);
+              clearTimeout(timeout);
+              reject(error);
+            });
+          })
+          .on('end', () => {
+            clearTimeout(timeout);
+            console.log(`Zip extraction completed. Found ${extractedFiles.length} files.`);
+            resolve();
+          })
+          .on('error', (error: any) => {
+            clearTimeout(timeout);
+            console.error('Error during zip extraction:', error);
+            reject(error);
+          });
+
+          bufferStream.pipe(extractStream);
+        });
+      }
+
+      if (extractedFiles.length === 0) {
+        throw new Error('No files found in the zip archive');
+      }
+
+      // Step 4: Upload each document to S3 and create attachment records
+      const attachmentRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
+        workspaceId,
+        'attachment',
+      );
+
+      const uploadedAttachments: Array<{ id: string; name: string; fullPath: string; type: string }> = [];
+
+      for (const file of extractedFiles) {
+        try {
+          // Generate a unique filename to avoid conflicts
+          const uniqueFilename = `${uuidv4()}_${file.name}`;
+          
+          // Upload to S3
+          const uploadResult = await this.fileUploadService.uploadFile({
+            file: file.buffer,
+            filename: uniqueFilename,
+            mimeType: this.getMimeType(file.type),
+            fileFolder: FileFolder.Attachment,
+            workspaceId,
+          });
+
+          // Create attachment record
+          const attachment = await attachmentRepository.save({
+            name: file.name,
+            fullPath: uploadResult.files[0].path,
+            type: file.type,
+            authorId: signature.workspaceMemberId,
+            signatureId: signatureId,
+          });
+
+          uploadedAttachments.push({
+            id: attachment.id,
+            name: file.name,
+            fullPath: uploadResult.files[0].path,
+            type: file.type,
+          });
+
+          console.log(`Successfully uploaded and created attachment for: ${file.name}`);
+        } catch (error) {
+          console.error(`Failed to process file ${file.name}:`, error);
+          // Continue with other files even if one fails
+        }
+      }
+
+      if (uploadedAttachments.length === 0) {
+        throw new Error('Failed to upload any documents from the signature');
+      }
+
+      console.log(`Successfully processed ${uploadedAttachments.length} documents for signature ${signatureId}`);
+      return uploadedAttachments;
+
+    } catch (error) {
+      console.error('Failed to process signature documents:', error);
+      throw new Error(
+        `Failed to process signature documents: ${error?.response?.data?.message || error?.message || 'Unknown error'}`
+      );
+    }
+  }
+
+  /**
+   * Get file type from filename
+   */
+  private getFileTypeFromName(filename: string): string {
+    const extension = filename.split('.').pop()?.toLowerCase();
+    
+    switch (extension) {
+      case 'pdf':
+        return 'application/pdf';
+      case 'doc':
+        return 'application/msword';
+      case 'docx':
+        return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      case 'png':
+        return 'image/png';
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'txt':
+        return 'text/plain';
+      default:
+        return 'application/octet-stream';
+    }
+  }
+
+  /**
+   * Get MIME type from file type
+   */
+  private getMimeType(fileType: string): string {
+    // If fileType is already a MIME type, return it
+    if (fileType.includes('/')) {
+      return fileType;
+    }
+    
+    // Otherwise, convert file extension to MIME type
+    return this.getFileTypeFromName(`file.${fileType}`);
+  }
+
+  /**
+   * Get download URL for a completed signature (deprecated - use processSignatureDocuments instead)
    */
   async getDownloadUrl(
     workspaceId: string,
