@@ -4,7 +4,7 @@ import React from 'react';
 const StyledInputErrorHelper = styled.div`
   color: ${({ theme }) => theme.color.red};
   font-size: ${({ theme }) => theme.font.size.xs};
-  position: absolute;
+  position: relative;
   margin-top: ${({ theme }) => theme.spacing(0.25)};
 `;
 
