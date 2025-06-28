@@ -14,6 +14,7 @@ import { SignatureFieldType } from '@/signature/constants/signatureFieldTypes';
 import { useCreateSignature } from '@/signature/hooks/useCreateSignature';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
 import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
@@ -36,7 +37,7 @@ export enum SignatureCreationStep {
 }
 
 type CreateSignatureFormItemsProps = {
-  onNext: (step: SignatureCreationStep) => void;
+  setStep: (step: SignatureCreationStep) => void;
   currentStep: SignatureCreationStep;
   currentPageIndex: number;
   currentUser: User;
@@ -84,14 +85,20 @@ const StyledColorCircle = styled.div<{ color: string }>`
 `;
 
 export const CreateSignatureFormItems = ({
-  onNext,
+  setStep,
   currentStep,
   currentPageIndex,
   currentUser,
   attachment,
 }: CreateSignatureFormItemsProps) => {
-  const { watch, setValue, handleSubmit, reset } =
-    useFormContext<CreateSignatureFormValues>();
+  const {
+    watch,
+    setValue,
+    handleSubmit,
+    reset,
+    trigger,
+    formState: { errors },
+  } = useFormContext<CreateSignatureFormValues>();
   const { findOneRecord } = useLazyFindOneRecord({
     objectNameSingular: 'person',
   });
@@ -289,6 +296,20 @@ export const CreateSignatureFormItems = ({
     }
   };
 
+  const handleOnNextStep = async () => {
+    const isFormValid = await trigger([
+      'title',
+      'message',
+      'signees',
+      'user_signature',
+      'order_enabled',
+    ]);
+    if (isFormValid && isDefined(signees[0].id)) {
+      setValue('selected_signee_id', signees[0].id);
+      setStep(SignatureCreationStep.SIGNATURE);
+    }
+  };
+
   return (
     <StyledForm>
       {currentStep === SignatureCreationStep.CONFIGURATION && (
@@ -298,6 +319,7 @@ export const CreateSignatureFormItems = ({
             defaultValue={title}
             placeholder="Enter Signature Request Title"
             onChange={(value) => setValue('title', value)}
+            error={errors.title?.message}
           />
 
           <FormTextFieldInput
@@ -306,6 +328,7 @@ export const CreateSignatureFormItems = ({
             placeholder="Enter Signature Request Message"
             onChange={(value) => setValue('message', value)}
             multiline
+            error={errors.message?.message}
           />
 
           <StyledBooleanFieldContainer>
@@ -367,17 +390,23 @@ export const CreateSignatureFormItems = ({
                 <StyledOrderSelect>
                   <FormSelectFieldInput
                     label="Order"
-                    defaultValue={(userSignatureEnabled
-                      ? index + 2
-                      : index + 1
+                    defaultValue={(
+                      field.order ||
+                      (userSignatureEnabled ? index + 2 : index + 1)
                     ).toString()}
                     onChange={(value) => {
                       const newSignees = [...signees];
-                      newSignees[index] = {
-                        ...newSignees[index],
-                        order: parseInt(value as string),
-                      };
-                      setValue('signees', newSignees);
+                      // Find the correct index in the full signees array
+                      const actualIndex = newSignees.findIndex(
+                        (signee) => signee.id === field.id,
+                      );
+                      if (actualIndex !== -1) {
+                        newSignees[actualIndex] = {
+                          ...newSignees[actualIndex],
+                          order: parseInt(value as string, 10),
+                        };
+                        setValue('signees', newSignees);
+                      }
                     }}
                     options={Array.from(
                       { length: signeesExcludingCurrentUser.length },
@@ -399,6 +428,10 @@ export const CreateSignatureFormItems = ({
               )}
             </StyledSigneeContainer>
           ))}
+
+          {errors.signees?.message && (
+            <InputErrorHelper>{errors.signees.message}</InputErrorHelper>
+          )}
 
           <Button Icon={IconPlus} title="Add Signee" onClick={addSignee} />
 
@@ -455,27 +488,22 @@ export const CreateSignatureFormItems = ({
             variant="primary"
             onClick={() => addSignature(SignatureFieldType.CHECKBOX)}
           />
+
+          {errors.signatures?.message && (
+            <InputErrorHelper>{errors.signatures.message}</InputErrorHelper>
+          )}
         </>
       )}
       <StyledButtonContainer>
         {currentStep === SignatureCreationStep.CONFIGURATION && (
-          <Button
-            title="Next"
-            variant="secondary"
-            onClick={() => {
-              if (isDefined(signees[0].id)) {
-                setValue('selected_signee_id', signees[0].id);
-                onNext(SignatureCreationStep.SIGNATURE);
-              }
-            }}
-          />
+          <Button title="Next" variant="secondary" onClick={handleOnNextStep} />
         )}
         {currentStep === SignatureCreationStep.SIGNATURE && (
           <StyledBooleanFieldContainer>
             <Button
               title="Previous"
               variant="secondary"
-              onClick={() => onNext(SignatureCreationStep.CONFIGURATION)}
+              onClick={() => setStep(SignatureCreationStep.CONFIGURATION)}
             />
             <Button
               title={loading ? 'Creating...' : 'Submit'}
