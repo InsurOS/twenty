@@ -155,6 +155,37 @@ const formSchema = z
         'Each signee must have a unique order when signing order is enabled',
       path: ['signees'], // This will show the error on the signees field
     },
+  )
+  .refine(
+    (data) => {
+      // Get all signees with valid IDs (excluding null IDs)
+      const validSignees = data.signees.filter((signee) => signee.id !== null);
+
+      // If no valid signees, skip validation
+      if (validSignees.length === 0) {
+        return true;
+      }
+
+      // Get all signee IDs
+      const signeeIds = validSignees.map((signee) => signee.id);
+
+      // Get all signature signee IDs
+      const signatureSigneeIds = data.signatures.map(
+        (signature) => signature.signee_id,
+      );
+
+      // Check if each signee has at least one signature
+      const signeesWithSignatures = signeeIds.filter((signeeId) =>
+        signatureSigneeIds.includes(signeeId as string),
+      );
+
+      return signeesWithSignatures.length === signeeIds.length;
+    },
+    {
+      message:
+        'All signees must have at least one signature field. Please add signature fields for each signee.',
+      path: ['signatures'], // This will show the error on the signatures field
+    },
   );
 
 export type CreateSignatureFormValues = z.infer<typeof formSchema>;

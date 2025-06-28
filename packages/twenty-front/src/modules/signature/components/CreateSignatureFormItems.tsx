@@ -488,6 +488,10 @@ export const CreateSignatureFormItems = ({
             variant="primary"
             onClick={() => addSignature(SignatureFieldType.CHECKBOX)}
           />
+
+          {errors.signatures?.message && (
+            <InputErrorHelper>{errors.signatures.message}</InputErrorHelper>
+          )}
         </>
       )}
       <StyledButtonContainer>
@@ -511,7 +515,6 @@ export const CreateSignatureFormItems = ({
           </StyledBooleanFieldContainer>
         )}
       </StyledButtonContainer>
-      <pre>{JSON.stringify(watch(), null, 2)}</pre>
     </StyledForm>
   );
 };
