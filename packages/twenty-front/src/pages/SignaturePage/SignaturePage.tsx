@@ -75,44 +75,87 @@ const StyledLoaderContainer = styled.div`
   justify-content: center;
 `;
 
-const formSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  message: z.string().min(1, 'Message is required'),
-  signees: z
-    .array(
-      z.object({
-        id: z.union([z.string(), z.null()]),
-        order: z.number().optional(),
-        color: z.custom<SignatureColor>(),
-        name: z.string().optional(),
-        email: z.string().email().optional(),
-      }),
-    )
-    .min(1, 'At least one signee is required'),
-  signatures: z
-    .array(
-      z.object({
-        name: z.string(),
-        email: z.string().email(),
-        x: z.number(),
-        y: z.number(),
-        width: z.number(),
-        height: z.number(),
-        page_index: z.number(),
-        field_type: z.number(),
-        signee_id: z.string(),
-        index: z.number(),
-      }),
-    )
-    .default([]),
-  user_signature: z.boolean(),
-  order_enabled: z.boolean(),
-  additional_receiver_ids: z.array(z.string()).default([]),
-  additional_receiver_emails: z.array(z.string().email()).default([]),
-  selected_signee_id: z.union([z.string(), z.undefined()]),
-  file_name: z.string(),
-  attachment_id: z.string(),
-});
+const formSchema = z
+  .object({
+    title: z.string().min(1, 'Title is required'),
+    message: z.string().min(1, 'Message is required'),
+    signees: z
+      .array(
+        z.object({
+          id: z.union([z.string(), z.null()]),
+          order: z.number().optional(),
+          color: z.custom<SignatureColor>(),
+          name: z.string().optional(),
+          email: z.string().email().optional(),
+        }),
+      )
+      .min(1, 'At least one signee is required')
+      .refine(
+        () => {
+          // Only validate order uniqueness if order_enabled is true
+          // This will be checked in the parent object validation
+          return true;
+        },
+        {
+          message: 'At least one signee is required',
+        },
+      ),
+    signatures: z
+      .array(
+        z.object({
+          name: z.string(),
+          email: z.string().email(),
+          x: z.number(),
+          y: z.number(),
+          width: z.number(),
+          height: z.number(),
+          page_index: z.number(),
+          field_type: z.number(),
+          signee_id: z.string(),
+          index: z.number(),
+        }),
+      )
+      .default([]),
+    user_signature: z.boolean(),
+    order_enabled: z.boolean(),
+    additional_receiver_ids: z.array(z.string()).default([]),
+    additional_receiver_emails: z.array(z.string().email()).default([]),
+    selected_signee_id: z.union([z.string(), z.undefined()]),
+    file_name: z.string(),
+    attachment_id: z.string(),
+  })
+  .refine(
+    (data) => {
+      // If order is not enabled, skip validation
+      if (!data.order_enabled) {
+        return true;
+      }
+
+      // Get all signees with defined orders
+      const signeesWithOrder = data.signees.filter(
+        (signee) => signee.id !== null && signee.order !== undefined,
+      );
+
+      // Check if all signees have an order
+      if (
+        signeesWithOrder.length !==
+        data.signees.filter((s) => s.id !== null).length
+      ) {
+        return false;
+      }
+
+      // Check for duplicate orders
+      const orders = signeesWithOrder.map((signee) => signee.order);
+      const uniqueOrders = new Set(orders);
+
+      return orders.length === uniqueOrders.size;
+    },
+    {
+      message:
+        'Each signee must have a unique order when signing order is enabled',
+      path: ['signees'], // This will show the error on the signees field
+    },
+  );
 
 export type CreateSignatureFormValues = z.infer<typeof formSchema>;
 
@@ -182,8 +225,8 @@ export const SignaturePage = ({
   const methods = useForm<CreateSignatureFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
-      message: '',
+      title: 'Document Signature Request',
+      message: 'Please sign the document',
       signees: [
         {
           id: currentUser.id,
@@ -232,7 +275,7 @@ export const SignaturePage = ({
               ) : (
                 <StyledScrollWrapper componentInstanceId="signature-form">
                   <CreateSignatureFormItems
-                    onNext={setStep}
+                    setStep={setStep}
                     currentStep={step}
                     currentPageIndex={pageNumber - 1}
                     currentUser={currentUser}
