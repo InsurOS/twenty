@@ -123,44 +123,6 @@ export const CreateSignatureFormItems = ({
     ]);
   };
 
-  const handleSigneeSelection = async (
-    personId: string | null,
-    signeeIndex: number,
-  ) => {
-    const actualIndex = userSignatureEnabled ? signeeIndex + 1 : signeeIndex;
-
-    if (!personId) {
-      const newSignees = [...signees];
-      newSignees[actualIndex] = {
-        ...newSignees[actualIndex],
-        id: null,
-        name: undefined,
-        email: undefined,
-      };
-      setValue('signees', newSignees);
-      return;
-    }
-
-    await findOneRecord({
-      objectRecordId: personId,
-      onCompleted: (person) => {
-        if (!person) {
-          throw new Error('Person not found');
-        }
-
-        const newSignees = [...signees];
-        newSignees[actualIndex] = {
-          ...newSignees[actualIndex],
-          id: personId,
-          color: getSignatureColor(actualIndex),
-          name: `${person.name?.firstName} ${person.name?.lastName}`,
-          email: person.emails?.primaryEmail,
-        };
-        setValue('signees', newSignees);
-      },
-    });
-  };
-
   const removeSignee = (signeeId: string | null) => {
     if (signees.length > 1) {
       const signeeToRemove = signees.find((signee) => signee.id === signeeId);
@@ -382,7 +344,48 @@ export const CreateSignatureFormItems = ({
                 defaultValue={field.id}
                 onChange={(value) => {
                   const personId = value as string | null;
-                  handleSigneeSelection(personId, index);
+
+                  // Immediately update the form state with the selected ID
+                  const actualIndex = userSignatureEnabled ? index + 1 : index;
+                  const newSignees = [...signees];
+
+                  if (!personId) {
+                    newSignees[actualIndex] = {
+                      ...newSignees[actualIndex],
+                      id: null,
+                      name: undefined,
+                      email: undefined,
+                    };
+                    setValue('signees', newSignees);
+                    return;
+                  }
+
+                  // Set the ID immediately
+                  newSignees[actualIndex] = {
+                    ...newSignees[actualIndex],
+                    id: personId,
+                  };
+                  setValue('signees', newSignees);
+
+                  // Then fetch the person details asynchronously
+                  findOneRecord({
+                    objectRecordId: personId,
+                    onCompleted: (person) => {
+                      if (!person) {
+                        throw new Error('Person not found');
+                      }
+
+                      const updatedSignees = [...signees];
+                      updatedSignees[actualIndex] = {
+                        ...updatedSignees[actualIndex],
+                        id: personId,
+                        color: getSignatureColor(actualIndex),
+                        name: `${person.name?.firstName} ${person.name?.lastName}`,
+                        email: person.emails?.primaryEmail,
+                      };
+                      setValue('signees', updatedSignees);
+                    },
+                  });
                 }}
                 excludedRecordIds={getExcludedPersonIds()}
               />
