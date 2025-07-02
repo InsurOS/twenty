@@ -19,6 +19,7 @@ import {
   Signature,
   SignatureActivityItem,
   SignatureComplete,
+  SignatureSignerStatus,
 } from '../types/Signature';
 
 type SignatureActivityProps = {
@@ -130,17 +131,19 @@ const SignatureActivityWithSignatureComplete = ({
     });
 
     signatureComplete.signers.forEach((signer) => {
-      if (signer.status === 'NOTIFIED') {
-        activities.push({
-          id: `signer-${signer.id}-notified`,
-          type: 'SIGNER_NOTIFIED',
-          title: t`Signer notified`,
-          description: t`A signer was notified to sign the document`,
-          createdAt: signer.createdAt,
-          icon: <IconClockHour8 />,
-          signerId: signer.personId,
-        });
-      } else if (signer.status === 'SIGNED') {
+      // Always add notification activity when signer is created
+      activities.push({
+        id: `signer-${signer.id}-notified`,
+        type: 'SIGNER_NOTIFIED',
+        title: t`Signer notified`,
+        description: t`A signer was notified to sign the document`,
+        createdAt: signer.createdAt,
+        icon: <IconClockHour8 />,
+        signerId: signer.personId,
+      });
+
+      // Add signing activity if the signer has signed
+      if (signer.status === SignatureSignerStatus.SIGNED) {
         activities.push({
           id: `signer-${signer.id}-signed`,
           type: 'SIGNER_SIGNED',
