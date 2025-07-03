@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Document, Page } from 'react-pdf';
@@ -168,7 +167,6 @@ export const DocumentSignatureEditor = ({
   setNumPages,
   attachmentPath,
 }: DocumentSignatureEditorProps) => {
-  const { t } = useLingui();
   const { watch, setValue } = useFormContext<CreateSignatureFormValues>();
   const signees = watch('signees');
   const signatures = watch('signatures') || [];
@@ -203,26 +201,27 @@ export const DocumentSignatureEditor = ({
   };
 
   const zoomIn = () => {
-    setScale((prev) => Math.min(prev + 0.25, 2));
+    setScale((prev) => Math.min(prev + 0.1, 2));
   };
 
   const zoomOut = () => {
-    setScale((prev) => Math.max(prev - 0.25, 0.5));
+    setScale((prev) => Math.max(prev - 0.1, 0.5));
   };
 
   const handleMouseDown = (e: React.MouseEvent, signatureIndex: number) => {
-    e.stopPropagation();
-    const page = document
-      .querySelector('.react-pdf__Page')
+    if ((e.target as HTMLElement).classList.contains('resize-handle')) return;
+    const page = e.currentTarget
+      .closest('.react-pdf__Page')
       ?.getBoundingClientRect();
     if (!page) return;
     const signature = signatures.find((s) => s.index === signatureIndex);
     if (!signature) return;
-
+    const offsetX = (e.clientX - page.left) / scale - signature.x;
+    const offsetY = (e.clientY - page.top) / scale - signature.y;
     setDraggedBox({
       signatureIndex,
-      offsetX: (e.clientX - page.left) / scale - signature.x,
-      offsetY: (e.clientY - page.top) / scale - signature.y,
+      offsetX,
+      offsetY,
     });
   };
 
