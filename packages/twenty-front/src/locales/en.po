@@ -1138,10 +1138,15 @@ msgstr "Change to Yearly?"
 msgid "Check your Emails"
 msgstr "Check your Emails"
 
+#. js-lingui-id: k835EY
+#: src/modules/billing/hooks/useHandleCheckoutSession.ts
+msgid "Checkout session error. Please retry or contact InsurOS team"
+msgstr "Checkout session error. Please retry or contact InsurOS team"
+
 #. js-lingui-id: SxwQE8
 #: src/modules/billing/hooks/useHandleCheckoutSession.ts
-msgid "Checkout session error. Please retry or contact Twenty team"
-msgstr "Checkout session error. Please retry or contact Twenty team"
+#~ msgid "Checkout session error. Please retry or contact Twenty team"
+#~ msgstr "Checkout session error. Please retry or contact Twenty team"
 
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -2458,6 +2463,11 @@ msgstr "Error resending invitation"
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
 msgid "Error validating approved access domain"
 msgstr "Error validating approved access domain"
+
+#. js-lingui-id: PMPiCt
+#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+msgid "Error while ending trial period. Please contact InsurOS team."
+msgstr "Error while ending trial period. Please contact InsurOS team."
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
