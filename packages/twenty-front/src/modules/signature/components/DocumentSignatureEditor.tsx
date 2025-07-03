@@ -401,7 +401,7 @@ export const DocumentSignatureEditor = ({
           variant="tertiary"
         />
         <span>
-          {t`Page {pageNumber} of {numPages ?? '?'}`}
+          {t`Page`} {pageNumber} {t`of`} {numPages ?? '?'}
         </span>
         <IconButton
           Icon={IconChevronRight}

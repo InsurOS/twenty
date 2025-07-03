@@ -420,10 +420,25 @@ msgstr "مفاتيح واجهة برمجة التطبيقات النشطة ال�
 msgid "Add account"
 msgstr "إضافة حساب"
 
+#. js-lingui-id: t60iqu
+#: src/modules/signature/components/AdditionalRecipientsFormItem.tsx
+msgid "Add Additional recipient"
+msgstr ""
+
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Add Approved Access Domain"
 msgstr "إضافة نطاق وصول معتمد"
+
+#. js-lingui-id: PyvNaM
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Add Checkbox"
+msgstr ""
+
+#. js-lingui-id: Z/dcxc
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Add Date"
+msgstr ""
 
 #. js-lingui-id: DpV70M
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -435,6 +450,11 @@ msgstr "إضافة حقل"
 #: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
 msgid "Add filter"
 msgstr "إضافة فلتر"
+
+#. js-lingui-id: RYzv9r
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Add Initials"
+msgstr ""
 
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
@@ -476,10 +496,30 @@ msgstr ""
 msgid "Add rule"
 msgstr ""
 
+#. js-lingui-id: rJVzvt
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Add Signature"
+msgstr ""
+
+#. js-lingui-id: 7Nym7C
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Add Signee"
+msgstr ""
+
+#. js-lingui-id: L0EIrz
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Add signees to the document. They will be able to sign the document."
+msgstr ""
+
 #. js-lingui-id: sgXUv+
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
 msgid "Add SSO Identity Provider"
 msgstr "إضافة موفر هوية الدخول الأحادي SSO"
+
+#. js-lingui-id: mXXoi9
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Add Text"
+msgstr ""
 
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -524,6 +564,16 @@ msgstr "تم الإضافة {beautifyPastDateRelative}"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "أضيف إلى القائمة السوداء"
+
+#. js-lingui-id: SiWFTy
+#: src/modules/signature/components/AdditionalRecipientsFormItem.tsx
+msgid "Additional recipient"
+msgstr ""
+
+#. js-lingui-id: +c+WsZ
+#: src/modules/signature/components/AdditionalRecipientsFormItem.tsx
+msgid "Additional Recipients"
+msgstr ""
 
 #. js-lingui-id: Eis4ey
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
@@ -629,6 +679,11 @@ msgstr ""
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "All roles"
 msgstr "كل الأدوار"
+
+#. js-lingui-id: e3UXq8
+#: src/pages/SignaturePage/SignaturePage.tsx
+msgid "All signees must have at least one signature field. Please add signature fields for each signee."
+msgstr ""
 
 #. js-lingui-id: bL5bBA
 #: src/modules/signature/components/SignatureActivity.tsx
@@ -896,6 +951,12 @@ msgstr "يجب أن تكون بطول 8 أحرف على الأقل."
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "At least one authentication method must be enabled"
 msgstr "يجب تفعيل طريقة مصادقة واحدة على الأقل"
+
+#. js-lingui-id: 5ut3+V
+#: src/pages/SignaturePage/SignaturePage.tsx
+#: src/pages/SignaturePage/SignaturePage.tsx
+msgid "At least one signee is required"
+msgstr ""
 
 #. js-lingui-id: P8fBlG
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -1593,6 +1654,11 @@ msgstr "إنشاء حقل اختيار"
 msgid "Create Select..."
 msgstr ""
 
+#. js-lingui-id: nC533G
+#: src/modules/activities/files/components/AttachmentDropdown.tsx
+msgid "Create Signature"
+msgstr ""
+
 #. js-lingui-id: zt6Erc
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
@@ -1632,6 +1698,11 @@ msgstr ""
 #. js-lingui-id: YO4SdK
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Creating your workspace"
+msgstr ""
+
+#. js-lingui-id: HM56Bx
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Creating..."
 msgstr ""
 
 #. js-lingui-id: R3PLzn
@@ -1858,6 +1929,7 @@ msgstr ""
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -2088,6 +2160,11 @@ msgstr "عرض النصوص في عدة خطوط"
 msgid "Do not import"
 msgstr ""
 
+#. js-lingui-id: F9QG+1
+#: src/pages/SignaturePage/SignaturePage.tsx
+msgid "Document Signature Request"
+msgstr ""
+
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Doesn't contain"
@@ -2126,6 +2203,11 @@ msgstr "لا تقم بإنشاء جهات اتصال من/إلى بريد Gmail�
 msgid "Don’t sync emails from team@ support@ noreply@..."
 msgstr "لا تقم بمزامنة رسائل البريد الإلكتروني من team@ support@ noreply@..."
 
+#. js-lingui-id: mzI/c+
+#: src/modules/activities/files/components/AttachmentDropdown.tsx
+msgid "Download"
+msgstr ""
+
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -2155,6 +2237,11 @@ msgstr "مثلاً تكامل الدعم الخلفي"
 #. js-lingui-id: GhTFTJ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "e.g., summary, status, count"
+msgstr ""
+
+#. js-lingui-id: eM+Y1j
+#: src/pages/SignaturePage/SignaturePage.tsx
+msgid "Each signee must have a unique order when signing order is enabled"
 msgstr ""
 
 #. js-lingui-id: tOkc8o
@@ -2349,6 +2436,11 @@ msgstr "مصفوفة فارغة"
 msgid "Empty Object"
 msgstr "كائن فارغ"
 
+#. js-lingui-id: S+mLLv
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Enable signing order"
+msgstr ""
+
 #. js-lingui-id: q1srUM
 #: src/modules/settings/accounts/components/SetttingsAccountsImapConnectionForm.tsx
 msgid "Encryption"
@@ -2377,6 +2469,16 @@ msgstr ""
 #. js-lingui-id: 9/30HU
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Enter in <0>Unicode</0> format"
+msgstr ""
+
+#. js-lingui-id: gm2szA
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Enter Signature Request Message"
+msgstr ""
+
+#. js-lingui-id: Gry3Q4
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Enter Signature Request Title"
 msgstr ""
 
 #. js-lingui-id: XJU8BD
@@ -2679,6 +2781,11 @@ msgstr "تصدير العمليات"
 #. js-lingui-id: uE7S0L
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
 msgid "Extra Credits Used"
+msgstr ""
+
+#. js-lingui-id: 5T0IEG
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Failed to create signature"
 msgstr ""
 
 #. js-lingui-id: bVax4d
@@ -3094,6 +3201,11 @@ msgstr ""
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hungarian"
 msgstr "المجرية"
+
+#. js-lingui-id: Uv8Zah
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "I will sign the document"
+msgstr ""
 
 #. js-lingui-id: wwu18a
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -3743,6 +3855,16 @@ msgstr ""
 msgid "Members"
 msgstr "الأعضاء"
 
+#. js-lingui-id: xDAtGP
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Message"
+msgstr ""
+
+#. js-lingui-id: Vjat/X
+#: src/pages/SignaturePage/SignaturePage.tsx
+msgid "Message is required"
+msgstr ""
+
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Message not found"
@@ -4014,6 +4136,11 @@ msgstr "موفر دخول موحد جديد"
 #~ msgid "New Webhook"
 #~ msgstr "New Webhook"
 
+#. js-lingui-id: hXzOVo
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Next"
+msgstr ""
+
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -4061,11 +4188,13 @@ msgid "No data found"
 msgstr ""
 
 #. js-lingui-id: SAJuFS
+#: src/pages/SignaturePage/SignaturePage.tsx
 #: src/modules/signature/components/SignatureActivity.tsx
 msgid "No Document"
 msgstr ""
 
 #. js-lingui-id: jvdYMG
+#: src/pages/SignaturePage/SignaturePage.tsx
 #: src/modules/signature/components/SignatureActivity.tsx
 msgid "No document was found for this signature request."
 msgstr ""
@@ -4327,6 +4456,11 @@ msgstr ""
 msgid "Objects"
 msgstr "كائنات"
 
+#. js-lingui-id: BwJKBw
+#: src/modules/signature/components/DocumentSignatureEditor.tsx
+msgid "of"
+msgstr ""
+
 #. js-lingui-id: KNz3EF
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
@@ -4401,6 +4535,11 @@ msgstr "خيارات"
 msgid "or"
 msgstr "أو"
 
+#. js-lingui-id: UYUgdb
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Order"
+msgstr ""
+
 #. js-lingui-id: ucgZ0o
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Organization"
@@ -4446,6 +4585,16 @@ msgstr ""
 #. js-lingui-id: bv8ZsZ
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
 #~ msgid "Overridden on {isOverriddenBy} {pluralizedObject}"
+#~ msgstr ""
+
+#. js-lingui-id: 6WdDG7
+#: src/modules/signature/components/DocumentSignatureEditor.tsx
+msgid "Page"
+msgstr ""
+
+#. js-lingui-id: hBzbYM
+#: src/modules/signature/components/DocumentSignatureEditor.tsx
+#~ msgid "Page {pageNumber} of {numPages ?? '?'}"
 #~ msgstr ""
 
 #. js-lingui-id: boJlGf
@@ -4590,6 +4739,11 @@ msgstr ""
 msgid "Please search for a user first"
 msgstr "يرجى البحث عن مستخدم أولاً"
 
+#. js-lingui-id: VqaeE3
+#: src/pages/SignaturePage/SignaturePage.tsx
+msgid "Please sign the document"
+msgstr ""
+
 #. js-lingui-id: 6nsIo3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
@@ -4665,6 +4819,11 @@ msgstr ""
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 msgid "Preview"
 msgstr "معاينة"
+
+#. js-lingui-id: DHhJ7s
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Previous"
+msgstr ""
 
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -4835,6 +4994,11 @@ msgstr "\\\\"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove option"
 msgstr "إزالة الخيار"
+
+#. js-lingui-id: 2wxgft
+#: src/modules/activities/files/components/AttachmentDropdown.tsx
+msgid "Rename"
+msgstr ""
 
 #. js-lingui-id: Ee8JBW
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -5236,6 +5400,11 @@ msgstr ""
 msgid "Select header row"
 msgstr ""
 
+#. js-lingui-id: wW2LdU
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Select Signee"
+msgstr ""
+
 #. js-lingui-id: UKCiEd
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 msgid "Select Source"
@@ -5270,6 +5439,11 @@ msgstr "\\\\"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
 msgstr "\\\\"
+
+#. js-lingui-id: n17r3U
+#: src/modules/signature/components/AdditionalRecipientsFormItem.tsx
+msgid "Send finished documents to these recipients (they won't need to sign)"
+msgstr ""
 
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -5451,6 +5625,11 @@ msgstr ""
 msgid "Signature Completed"
 msgstr ""
 
+#. js-lingui-id: 6w/mO9
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Signature created successfully"
+msgstr ""
+
 #. js-lingui-id: +90yOr
 #: src/modules/signature/components/SignatureStatusHeader.tsx
 msgid "Signature In Progress"
@@ -5462,6 +5641,10 @@ msgid "Signature Pending"
 msgstr ""
 
 #. js-lingui-id: py6hU8
+#: src/pages/SignaturePage/SignaturePage.tsx
+#: src/pages/SignaturePage/SignaturePage.tsx
+#: src/pages/SignaturePage/SignaturePage.tsx
+#: src/pages/SignaturePage/SignaturePage.tsx
 #: src/modules/signature/components/SignatureStatusHeader.tsx
 msgid "Signature Request"
 msgstr ""
@@ -5485,6 +5668,16 @@ msgstr ""
 #. placeholder {1}: totalSigners === 1 ? '' : 's'
 #: src/modules/signature/components/SignatureStatusHeader.tsx
 msgid "Signature request is created, waiting on {totalSigners} signer{1} to complete signature"
+msgstr ""
+
+#. js-lingui-id: DDloOi
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Signee"
+msgstr ""
+
+#. js-lingui-id: lDncb4
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Signees"
 msgstr ""
 
 #. js-lingui-id: mF9gim
@@ -5625,6 +5818,7 @@ msgstr "سيتم مشاركة الموضوع والمحتوى والمرفقات
 
 #. js-lingui-id: hQRttt
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
 msgid "Submit"
 msgstr ""
 
@@ -6006,6 +6200,16 @@ msgstr "المنطقة الزمنية"
 msgid "Timestamp and participants will be shared with your team."
 msgstr "سيتم مشاركة الطابع الزمني والمشاركين مع فريقك."
 
+#. js-lingui-id: MHrjPM
+#: src/modules/signature/components/CreateSignatureFormItems.tsx
+msgid "Title"
+msgstr ""
+
+#. js-lingui-id: 9udQT9
+#: src/pages/SignaturePage/SignaturePage.tsx
+msgid "Title is required"
+msgstr ""
+
 #. js-lingui-id: aqMzDX
 #: src/pages/settings/SettingsBilling.tsx
 #~ msgid "to monthly"
@@ -6341,6 +6545,12 @@ msgstr "الفيتنامية"
 msgid "View"
 msgstr "عرض"
 
+#. js-lingui-id: W7cVXM
+#: src/modules/activities/files/components/AttachmentSignatureAuditTrailActionItem.tsx
+#: src/modules/activities/files/components/AttachmentSignatureAuditTrailActionItem.tsx
+msgid "View Audit Trail"
+msgstr ""
+
 #. js-lingui-id: KANz0G
 #: src/pages/settings/SettingsBilling.tsx
 msgid "View billing details"
@@ -6356,6 +6566,17 @@ msgstr "عرض تفاصيل الفوترة"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #~ msgid "View settings"
 #~ msgstr "View settings"
+
+#. js-lingui-id: KniFtw
+#: src/modules/activities/files/components/AttachmentDropdown.tsx
+msgid "View Signature"
+msgstr ""
+
+#. js-lingui-id: 46Xi8r
+#: src/modules/activities/files/components/AttachmentSignatureSignedAttachmentActionItem.tsx
+#: src/modules/activities/files/components/AttachmentSignatureSignedAttachmentActionItem.tsx
+msgid "View Signed Document"
+msgstr ""
 
 #. js-lingui-id: bJAIqT
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
