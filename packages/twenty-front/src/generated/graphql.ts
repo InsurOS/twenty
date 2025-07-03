@@ -480,6 +480,21 @@ export type CreateOneFieldMetadataInput = {
   field: CreateFieldInput;
 };
 
+export type CreateOneRabbitSignSignatureInput = {
+  attachmentId: Scalars['String'];
+  filename: Scalars['String'];
+  message: Scalars['String'];
+  signatureStatus: Scalars['String'];
+  signaturesData: Scalars['String'];
+  title: Scalars['String'];
+  workspaceMemberId: Scalars['String'];
+};
+
+export type CreateOneRabbitSignSignatureOutput = {
+  __typename?: 'CreateOneRabbitSignSignatureOutput';
+  id: Scalars['String'];
+};
+
 export type CreateRoleInput = {
   canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
@@ -652,6 +667,7 @@ export enum FeatureFlagKey {
   IS_IMAP_ENABLED = 'IS_IMAP_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
+  IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
   IS_WORKFLOW_FILTERING_ENABLED = 'IS_WORKFLOW_FILTERING_ENABLED'
@@ -970,6 +986,7 @@ export type Mutation = {
   createOneObject: Object;
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
+  createRabbitSignSignatureWithExternalCall: CreateOneRabbitSignSignatureOutput;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean'];
@@ -1122,6 +1139,11 @@ export type MutationCreateOneRoleArgs = {
 
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
+};
+
+
+export type MutationCreateRabbitSignSignatureWithExternalCallArgs = {
+  input: CreateOneRabbitSignSignatureInput;
 };
 
 
@@ -1671,6 +1693,8 @@ export type Query = {
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getQueueMetrics: QueueMetricsData;
+  /** Get the download URL for a completed RabbitSign signature */
+  getRabbitSignDownloadUrl: Scalars['String'];
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
@@ -1749,6 +1773,11 @@ export type QueryGetPublicWorkspaceDataByDomainArgs = {
 export type QueryGetQueueMetricsArgs = {
   queueName: Scalars['String'];
   timeRange?: InputMaybe<QueueMetricsTimeRange>;
+};
+
+
+export type QueryGetRabbitSignDownloadUrlArgs = {
+  signatureId: Scalars['String'];
 };
 
 
@@ -2330,6 +2359,7 @@ export type UpdateWorkspaceInput = {
   customDomain?: InputMaybe<Scalars['String']>;
   defaultRoleId?: InputMaybe<Scalars['String']>;
   displayName?: InputMaybe<Scalars['String']>;
+  featureFlags?: InputMaybe<Array<Scalars['String']>>;
   inviteHash?: InputMaybe<Scalars['String']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']>;
   isMicrosoftAuthEnabled?: InputMaybe<Scalars['Boolean']>;
