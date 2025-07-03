@@ -146,19 +146,17 @@ export class RabbitSignSignerService extends TypeOrmQueryService<RabbitSignSigne
       );
 
     // Find the signer by signature ID and person's primary email
-    const signer = await rabbitSignSignerRepository.findOne({
+    const signers = await rabbitSignSignerRepository.find({
       where: { signatureId },
       relations: ['person'],
     });
 
-    if (!signer || !signer.person?.emails?.primaryEmail) {
-      console.warn(`No signer found for email: ${signerEmail} in signature ${signatureId}`);
-      return null;
-    }
+    const signer = signers.find(
+      s => s.person?.emails?.primaryEmail?.toLowerCase() === signerEmail.toLowerCase()
+    );
 
-    // Check if the email matches (case-insensitive)
-    if (signer.person.emails.primaryEmail.toLowerCase() !== signerEmail.toLowerCase()) {
-      console.warn(`Email mismatch: expected ${signerEmail}, found ${signer.person.emails.primaryEmail}`);
+    if (!signer) {
+      console.warn(`No signer found for email: ${signerEmail} in signature ${signatureId}`);
       return null;
     }
 
