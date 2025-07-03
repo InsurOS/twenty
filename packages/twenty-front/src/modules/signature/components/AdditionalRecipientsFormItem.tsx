@@ -6,6 +6,7 @@ import {
   StyledSigneeContainer,
   StyledTitle,
 } from '@/signature/components/SharedStyledComponents';
+import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,6 +15,7 @@ import { Button } from 'twenty-ui/input';
 import { CreateSignatureFormValues } from '~/pages/SignaturePage/SignaturePage';
 
 export const AdditionalrecipientsFormItem = () => {
+  const { t } = useLingui();
   const { people: additionalrecipients, fetchPeople } = useFetchPeople();
   const { setValue, watch } = useFormContext<CreateSignatureFormValues>();
   const additionalrecipientIds = watch('additional_receiver_ids');
@@ -46,14 +48,14 @@ export const AdditionalrecipientsFormItem = () => {
 
   return (
     <>
-      <StyledTitle>Additional Recipients</StyledTitle>
+      <StyledTitle>{t`Additional Recipients`}</StyledTitle>
       <StyledDescription>
-        Send finished documents to these recipients (they won't need to sign)
+        {t`Send finished documents to these recipients (they won't need to sign)`}
       </StyledDescription>
       {additionalrecipientIds.map((recipientId, index) => (
         <StyledSigneeContainer key={index}>
           <FormRelationToOneFieldInput
-            label="Additional recipient"
+            label={t`Additional recipient`}
             objectNameSingular="person"
             defaultValue={recipientId}
             onChange={(value) => {
@@ -79,7 +81,7 @@ export const AdditionalrecipientsFormItem = () => {
       ))}
       <Button
         Icon={IconPlus}
-        title="Add Additional recipient"
+        title={t`Add Additional recipient`}
         onClick={addAdditionalrecipient}
       />
     </>

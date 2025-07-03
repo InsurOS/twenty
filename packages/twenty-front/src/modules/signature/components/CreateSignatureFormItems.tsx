@@ -15,6 +15,7 @@ import { useCreateSignature } from '@/signature/hooks/useCreateSignature';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -90,6 +91,7 @@ export const CreateSignatureFormItems = ({
   currentUser,
   attachment,
 }: CreateSignatureFormItemsProps) => {
+  const { t } = useLingui();
   const {
     watch,
     setValue,
@@ -244,15 +246,16 @@ export const CreateSignatureFormItems = ({
         file_name: attachment.fullPath,
         attachment_id: attachment.id,
         signatures: formValues.signatures,
+        selected_signee_id: formValues.selected_signee_id,
       });
 
       enqueueSuccessSnackBar({
-        message: 'Signature created successfully',
+        message: t`Signature created successfully`,
       });
       reset();
     } catch (error) {
       enqueueErrorSnackBar({
-        message: 'Failed to create signature',
+        message: t`Failed to create signature`,
       });
     }
   };
@@ -276,17 +279,17 @@ export const CreateSignatureFormItems = ({
       {currentStep === SignatureCreationStep.CONFIGURATION && (
         <>
           <FormTextFieldInput
-            label="Title"
+            label={t`Title`}
             defaultValue={title}
-            placeholder="Enter Signature Request Title"
+            placeholder={t`Enter Signature Request Title`}
             onChange={(value) => setValue('title', value)}
             error={errors.title?.message}
           />
 
           <FormTextFieldInput
-            label="Message"
+            label={t`Message`}
             defaultValue={message}
-            placeholder="Enter Signature Request Message"
+            placeholder={t`Enter Signature Request Message`}
             onChange={(value) => setValue('message', value)}
             multiline
             error={errors.message?.message}
@@ -294,7 +297,7 @@ export const CreateSignatureFormItems = ({
 
           <StyledBooleanFieldContainer>
             <FormBooleanFieldInput
-              label="I will sign the document"
+              label={t`I will sign the document`}
               defaultValue={userSignatureEnabled}
               onChange={(value) => {
                 setValue('user_signature', Boolean(value));
@@ -307,7 +310,7 @@ export const CreateSignatureFormItems = ({
             />
 
             <FormBooleanFieldInput
-              label="Enable signing order"
+              label={t`Enable signing order`}
               defaultValue={orderEnabled}
               onChange={(value) => {
                 setValue('order_enabled', Boolean(value));
@@ -330,15 +333,15 @@ export const CreateSignatureFormItems = ({
             />
           </StyledBooleanFieldContainer>
 
-          <StyledTitle>Signees</StyledTitle>
+          <StyledTitle>{t`Signees`}</StyledTitle>
           <StyledDescription>
-            Add signees to the document. They will be able to sign the document.
+            {t`Add signees to the document. They will be able to sign the document.`}
           </StyledDescription>
 
           {signeesExcludingCurrentUser.map((field, index) => (
             <StyledSigneeContainer key={index}>
               <FormRelationToOneFieldInput
-                label="Signee"
+                label={t`Signee`}
                 objectNameSingular="person"
                 defaultValue={field.id}
                 onChange={(value) => {
@@ -391,7 +394,7 @@ export const CreateSignatureFormItems = ({
               {orderEnabled && (
                 <StyledOrderSelect>
                   <FormSelectFieldInput
-                    label="Order"
+                    label={t`Order`}
                     defaultValue={(
                       field.order ||
                       (userSignatureEnabled ? index + 2 : index + 1)
@@ -435,7 +438,7 @@ export const CreateSignatureFormItems = ({
             <InputErrorHelper>{errors.signees.message}</InputErrorHelper>
           )}
 
-          <Button Icon={IconPlus} title="Add Signee" onClick={addSignee} />
+          <Button Icon={IconPlus} title={t`Add Signee`} onClick={addSignee} />
 
           <AdditionalrecipientsFormItem />
         </>
@@ -443,7 +446,7 @@ export const CreateSignatureFormItems = ({
       {currentStep === SignatureCreationStep.SIGNATURE && (
         <>
           <FormSelectFieldInput
-            label="Select Signee"
+            label={t`Select Signee`}
             defaultValue={selectedSigneeId}
             onChange={(value) => {
               if (isDefined(value)) {
@@ -462,31 +465,31 @@ export const CreateSignatureFormItems = ({
           />
           <Button
             Icon={IconSignature}
-            title="Add Signature"
+            title={t`Add Signature`}
             variant="primary"
             onClick={() => addSignature(SignatureFieldType.SIGNATURE)}
           />
           <Button
             Icon={IconLetterCaseUpper}
-            title="Add Initials"
+            title={t`Add Initials`}
             variant="primary"
             onClick={() => addSignature(SignatureFieldType.INITIALS)}
           />
           <Button
             Icon={IconCalendar}
-            title="Add Date"
+            title={t`Add Date`}
             variant="primary"
             onClick={() => addSignature(SignatureFieldType.DATE)}
           />
           <Button
             Icon={IconTextScan2}
-            title="Add Text"
+            title={t`Add Text`}
             variant="primary"
             onClick={() => addSignature(SignatureFieldType.TEXT)}
           />
           <Button
             Icon={IconCheckbox}
-            title="Add Checkbox"
+            title={t`Add Checkbox`}
             variant="primary"
             onClick={() => addSignature(SignatureFieldType.CHECKBOX)}
           />
@@ -498,17 +501,21 @@ export const CreateSignatureFormItems = ({
       )}
       <StyledButtonContainer>
         {currentStep === SignatureCreationStep.CONFIGURATION && (
-          <Button title="Next" variant="secondary" onClick={handleOnNextStep} />
+          <Button
+            title={t`Next`}
+            variant="secondary"
+            onClick={handleOnNextStep}
+          />
         )}
         {currentStep === SignatureCreationStep.SIGNATURE && (
           <StyledBooleanFieldContainer>
             <Button
-              title="Previous"
+              title={t`Previous`}
               variant="secondary"
               onClick={() => setStep(SignatureCreationStep.CONFIGURATION)}
             />
             <Button
-              title={loading ? 'Creating...' : 'Submit'}
+              title={loading ? t`Creating...` : t`Submit`}
               variant="primary"
               accent="green"
               onClick={handleSubmit(onSubmit)}
