@@ -7,7 +7,7 @@ import { MenuItem } from 'twenty-ui/navigation';
 
 type AttachmentSignatureSignedAttachmentActionItemProps = {
   signatureId: string | null;
-  type?: 'menuItem' | 'button';
+  type: 'menuItem' | 'button';
 };
 
 export const AttachmentSignatureSignedAttachmentActionItem = ({

@@ -1,3 +1,5 @@
+import { AttachmentSignatureAuditTrailActionItem } from '@/activities/files/components/AttachmentSignatureAuditTrailActionItem';
+import { AttachmentSignatureSignedAttachmentActionItem } from '@/activities/files/components/AttachmentSignatureSignedAttachmentActionItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { SignatureActivityRow } from '@/signature/components/SignatureActivityRow';
@@ -65,6 +67,14 @@ const StyledLoaderContainer = styled.div`
   display: flex;
   height: 100%;
   justify-content: center;
+`;
+
+const StyledSignatureActionsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(3)};
+  margin: ${({ theme }) => theme.spacing(6)};
+  margin-top: 0;
 `;
 
 export const SignatureActivity = ({ signature }: SignatureActivityProps) => {
@@ -206,6 +216,16 @@ const SignatureActivityWithSignatureComplete = ({
   return (
     <div>
       <SignatureStatusHeader signatureComplete={signatureComplete} />
+      <StyledSignatureActionsContainer>
+        <AttachmentSignatureAuditTrailActionItem
+          signatureId={signatureComplete.id}
+          type="button"
+        />
+        <AttachmentSignatureSignedAttachmentActionItem
+          signatureId={signatureComplete.id}
+          type="button"
+        />
+      </StyledSignatureActionsContainer>
       <StyledTimelineContainer>
         <StyledActivityGroupContainer>
           <StyledActivityGroupBar />
