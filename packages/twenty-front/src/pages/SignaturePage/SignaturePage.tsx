@@ -12,6 +12,7 @@ import {
   getSignatureColor,
   SignatureColor,
 } from '@/signature/constants/signatureColors';
+import { SignatureStatus } from '@/signature/types/Signature';
 import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
@@ -284,6 +285,15 @@ export const SignaturePage = ({
       attachment_id: attachment.id,
     },
   });
+  const getAttachmentPath = () => {
+    if (
+      signature?.signatureStatus === SignatureStatus.COMPLETED &&
+      isDefined(signature.signatureSignedAttachment?.fullPath)
+    ) {
+      return signature.signatureSignedAttachment.fullPath;
+    }
+    return attachment.fullPath;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -320,7 +330,7 @@ export const SignaturePage = ({
                   setPageNumber={setPageNumber}
                   numPages={numPages ?? 0}
                   setNumPages={setNumPages}
-                  attachment={attachment}
+                  attachmentPath={getAttachmentPath()}
                 />
               </StyledAttachmentContainer>
             </StyledPageContainer>

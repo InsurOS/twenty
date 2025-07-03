@@ -1,4 +1,3 @@
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -157,7 +156,7 @@ type DocumentSignatureEditorProps = {
   numPages: number;
   setPageNumber: React.Dispatch<React.SetStateAction<number>>;
   setNumPages: React.Dispatch<React.SetStateAction<number>>;
-  attachment: ObjectRecord;
+  attachmentPath: string;
 };
 
 export const DocumentSignatureEditor = ({
@@ -166,7 +165,7 @@ export const DocumentSignatureEditor = ({
   numPages,
   setPageNumber,
   setNumPages,
-  attachment,
+  attachmentPath,
 }: DocumentSignatureEditorProps) => {
   const { watch, setValue } = useFormContext<CreateSignatureFormValues>();
   const signees = watch('signees');
@@ -307,10 +306,7 @@ export const DocumentSignatureEditor = ({
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
-      <Document
-        file={attachment.fullPath}
-        onLoadSuccess={onDocumentLoadSuccess}
-      >
+      <Document file={attachmentPath} onLoadSuccess={onDocumentLoadSuccess}>
         <StyledPage
           pageNumber={pageNumber}
           scale={scale}

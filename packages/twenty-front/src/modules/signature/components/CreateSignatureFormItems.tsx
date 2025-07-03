@@ -12,7 +12,6 @@ import {
 import { getSignatureColor } from '@/signature/constants/signatureColors';
 import { SignatureFieldType } from '@/signature/constants/signatureFieldTypes';
 import { useCreateSignature } from '@/signature/hooks/useCreateSignature';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
 import styled from '@emotion/styled';
@@ -103,7 +102,7 @@ export const CreateSignatureFormItems = ({
     objectNameSingular: 'person',
   });
   const { createSignature, loading } = useCreateSignature();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const orderEnabled = watch('order_enabled');
   const signees = watch('signees');
@@ -247,13 +246,13 @@ export const CreateSignatureFormItems = ({
         signatures: formValues.signatures,
       });
 
-      enqueueSnackBar('Signature created successfully', {
-        variant: SnackBarVariant.Success,
+      enqueueSuccessSnackBar({
+        message: 'Signature created successfully',
       });
       reset();
     } catch (error) {
-      enqueueSnackBar('Failed to create signature', {
-        variant: SnackBarVariant.Error,
+      enqueueErrorSnackBar({
+        message: 'Failed to create signature',
       });
     }
   };

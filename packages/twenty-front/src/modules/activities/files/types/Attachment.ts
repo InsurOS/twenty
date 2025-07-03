@@ -1,5 +1,5 @@
 import { Person } from '@/people/types/Person';
-import { Signature } from '../../../signature/types/Signature';
+import { SignatureComplete } from '../../../signature/types/Signature';
 
 export type Attachment = {
   id: string;
@@ -32,5 +32,5 @@ export type AttachmentComplete = Attachment & {
       additionalEmails: string[];
     };
   };
-  signature: Signature | null;
+  signature: SignatureComplete | null;
 };
