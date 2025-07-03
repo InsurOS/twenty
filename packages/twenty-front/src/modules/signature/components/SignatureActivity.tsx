@@ -22,6 +22,7 @@ import {
   SignatureActivityItem,
   SignatureComplete,
   SignatureSignerStatus,
+  SignatureStatus,
 } from '../types/Signature';
 
 type SignatureActivityProps = {
@@ -216,16 +217,18 @@ const SignatureActivityWithSignatureComplete = ({
   return (
     <div>
       <SignatureStatusHeader signatureComplete={signatureComplete} />
-      <StyledSignatureActionsContainer>
-        <AttachmentSignatureAuditTrailActionItem
-          signatureId={signatureComplete.id}
-          type="button"
-        />
-        <AttachmentSignatureSignedAttachmentActionItem
-          signatureId={signatureComplete.id}
-          type="button"
-        />
-      </StyledSignatureActionsContainer>
+      {signatureComplete.signatureStatus === SignatureStatus.COMPLETED && (
+        <StyledSignatureActionsContainer>
+          <AttachmentSignatureAuditTrailActionItem
+            signatureId={signatureComplete.id}
+            type="button"
+          />
+          <AttachmentSignatureSignedAttachmentActionItem
+            signatureId={signatureComplete.id}
+            type="button"
+          />
+        </StyledSignatureActionsContainer>
+      )}
       <StyledTimelineContainer>
         <StyledActivityGroupContainer>
           <StyledActivityGroupBar />
