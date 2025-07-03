@@ -1,7 +1,9 @@
+import { AttachmentSignatureAuditTrailMenuItem } from '@/activities/files/components/AttachmentSignatureAuditTrailMenuItem';
+import { AttachmentSignatureSignedAttachmentMenuItem } from '@/activities/files/components/AttachmentSignatureSignedAttachmentMenuItem';
+import { useGetMenuDropdownWidth } from '@/activities/files/hooks/useGetMenuDropdownWidth';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import {
   IconDotsVertical,
@@ -30,6 +32,7 @@ export const AttachmentDropdown = ({
   onSignature,
   signatureId,
 }: AttachmentDropdownProps) => {
+  const dropdownWidth = useGetMenuDropdownWidth({ signatureId });
   const dropdownId = `${scopeKey}-settings-field-active-action-dropdown`;
 
   const { closeDropdown } = useDropdown(dropdownId);
@@ -61,7 +64,7 @@ export const AttachmentDropdown = ({
         <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
       }
       dropdownComponents={
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
+        <DropdownContent widthInPixels={dropdownWidth}>
           <DropdownMenuItemsContainer scrollable={false}>
             {Boolean(onSignature) && (
               <MenuItem
@@ -70,6 +73,10 @@ export const AttachmentDropdown = ({
                 onClick={handleNavigateSignaturePage}
               />
             )}
+            <AttachmentSignatureAuditTrailMenuItem signatureId={signatureId} />
+            <AttachmentSignatureSignedAttachmentMenuItem
+              signatureId={signatureId}
+            />
             <MenuItem
               text="Download"
               LeftIcon={IconDownload}

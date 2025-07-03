@@ -11,6 +11,8 @@ export type Signature = {
   deletedAt: string;
   signatureStatus: SignatureStatus;
   workspaceMemberId: string;
+  signatureAuditTrailDownloadAttachmentId: string;
+  signatureSignedAttachmentId: string;
   __typename: 'RabbitSignSignature';
 };
 
@@ -39,9 +41,29 @@ export type SignatureSigner = {
   __typename: 'RabbitSignSignatureSigner';
 };
 
+type SignatureAuditTrailDownloadAttachment = Attachment & {
+  signatureAuditTrailDownloadId: string | null;
+  signatureSignedId: string | null;
+  attachmentId: string;
+  authorId: string;
+  fullPath: string;
+  __typename: 'Attachment';
+};
+
+type SignatureSignedAttachment = Attachment & {
+  signatureAuditTrailDownloadId: string | null;
+  signatureId: string;
+  attachmentId: string;
+  authorId: string;
+  fullPath: string;
+  __typename: 'Attachment';
+};
+
 export type SignatureComplete = Signature & {
   attachment: Attachment;
   signers: SignatureSigner[];
+  signatureAuditTrailDownloadAttachment: SignatureAuditTrailDownloadAttachment | null;
+  signatureSignedAttachment: SignatureSignedAttachment | null;
 };
 
 export type SignatureActivityItem = {
