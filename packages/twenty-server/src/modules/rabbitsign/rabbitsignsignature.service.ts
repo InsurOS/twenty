@@ -128,6 +128,16 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
     }
   }
 
+  /**
+   * Ensures the title ends with .pdf extension
+   */
+  private ensurePdfExtension(title: string): string {
+    if (title.toLowerCase().endsWith('.pdf')) {
+      return title;
+    }
+    return `${title}.pdf`;
+  }
+
   private async createRabbitSignSignatureExternally(
     rabbitSignSignatureId: string,
     workspaceMemberId: string,
@@ -139,6 +149,9 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
 
     const { keyId, keySecret } = rabbitSignKey;
     const { title, message, pdfBuffer, signers } = signatureRequest;
+
+    // Ensure title ends with .pdf
+    const pdfTitle = this.ensurePdfExtension(title);
 
     // Step 1: Get upload URL
     const path1 = '/api/v1/upload-url';
@@ -189,12 +202,12 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
 
     const body2 = {
       folder: {
-        title: title,
+        title: pdfTitle,
         summary: message,
         docInfo: [
           {
             url: uploadUrl,
-            docTitle: title,
+            docTitle: pdfTitle,
           },
         ],
         signerInfo,
