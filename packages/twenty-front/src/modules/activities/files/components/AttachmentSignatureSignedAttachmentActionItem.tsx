@@ -2,15 +2,18 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { SignatureComplete } from '@/signature/types/Signature';
 import { IconFileCheck } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 
-type AttachmentSignatureSignedAttachmentMenuItemProps = {
+type AttachmentSignatureSignedAttachmentActionItemProps = {
   signatureId: string | null;
+  type: 'menuItem' | 'button';
 };
 
-export const AttachmentSignatureSignedAttachmentMenuItem = ({
+export const AttachmentSignatureSignedAttachmentActionItem = ({
   signatureId,
-}: AttachmentSignatureSignedAttachmentMenuItemProps) => {
+  type = 'menuItem',
+}: AttachmentSignatureSignedAttachmentActionItemProps) => {
   const { record: signature, loading: signatureLoading } =
     useFindOneRecord<SignatureComplete>({
       objectNameSingular: CoreObjectNameSingular.RABBIT_SIGN_SIGNATURE,
@@ -32,11 +35,23 @@ export const AttachmentSignatureSignedAttachmentMenuItem = ({
     return null;
   }
 
-  return (
-    <MenuItem
-      text={`View Signed Document`}
-      LeftIcon={IconFileCheck}
-      onClick={() => window.open(signatureSignedAttachment.fullPath)}
-    />
-  );
+  if (type === 'menuItem') {
+    return (
+      <MenuItem
+        text={`View Signed Document`}
+        LeftIcon={IconFileCheck}
+        onClick={() => window.open(signatureSignedAttachment.fullPath)}
+      />
+    );
+  }
+
+  if (type === 'button') {
+    return (
+      <Button
+        title="View Signed Document"
+        Icon={IconFileCheck}
+        onClick={() => window.open(signatureSignedAttachment.fullPath)}
+      />
+    );
+  }
 };
