@@ -5,6 +5,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useLingui } from '@lingui/react/macro';
 import {
   IconDotsVertical,
   IconDownload,
@@ -32,6 +33,7 @@ export const AttachmentDropdown = ({
   onSignature,
   signatureId,
 }: AttachmentDropdownProps) => {
+  const { t } = useLingui();
   const dropdownWidth = useGetMenuDropdownWidth({ signatureId });
   const dropdownId = `${scopeKey}-settings-field-active-action-dropdown`;
 
@@ -68,7 +70,7 @@ export const AttachmentDropdown = ({
           <DropdownMenuItemsContainer scrollable={false}>
             {Boolean(onSignature) && (
               <MenuItem
-                text={signatureId ? 'View Signature' : 'Create Signature'}
+                text={signatureId ? t`View Signature` : t`Create Signature`}
                 LeftIcon={IconSignature}
                 onClick={handleNavigateSignaturePage}
               />
@@ -82,17 +84,17 @@ export const AttachmentDropdown = ({
               type="menuItem"
             />
             <MenuItem
-              text="Download"
+              text={t`Download`}
               LeftIcon={IconDownload}
               onClick={handleDownload}
             />
             <MenuItem
-              text="Rename"
+              text={t`Rename`}
               LeftIcon={IconPencil}
               onClick={handleRename}
             />
             <MenuItem
-              text="Delete"
+              text={t`Delete`}
               accent="danger"
               LeftIcon={IconTrash}
               onClick={handleDelete}

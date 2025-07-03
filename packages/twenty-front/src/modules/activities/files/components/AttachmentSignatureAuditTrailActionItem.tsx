@@ -1,6 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { SignatureComplete } from '@/signature/types/Signature';
+import { useLingui } from '@lingui/react/macro';
 import { IconHistory } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -14,6 +15,7 @@ export const AttachmentSignatureAuditTrailActionItem = ({
   signatureId,
   type,
 }: AttachmentSignatureAuditTrailActionItemProps) => {
+  const { t } = useLingui();
   const { record: signature, loading: signatureLoading } =
     useFindOneRecord<SignatureComplete>({
       objectNameSingular: CoreObjectNameSingular.RABBIT_SIGN_SIGNATURE,
@@ -38,7 +40,7 @@ export const AttachmentSignatureAuditTrailActionItem = ({
   if (type === 'menuItem') {
     return (
       <MenuItem
-        text={`View Audit Trail`}
+        text={t`View Audit Trail`}
         LeftIcon={IconHistory}
         onClick={() =>
           window.open(signatureAuditTrailDownloadAttachment.fullPath)
@@ -50,7 +52,7 @@ export const AttachmentSignatureAuditTrailActionItem = ({
   if (type === 'button') {
     return (
       <Button
-        title="View Audit Trail"
+        title={t`View Audit Trail`}
         Icon={IconHistory}
         onClick={() =>
           window.open(signatureAuditTrailDownloadAttachment.fullPath)
