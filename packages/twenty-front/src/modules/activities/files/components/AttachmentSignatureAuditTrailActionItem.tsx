@@ -2,15 +2,18 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { SignatureComplete } from '@/signature/types/Signature';
 import { IconHistory } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 
-type AttachmentSignatureAuditTrailMenuItemProps = {
+type AttachmentSignatureAuditTrailActionItemProps = {
   signatureId: string | null;
+  type: 'menuItem' | 'button';
 };
 
-export const AttachmentSignatureAuditTrailMenuItem = ({
+export const AttachmentSignatureAuditTrailActionItem = ({
   signatureId,
-}: AttachmentSignatureAuditTrailMenuItemProps) => {
+  type,
+}: AttachmentSignatureAuditTrailActionItemProps) => {
   const { record: signature, loading: signatureLoading } =
     useFindOneRecord<SignatureComplete>({
       objectNameSingular: CoreObjectNameSingular.RABBIT_SIGN_SIGNATURE,
@@ -32,13 +35,27 @@ export const AttachmentSignatureAuditTrailMenuItem = ({
     return null;
   }
 
-  return (
-    <MenuItem
-      text={`View Audit Trail`}
-      LeftIcon={IconHistory}
-      onClick={() =>
-        window.open(signatureAuditTrailDownloadAttachment.fullPath)
-      }
-    />
-  );
+  if (type === 'menuItem') {
+    return (
+      <MenuItem
+        text={`View Audit Trail`}
+        LeftIcon={IconHistory}
+        onClick={() =>
+          window.open(signatureAuditTrailDownloadAttachment.fullPath)
+        }
+      />
+    );
+  }
+
+  if (type === 'button') {
+    return (
+      <Button
+        title="View Audit Trail"
+        Icon={IconHistory}
+        onClick={() =>
+          window.open(signatureAuditTrailDownloadAttachment.fullPath)
+        }
+      />
+    );
+  }
 };

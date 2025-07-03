@@ -1,5 +1,5 @@
-import { AttachmentSignatureAuditTrailMenuItem } from '@/activities/files/components/AttachmentSignatureAuditTrailMenuItem';
-import { AttachmentSignatureSignedAttachmentMenuItem } from '@/activities/files/components/AttachmentSignatureSignedAttachmentMenuItem';
+import { AttachmentSignatureAuditTrailActionItem } from '@/activities/files/components/AttachmentSignatureAuditTrailActionItem';
+import { AttachmentSignatureSignedAttachmentActionItem } from '@/activities/files/components/AttachmentSignatureSignedAttachmentActionItem';
 import { useGetMenuDropdownWidth } from '@/activities/files/hooks/useGetMenuDropdownWidth';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -73,9 +73,13 @@ export const AttachmentDropdown = ({
                 onClick={handleNavigateSignaturePage}
               />
             )}
-            <AttachmentSignatureAuditTrailMenuItem signatureId={signatureId} />
-            <AttachmentSignatureSignedAttachmentMenuItem
+            <AttachmentSignatureAuditTrailActionItem
               signatureId={signatureId}
+              type="menuItem"
+            />
+            <AttachmentSignatureSignedAttachmentActionItem
+              signatureId={signatureId}
+              type="menuItem"
             />
             <MenuItem
               text="Download"
