@@ -71,63 +71,6 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
     };
   }
 
-  async createSignature(
-    workspaceId: string,
-    workspaceMemberId: string,
-    signatureRequest: RabbitSignSignatureRequest,
-  ) {
-    const rabbitSignSignatureRepository = 
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<RabbitSignSignatureWorkspaceEntity>(
-        workspaceId,
-        'rabbitSignSignature',
-      );
-
-    // Step 1: Create the signature record with initial status
-    const signatureRecord = await rabbitSignSignatureRepository.save({
-      title: signatureRequest.title,
-      signatureStatus: 'PROCESSING',
-      workspaceMemberId,
-    });
-
-    try {
-      // Step 2: Call RabbitSign API
-      const result = await this.createRabbitSignSignatureExternally(
-        signatureRecord.id,
-        workspaceMemberId,
-        workspaceId,
-        signatureRequest,
-      );
-
-      // Step 3: Update the record with success status and external data
-      await rabbitSignSignatureRepository.update(
-        { id: signatureRecord.id },
-        { 
-          signatureStatus: 'SENT_FOR_SIGNATURE',
-          // You might want to store additional info like folder ID
-        }
-      );
-
-      return {
-        ...signatureRecord,
-        signatureStatus: 'SENT_FOR_SIGNATURE',
-        externalData: result,
-      };
-
-    } catch (error) {
-      // Step 4: Update the record with failure status
-      await rabbitSignSignatureRepository.update(
-        { id: signatureRecord.id },
-        { signatureStatus: 'FAILED' }
-      );
-
-      console.error('RabbitSign API Error:', error);
-      
-      throw new Error(
-        `Failed to create RabbitSign signature: ${error?.response?.data?.message || error?.message || 'Unknown error'}`
-      );
-    }
-  }
-
   /**
    * Ensures the title ends with .pdf extension
    */
@@ -149,9 +92,6 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
 
     const { keyId, keySecret } = rabbitSignKey;
     const { title, message, pdfBuffer, signers } = signatureRequest;
-
-    // Ensure title ends with .pdf
-    const pdfTitle = this.ensurePdfExtension(title);
 
     // Step 1: Get upload URL
     const path1 = '/api/v1/upload-url';
@@ -202,12 +142,12 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
 
     const body2 = {
       folder: {
-        title: pdfTitle,
+        title: title,
         summary: message,
         docInfo: [
           {
             url: uploadUrl,
-            docTitle: pdfTitle,
+            docTitle: title,
           },
         ],
         signerInfo,
@@ -257,7 +197,7 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
 
     // Step 1: Create the record
     const signatureRecord = await rabbitSignSignatureRepository.save({
-      title: input.title,
+      title: this.ensurePdfExtension(input.title),
       signatureStatus: 'PROCESSING',
       workspaceMemberId: input.workspaceMemberId,
       attachmentId: input.attachmentId,
@@ -282,7 +222,7 @@ export class RabbitSignSignatureService extends TypeOrmQueryService<RabbitSignSi
           input.workspaceMemberId,
           input.workspaceId,
           {
-            title: input.title,
+            title: this.ensurePdfExtension(input.title),
             message: input.message,
             pdfBuffer: input.pdfBuffer,
             signers: input.signers,
