@@ -285,10 +285,15 @@ export const SignaturePage = ({
       attachment_id: attachment.id,
     },
   });
-  const attachmentPath =
-    signature?.signatureStatus === SignatureStatus.COMPLETED
-      ? signature.signatureSignedAttachment?.fullPath || ''
-      : attachment.fullPath;
+  const getAttachmentPath = () => {
+    if (
+      signature?.signatureStatus === SignatureStatus.COMPLETED &&
+      isDefined(signature.signatureSignedAttachment?.fullPath)
+    ) {
+      return signature.signatureSignedAttachment.fullPath;
+    }
+    return attachment.fullPath;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -325,7 +330,7 @@ export const SignaturePage = ({
                   setPageNumber={setPageNumber}
                   numPages={numPages ?? 0}
                   setNumPages={setNumPages}
-                  attachmentPath={attachmentPath}
+                  attachmentPath={getAttachmentPath()}
                 />
               </StyledAttachmentContainer>
             </StyledPageContainer>
