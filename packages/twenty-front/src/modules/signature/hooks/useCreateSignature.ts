@@ -1,9 +1,11 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { gql, useMutation } from '@apollo/client';
+import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { CreateSignatureFormValues } from '~/pages/SignaturePage/SignaturePage';
 
@@ -30,8 +32,11 @@ export const useCreateSignature = () => {
     recordGqlFields: computedRecordGqlFields,
   });
 
+  const apolloCoreClient = useContext(ApolloCoreClientContext);
+
   const [createSignatureMutation, { loading, error }] = useMutation(
     CREATE_RABBIT_SIGN_SIGNATURE_WITH_EXTERNAL,
+    { client: apolloCoreClient }
   );
 
   const createSignature = async (formValues: CreateSignatureFormValues) => {
