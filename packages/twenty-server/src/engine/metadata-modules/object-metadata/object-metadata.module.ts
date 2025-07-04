@@ -7,7 +7,6 @@ import {
   PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
@@ -37,6 +36,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
 import { ObjectMetadataEntity } from './object-metadata.entity';
 import { ObjectMetadataService } from './object-metadata.service';
 
+import { RabbitSignModule } from 'src/modules/rabbitsign/rabbitsign.module';
 import { CreateObjectInput } from './dtos/create-object.input';
 import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
 import { UpdateObjectPayload } from './dtos/update-object.input';
@@ -63,6 +63,7 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
         WorkspaceCacheStorageModule,
         WorkspaceMetadataCacheModule,
         WorkspaceDataSourceModule,
+        RabbitSignModule,
       ],
       services: [
         ObjectMetadataService,

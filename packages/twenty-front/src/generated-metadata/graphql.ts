@@ -509,6 +509,21 @@ export type CreateOneObjectInput = {
   object: CreateObjectInput;
 };
 
+export type CreateOneRabbitSignSignatureInput = {
+  attachmentId: Scalars['String'];
+  filename: Scalars['String'];
+  message: Scalars['String'];
+  signatureStatus: Scalars['String'];
+  signaturesData: Scalars['String'];
+  title: Scalars['String'];
+  workspaceMemberId: Scalars['String'];
+};
+
+export type CreateOneRabbitSignSignatureOutput = {
+  __typename?: 'CreateOneRabbitSignSignatureOutput';
+  id: Scalars['String'];
+};
+
 export type CreateRemoteServerInput = {
   foreignDataWrapperOptions: Scalars['JSON'];
   foreignDataWrapperType: Scalars['String'];
@@ -1016,6 +1031,7 @@ export type Mutation = {
   createOneRemoteServer: RemoteServer;
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
+  createRabbitSignSignatureWithExternalCall: CreateOneRabbitSignSignatureOutput;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean'];
@@ -1188,6 +1204,11 @@ export type MutationCreateOneRoleArgs = {
 
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
+};
+
+
+export type MutationCreateRabbitSignSignatureWithExternalCallArgs = {
+  input: CreateOneRabbitSignSignatureInput;
 };
 
 
@@ -1765,6 +1786,8 @@ export type Query = {
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getQueueMetrics: QueueMetricsData;
+  /** Get the download URL for a completed RabbitSign signature */
+  getRabbitSignDownloadUrl: Scalars['String'];
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
@@ -1869,6 +1892,11 @@ export type QueryGetPublicWorkspaceDataByDomainArgs = {
 export type QueryGetQueueMetricsArgs = {
   queueName: Scalars['String'];
   timeRange?: InputMaybe<QueueMetricsTimeRange>;
+};
+
+
+export type QueryGetRabbitSignDownloadUrlArgs = {
+  signatureId: Scalars['String'];
 };
 
 
