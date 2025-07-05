@@ -1,4 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
@@ -19,6 +20,7 @@ const CREATE_RABBIT_SIGN_SIGNATURE_WITH_EXTERNAL = gql`
 
 export const useCreateSignature = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.Attachment,
   });
@@ -32,6 +34,9 @@ export const useCreateSignature = () => {
 
   const [createSignatureMutation, { loading, error }] = useMutation(
     CREATE_RABBIT_SIGN_SIGNATURE_WITH_EXTERNAL,
+    {
+      client: apolloCoreClient,
+    },
   );
 
   const createSignature = async (formValues: CreateSignatureFormValues) => {
