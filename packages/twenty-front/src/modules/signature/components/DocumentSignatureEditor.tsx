@@ -251,8 +251,8 @@ export const DocumentSignatureEditor = ({
       const deltaX = (e.clientX - resizingBox.startX) / scale;
       const deltaY = (e.clientY - resizingBox.startY) / scale;
 
-      const newWidth = Math.max(50, resizingBox.startWidth + deltaX);
-      const newHeight = Math.max(30, resizingBox.startHeight + deltaY);
+      const newWidth = Math.max(10, resizingBox.startWidth + deltaX);
+      const newHeight = Math.max(10, resizingBox.startHeight + deltaY);
 
       const newSignatures = signatures.map((signature) => {
         if (signature.index === resizingBox.signatureIndex) {
