@@ -121,8 +121,6 @@ export const SignaturePageWithAttachment = () => {
     objectRecordId: attachmentId,
   });
 
-
-
   if (attachmentLoading) {
     return (
       <PageContainer>
@@ -176,116 +174,119 @@ export const SignaturePage = ({
   const [step, setStep] = useState(SignatureCreationStep.CONFIGURATION);
   const [pageNumber, setPageNumber] = useState(1);
   const [numPages, setNumPages] = useState<number>(0);
-  const getFormSchema = () => z
-    .object({
-      title: z.string().min(1, t`Title is required`),
-      message: z.string().min(1, t`Message is required`),
-      signees: z
-        .array(
-          z.object({
-            id: z.union([z.string(), z.null()]),
-            order: z.number().optional(),
-            color: z.custom<SignatureColor>(),
-            name: z.string().optional(),
-            email: z.string().email().optional(),
-          }),
-        )
-        .min(1, t`At least one signee is required`)
-        .refine(
-          () => {
-            // Only validate order uniqueness if order_enabled is true
-            // This will be checked in the parent object validation
+  const getFormSchema = () =>
+    z
+      .object({
+        title: z.string().min(1, t`Title is required`),
+        message: z.string().min(1, t`Message is required`),
+        signees: z
+          .array(
+            z.object({
+              id: z.union([z.string(), z.null()]),
+              order: z.number().optional(),
+              color: z.custom<SignatureColor>(),
+              name: z.string().optional(),
+              email: z.string().email().optional(),
+            }),
+          )
+          .min(1, t`At least one signee is required`)
+          .refine(
+            () => {
+              // Only validate order uniqueness if order_enabled is true
+              // This will be checked in the parent object validation
+              return true;
+            },
+            {
+              message: t`At least one signee is required`,
+            },
+          ),
+        signatures: z
+          .array(
+            z.object({
+              name: z.string(),
+              email: z.string().email(),
+              x: z.number(),
+              y: z.number(),
+              width: z.number(),
+              height: z.number(),
+              page_index: z.number(),
+              field_type: z.number(),
+              signee_id: z.string(),
+              index: z.number(),
+            }),
+          )
+          .default([]),
+        user_signature: z.boolean(),
+        order_enabled: z.boolean(),
+        additional_receiver_ids: z.array(z.string()).default([]),
+        additional_receiver_emails: z.array(z.string().email()).default([]),
+        selected_signee_id: z.union([z.string(), z.undefined()]),
+        file_name: z.string(),
+        attachment_id: z.string(),
+      })
+      .refine(
+        (data) => {
+          // If order is not enabled, skip validation
+          if (!data.order_enabled) {
             return true;
-          },
-          {
-            message: t`At least one signee is required`,
-          },
-        ),
-      signatures: z
-        .array(
-          z.object({
-            name: z.string(),
-            email: z.string().email(),
-            x: z.number(),
-            y: z.number(),
-            width: z.number(),
-            height: z.number(),
-            page_index: z.number(),
-            field_type: z.number(),
-            signee_id: z.string(),
-            index: z.number(),
-          }),
-        )
-        .default([]),
-      user_signature: z.boolean(),
-      order_enabled: z.boolean(),
-      additional_receiver_ids: z.array(z.string()).default([]),
-      additional_receiver_emails: z.array(z.string().email()).default([]),
-      selected_signee_id: z.union([z.string(), z.undefined()]),
-      file_name: z.string(),
-      attachment_id: z.string(),
-    })
-    .refine(
-      (data) => {
-        // If order is not enabled, skip validation
-        if (!data.order_enabled) {
-          return true;
-        }
+          }
 
-        // Get all signees with defined orders
-        const signeesWithOrder = data.signees.filter(
-          (signee) => signee.id !== null && signee.order !== undefined,
-        );
+          // Get all signees with defined orders
+          const signeesWithOrder = data.signees.filter(
+            (signee) => signee.id !== null && signee.order !== undefined,
+          );
 
-        // Check if all signees have an order
-        if (
-          signeesWithOrder.length !==
-          data.signees.filter((s) => s.id !== null).length
-        ) {
-          return false;
-        }
+          // Check if all signees have an order
+          if (
+            signeesWithOrder.length !==
+            data.signees.filter((s) => s.id !== null).length
+          ) {
+            return false;
+          }
 
-        // Check for duplicate orders
-        const orders = signeesWithOrder.map((signee) => signee.order);
-        const uniqueOrders = new Set(orders);
+          // Check for duplicate orders
+          const orders = signeesWithOrder.map((signee) => signee.order);
+          const uniqueOrders = new Set(orders);
 
-        return orders.length === uniqueOrders.size;
-      },
-      {
-        message: t`Each signee must have a unique order when signing order is enabled`,
-        path: ['signees'], // This will show the error on the signees field
-      },
-    )
-    .refine(
-      (data) => {
-        // Get all signees with valid IDs (excluding null IDs)
-        const validSignees = data.signees.filter((signee) => signee.id !== null);
+          return orders.length === uniqueOrders.size;
+        },
+        {
+          message: t`Each signee must have a unique order when signing order is enabled`,
+          path: ['signees'], // This will show the error on the signees field
+        },
+      )
+      .refine(
+        (data) => {
+          // Get all signees with valid IDs (excluding null IDs)
+          const validSignees = data.signees.filter(
+            (signee) => signee.id !== null,
+          );
 
-        // If no valid signees, skip validation
-        if (validSignees.length === 0) {
-          return true;
-        }
+          // If no valid signees, skip validation
+          if (validSignees.length === 0) {
+            return true;
+          }
 
-        // Get all signee IDs
-        const signeeIds = validSignees.map((signee) => signee.id);
+          // Get all signee IDs
+          const signeeIds = validSignees.map((signee) => signee.id);
 
-        // Get all signature signee IDs
-        const signatureSigneeIds = data.signatures.map(
-          (signature) => signature.signee_id,
-        );
+          // Get all signature signee IDs
+          const signatureSigneeIds = data.signatures.map(
+            (signature) => signature.signee_id,
+          );
 
-        // Check if each signee has at least one signature
-        const signeesWithSignatures = signeeIds.filter((signeeId) =>
-          signatureSigneeIds.includes(signeeId as string),
-        );
+          // Check if each signee has at least one signature
+          const signeesWithSignatures = signeeIds.filter((signeeId) =>
+            signatureSigneeIds.includes(signeeId as string),
+          );
 
-        return signeesWithSignatures.length === signeeIds.length;
-      },
-      {
-        message: t`All signees must have at least one signature field. Please add signature fields for each signee.`,
-        path: ['signatures'], // This will show the error on the signatures field
-      },
-    );
+          return signeesWithSignatures.length === signeeIds.length;
+        },
+        {
+          message: t`All signees must have at least one signature field. Please add signature fields for each signee.`,
+          path: ['signatures'], // This will show the error on the signatures field
+        },
+      );
 
   const methods = useForm<CreateSignatureFormValues>({
     resolver: zodResolver(getFormSchema()),
