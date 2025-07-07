@@ -77,6 +77,7 @@ const StyledActivityTitle = styled.div`
 const StyledActivityDescription = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.sm};
+  white-space: wrap;
 `;
 
 const StyledActivityMeta = styled.div`

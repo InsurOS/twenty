@@ -139,10 +139,19 @@ msgid "{serviceName} Integration"
 msgstr "{serviceName} Integration"
 
 #. js-lingui-id: 0qt4cE
-#. placeholder {2}: totalSigners === 1 ? '' : 's'
 #: src/modules/signature/components/SignatureStatusHeader.tsx
-msgid "{signedSigners} of {totalSigners} signer{2} have signed"
-msgstr "{signedSigners} of {totalSigners} signer{2} have signed"
+#~ msgid "{signedSigners} of {totalSigners} signer{2} have signed"
+#~ msgstr "{signedSigners} of {totalSigners} signer{2} have signed"
+
+#. js-lingui-id: U9CpkA
+#: src/modules/signature/components/SignatureStatusHeader.tsx
+msgid "{signedSigners} of {totalSigners} signers have signed"
+msgstr "{signedSigners} of {totalSigners} signers have signed"
+
+#. js-lingui-id: +0UOiU
+#: src/modules/signature/components/SignatureStatusHeader.tsx
+msgid "{signedSigners} of 1 signer have signed"
+msgstr "{signedSigners} of 1 signer have signed"
 
 #. js-lingui-id: pDgeaz
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
@@ -564,10 +573,19 @@ msgid "All ({relationRecordsCount})"
 msgstr "All ({relationRecordsCount})"
 
 #. js-lingui-id: kqBYiV
-#. placeholder {0}: totalSigners === 1 ? '' : 's'
 #: src/modules/signature/components/SignatureStatusHeader.tsx
-msgid "All {totalSigners} signer{0} have completed their signatures"
-msgstr "All {totalSigners} signer{0} have completed their signatures"
+#~ msgid "All {totalSigners} signer{0} have completed their signatures"
+#~ msgstr "All {totalSigners} signer{0} have completed their signatures"
+
+#. js-lingui-id: EKcR7g
+#: src/modules/signature/components/SignatureStatusHeader.tsx
+msgid "All {totalSigners} signers have completed their signatures"
+msgstr "All {totalSigners} signers have completed their signatures"
+
+#. js-lingui-id: mnezbI
+#: src/modules/signature/components/SignatureStatusHeader.tsx
+msgid "All 1 signer have completed their signatures"
+msgstr "All 1 signer have completed their signatures"
 
 #. js-lingui-id: 7EZqN0
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -5067,10 +5085,19 @@ msgid "Signature request details"
 msgstr "Signature request details"
 
 #. js-lingui-id: qOEEs9
-#. placeholder {1}: totalSigners === 1 ? '' : 's'
 #: src/modules/signature/components/SignatureStatusHeader.tsx
-msgid "Signature request is created, waiting on {totalSigners} signer{1} to complete signature"
-msgstr "Signature request is created, waiting on {totalSigners} signer{1} to complete signature"
+#~ msgid "Signature request is created, waiting on {totalSigners} signer{1} to complete signature"
+#~ msgstr "Signature request is created, waiting on {totalSigners} signer{1} to complete signature"
+
+#. js-lingui-id: U+YSn+
+#: src/modules/signature/components/SignatureStatusHeader.tsx
+msgid "Signature request is created, waiting on {totalSigners} signers to complete signature"
+msgstr "Signature request is created, waiting on {totalSigners} signers to complete signature"
+
+#. js-lingui-id: NVXMik
+#: src/modules/signature/components/SignatureStatusHeader.tsx
+msgid "Signature request is created, waiting on 1 signer to complete signature"
+msgstr "Signature request is created, waiting on 1 signer to complete signature"
 
 #. js-lingui-id: DDloOi
 #: src/modules/signature/components/CreateSignatureFormItems.tsx

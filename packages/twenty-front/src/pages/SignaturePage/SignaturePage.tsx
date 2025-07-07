@@ -7,16 +7,13 @@ import {
   CreateSignatureFormItems,
   SignatureCreationStep,
 } from '@/signature/components/CreateSignatureFormItems';
-import { DocumentSignatureEditor } from '@/signature/components/DocumentSignatureEditor';
+import { DocumentSignatureEditorWithAttachment } from '@/signature/components/DocumentSignatureEditor';
 import { SignatureActivity } from '@/signature/components/SignatureActivity';
 import {
   getSignatureColor,
   SignatureColor,
 } from '@/signature/constants/signatureColors';
-import {
-  SignatureComplete,
-  SignatureStatus,
-} from '@/signature/types/Signature';
+import { SignatureComplete } from '@/signature/types/Signature';
 import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
@@ -26,7 +23,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
@@ -179,13 +176,9 @@ export const SignaturePage = ({
     });
   const { t } = useLingui();
   const { person, signature } = attachment;
-  const [attachmentPath, setAttachmentPath] = useState(attachment.fullPath);
   const [step, setStep] = useState(SignatureCreationStep.CONFIGURATION);
   const [pageNumber, setPageNumber] = useState(1);
   const [numPages, setNumPages] = useState<number>(0);
-  useEffect(() => {
-    getAttachmentPath();
-  }, [signature]);
   const getFormSchema = () =>
     z
       .object({
@@ -331,22 +324,11 @@ export const SignaturePage = ({
       attachment_id: attachment.id,
     },
   });
-  const getAttachmentPath = async () => {
-    if (signature?.signatureStatus === SignatureStatus.COMPLETED) {
-      await fetchSignature({
-        objectRecordId: signature.id,
-        onCompleted: (signature) => {
-          if (isDefined(signature.signatureSignedAttachment)) {
-            setAttachmentPath(signature.signatureSignedAttachment.fullPath);
-          }
-        },
-      });
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
   };
+
   return (
     <PageContainer>
       <PageTitle title={t`Signature Request`} />
@@ -374,12 +356,12 @@ export const SignaturePage = ({
                 </StyledScrollWrapper>
               )}
               <StyledAttachmentContainer>
-                <DocumentSignatureEditor
+                <DocumentSignatureEditorWithAttachment
                   pageNumber={pageNumber}
                   setPageNumber={setPageNumber}
                   numPages={numPages ?? 0}
                   setNumPages={setNumPages}
-                  attachmentPath={attachmentPath}
+                  attachment={attachment}
                 />
               </StyledAttachmentContainer>
             </StyledPageContainer>

@@ -1,7 +1,13 @@
+/* eslint-disable react/jsx-props-no-spreading */
+import { AttachmentComplete } from '@/activities/files/types/Attachment';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { SignatureComplete } from '@/signature/types/Signature';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Document, Page } from 'react-pdf';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconCalendar,
   IconCheckbox,
@@ -150,16 +156,46 @@ const StyledResizeHandle = styled.div<{
   z-index: 10;
 `;
 
-type DocumentSignatureEditorProps = {
+type DocumentSignatureEditorWithAttachmentProps = {
   onPageChange?: (pageIndex: number) => void;
   pageNumber: number;
   numPages: number;
   setPageNumber: React.Dispatch<React.SetStateAction<number>>;
   setNumPages: React.Dispatch<React.SetStateAction<number>>;
+  attachment: AttachmentComplete;
+};
+
+type DocumentSignatureEditorProps = Omit<
+  DocumentSignatureEditorWithAttachmentProps,
+  'attachment'
+> & {
   attachmentPath: string;
 };
 
-export const DocumentSignatureEditor = ({
+export const DocumentSignatureEditorWithAttachment = ({
+  attachment,
+  ...rest
+}: DocumentSignatureEditorWithAttachmentProps) => {
+  const { record: signature } = useFindOneRecord<SignatureComplete>({
+    objectNameSingular: CoreObjectNameSingular.RABBIT_SIGN_SIGNATURE,
+    objectRecordId: attachment.signatureId ?? '',
+    skip: !attachment.signatureId,
+  });
+  if (!signature)
+    return (
+      <DocumentSignatureEditor attachmentPath={attachment.fullPath} {...rest} />
+    );
+  if (signature && isDefined(signature.signatureSignedAttachment)) {
+    return (
+      <DocumentSignatureEditor
+        attachmentPath={signature.signatureSignedAttachment.fullPath}
+        {...rest}
+      />
+    );
+  }
+};
+
+const DocumentSignatureEditor = ({
   onPageChange,
   pageNumber,
   numPages,
