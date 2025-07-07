@@ -184,8 +184,20 @@ export const SignaturePage = ({
   const [pageNumber, setPageNumber] = useState(1);
   const [numPages, setNumPages] = useState<number>(0);
   useEffect(() => {
+    const getAttachmentPath = async () => {
+      if (signature?.signatureStatus === SignatureStatus.COMPLETED) {
+        await fetchSignature({
+          objectRecordId: signature.id,
+          onCompleted: (signature) => {
+            if (isDefined(signature.signatureSignedAttachment)) {
+              setAttachmentPath(signature.signatureSignedAttachment.fullPath);
+            }
+          },
+        });
+      }
+    };
     getAttachmentPath();
-  }, [signature]);
+  }, [signature, fetchSignature]);
   const getFormSchema = () =>
     z
       .object({
@@ -331,18 +343,6 @@ export const SignaturePage = ({
       attachment_id: attachment.id,
     },
   });
-  const getAttachmentPath = async () => {
-    if (signature?.signatureStatus === SignatureStatus.COMPLETED) {
-      await fetchSignature({
-        objectRecordId: signature.id,
-        onCompleted: (signature) => {
-          if (isDefined(signature.signatureSignedAttachment)) {
-            setAttachmentPath(signature.signatureSignedAttachment.fullPath);
-          }
-        },
-      });
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

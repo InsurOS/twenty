@@ -34,22 +34,24 @@ export const SignatureStatusHeader = ({
     ).length;
 
     if (signatureComplete.signatureStatus === 'SIGNED') {
+      const signerText = totalSigners === 1 ? 'signer' : 'signers';
       return {
         title: t`Signature Completed`,
-        description: t`All ${totalSigners} signer${totalSigners === 1 ? '' : 's'} have completed their signatures`,
+        description: t`All ${totalSigners} ${signerText} have completed their signatures`,
       };
     }
 
     if (signatureComplete.signatureStatus === 'SENT_FOR_SIGNATURE') {
+      const signerText = totalSigners === 1 ? 'signer' : 'signers';
       if (signedSigners === 0) {
         return {
           title: t`Signature Pending`,
-          description: t`Signature request is created, waiting on ${totalSigners} signer${totalSigners === 1 ? '' : 's'} to complete signature`,
+          description: t`Signature request is created, waiting on ${totalSigners} ${signerText} to complete signature`,
         };
       } else {
         return {
           title: t`Signature In Progress`,
-          description: t`${signedSigners} of ${totalSigners} signer${totalSigners === 1 ? '' : 's'} have signed`,
+          description: t`${signedSigners} of ${totalSigners} ${signerText} have signed`,
         };
       }
     }

@@ -36,7 +36,7 @@ export const useCreateSignature = () => {
 
   const [createSignatureMutation, { loading, error }] = useMutation(
     CREATE_RABBIT_SIGN_SIGNATURE_WITH_EXTERNAL,
-    { client: apolloCoreClient },
+    { client: apolloCoreClient ?? undefined },
   );
 
   const createSignature = async (formValues: CreateSignatureFormValues) => {
