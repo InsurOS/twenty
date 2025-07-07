@@ -1,6 +1,6 @@
 import { SignatureComplete } from '@/signature/types/Signature';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 
 const StyledStatusHeader = styled.div`
   margin-bottom: 0;
@@ -27,47 +27,87 @@ export const SignatureStatusHeader = ({
 }) => {
   const { t } = useLingui();
 
-  const getStatusInfo = () => {
-    const totalSigners = signatureComplete.signers.length;
-    const signedSigners = signatureComplete.signers.filter(
-      (signer) => signer.status === 'SIGNED',
-    ).length;
+  const totalSigners = signatureComplete.signers.length;
+  const signedSigners = signatureComplete.signers.filter(
+    (signer) => signer.status === 'SIGNED',
+  ).length;
 
+  const getStatusInfo = () => {
     if (signatureComplete.signatureStatus === 'SIGNED') {
-      const signerText = totalSigners === 1 ? 'signer' : 'signers';
       return {
         title: t`Signature Completed`,
-        description: t`All ${totalSigners} ${signerText} have completed their signatures`,
       };
     }
 
     if (signatureComplete.signatureStatus === 'SENT_FOR_SIGNATURE') {
-      const signerText = totalSigners === 1 ? 'signer' : 'signers';
       if (signedSigners === 0) {
         return {
           title: t`Signature Pending`,
-          description: t`Signature request is created, waiting on ${totalSigners} ${signerText} to complete signature`,
         };
       } else {
         return {
           title: t`Signature In Progress`,
-          description: t`${signedSigners} of ${totalSigners} ${signerText} have signed`,
         };
       }
     }
 
     return {
       title: t`Signature Request`,
-      description: t`Signature request details`,
     };
   };
 
-  const { title, description } = getStatusInfo();
+  const { title } = getStatusInfo();
+
+  const renderDescription = () => {
+    if (signatureComplete.signatureStatus === 'SIGNED') {
+      if (totalSigners === 1) {
+        return <Trans>All 1 signer have completed their signatures</Trans>;
+      } else {
+        return (
+          <Trans>
+            All {totalSigners} signers have completed their signatures
+          </Trans>
+        );
+      }
+    }
+
+    if (signatureComplete.signatureStatus === 'SENT_FOR_SIGNATURE') {
+      if (signedSigners === 0) {
+        if (totalSigners === 1) {
+          return (
+            <Trans>
+              Signature request is created, waiting on 1 signer to complete
+              signature
+            </Trans>
+          );
+        } else {
+          return (
+            <Trans>
+              Signature request is created, waiting on {totalSigners} signers to
+              complete signature
+            </Trans>
+          );
+        }
+      } else {
+        if (totalSigners === 1) {
+          return <Trans>{signedSigners} of 1 signer have signed</Trans>;
+        } else {
+          return (
+            <Trans>
+              {signedSigners} of {totalSigners} signers have signed
+            </Trans>
+          );
+        }
+      }
+    }
+
+    return <Trans>Signature request details</Trans>;
+  };
 
   return (
     <StyledStatusHeader>
       <StyledStatusTitle>{title}</StyledStatusTitle>
-      <StyledStatusDescription>{description}</StyledStatusDescription>
+      <StyledStatusDescription>{renderDescription()}</StyledStatusDescription>
     </StyledStatusHeader>
   );
 };
